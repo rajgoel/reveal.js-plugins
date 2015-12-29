@@ -1,0 +1,3 @@
+[submodule "reveal.js-menu"]
+	path = reveal.js-menu
+	url = git://github.com/denehyg/reveal.js-menu.git
