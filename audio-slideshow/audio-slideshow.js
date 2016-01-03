@@ -23,6 +23,7 @@
 	var defaultText = false; // use slide text as default for the text to speech converter
 	var defaultDuration = 5; // value in seconds
 	var advance = 0; // advance to next slide after given time in milliseconds after audio has played, use negative value to not advance 
+	var autoplay = false; // automatically start slideshow
 	var playerOpacity = .05; // opacity when the mouse is far from to the audioplayer
 	var startAtFragment = false; // when moving to a slide, start at the current fragment or at the start of the slide
 	// ------------------
@@ -93,12 +94,18 @@
 		currentAudio = document.getElementById( id );
 		if ( currentAudio ) {
 			currentAudio.style.display = "block";
-			if ( previousAudio && currentAudio.id != previousAudio.id ) {
-				currentAudio.volume = previousAudio.volume;
-				currentAudio.muted = previousAudio.muted;
+			if ( previousAudio ) {
+				if ( currentAudio.id != previousAudio.id ) {
+					currentAudio.volume = previousAudio.volume;
+					currentAudio.muted = previousAudio.muted;
 //console.debug( "Play " + currentAudio.id);
+					currentAudio.play();
+				}
+			}
+			else if ( autoplay ) {
 				currentAudio.play();
 			}
+
 		}
 	}
 
@@ -121,6 +128,10 @@
 			defaultDuration = Reveal.getConfig().audioDefaultDuration;
 			console.warn('Setting parameter "audioDefaultDuration" is deprecated!');
 		}
+		if ( Reveal.getConfig().audioAutoplay ) {
+			autoplay = Reveal.getConfig().audioAutoplay;
+			console.warn('Setting parameter "audioAutoplay" is deprecated!');
+		}
 		if ( Reveal.getConfig().audioPlayerOpacity ) {
 			playerOpacity = Reveal.getConfig().audioPlayerOpacity;
 			console.warn('Setting parameter "audioPlayerOpacity" is deprecated!');
@@ -135,6 +146,7 @@
 			if ( config.defaultText ) defaultText = config.defaultText;
 			if ( config.defaultDuration ) defaultDuration = config.defaultDuration;
 			if ( config.advance ) advance = config.advance;
+			if ( config.autoplay ) autoplay = config.autoplay;
 			if ( config.playerOpacity ) playerOpacity = config.playerOpacity;
 		}
 
