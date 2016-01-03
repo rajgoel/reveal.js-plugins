@@ -1,7 +1,7 @@
 # Audio slideshows
 
 A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to easily add audio playback to each slide and fragment of your presentation. 
-The slideshow adds an audio player to the slide show and plays an audio file provided for each slide and fragment.
+The slideshow adds an audio player to the slideshow and plays an audio file provided for each slide and fragment.
 When an audio file has finished playing, the plugin and automatically advances the slideshow to the next slide or fragment. 
 
 [Check out the live demo](http://courses.telematique.eu/audio-slideshow)
@@ -45,7 +45,7 @@ Reveal.initialize({
 		textToSpeechURL: null,  // the URL to the text to speech converter
 		defaultText: false; 	// use slide text as default for the text to speech converter
 		advance: 0; 		// advance to next slide after given time in milliseconds after audio has played, use negative value to not advance 
-		defaultDuration: 5,	// default duration if no audio is available 
+		defaultDuration: 5,	// default duration in seconds if no audio is available 
 		playerOpacity: 0.05,	// opacity value of audio player if unfocused
 		startAtFragment: false; // when moving to a slide, start at the current fragment or at the start of the slide
 	},
@@ -72,7 +72,7 @@ Reveal.initialize({
 
 For each slide or fragment you can explicitly specify a file to be played when the slide or fragment is shown by setting the ```data-audio-src``` attribute for the slide or fragment.
 
-```
+```html
 <section>
 	<p>
 		With audio slideshows you can add recorded audio to whatever you want to deliver to your audience. 
@@ -94,7 +94,7 @@ where ```[YOUR_KEY]``` should be the key that you obtained after [registration a
 
 If the parameter ```defaultText``` is set to ```true```, the slide or fragment text is sent to the text-to-speech generator. Alternatively, you can use the ```data-audio-text``` attribute for each slide or fragment and each HTML-element, to explicitly specify the text to be sent to the text-to-speech converter.
 
-```
+```html
 <section data-audio-text="This is the text sent to the text-to-speech generator">
 	<p>This is the text shown on the slide</p>
 </section>
@@ -143,7 +143,7 @@ By default the audio slideshow does not show any fragment when navigating to a s
 
 By setting the ```data-audio-controls``` attribute for a video, the audio player controls can be linked to an embedded video.
 
-```
+```html
 <video preload="auto" data-audio-controls src="http://video.webmfiles.org/big-buck-bunny_trailer.webm" width="720" height="480">
 </video>
 ```
