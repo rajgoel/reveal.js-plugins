@@ -54,6 +54,37 @@ Reveal.initialize({
 ```
 The ```defaults``` parameter  will overwrite ```Chart.defaults```. Furthermore, for any chart type, e.g. line, bar, etc., the parameters for the individual datasets can be specified. Where Chart.js allows to specify a parameter for a particular dataset, the plugin allows to specify an array of values for this parameter, which will automatically be assigned to the datasets. Note that if there are more datasets than elements in the array, the plugin will start again with the first value in the array.
 
+## Usage
+
+A chart can be easily included in a slide by adding a ```canvas``` element with the ```data-chart``` attribute set to the desired chart type. Comma separated values can be given to specify the chart data. The first column provides the names for the datasets, whereas the first row provides table headers.
+
+```html
+<canvas data-chart="line">
+Month, January, February, March, April, May, June, July
+A, 65, 59, 80, 81, 56, 55, 40
+B, 28, 48, 40, 19, 86, 27, 90
+</canvas>
+```
+Within the canvas body, HTML comments can be used to configure the chart using JSON. If no table headers are provided, the JSON string must includes respective labels. 
+
+```html
+<canvas class="stretch" data-chart="line">
+A, 65, 59, 80, 81, 56, 55, 40
+<!-- This is a comment that will be ignored -->
+B, 28, 48, 40, 19, 86, 27, 90
+<!-- 
+{ 
+"data" : {
+	"labels" : ["Enero", "Febrero", "Marzo", "Avril", "Mayo", "Junio", "Julio"],
+	"datasets" : [{ "borderColor": "#0f0", "borderDash": ["5","10"] }, { "borderColor": "#0ff" } ]
+	}
+}
+-->
+</canvas>
+```
+
+
+
 ## License
 
 MIT licensed
