@@ -24,13 +24,13 @@ var RevealChart = window.RevealChart || (function(){
 	/*
 	* Recursively merge properties of two objects 
 	*/
-	function MergeRecursive(obj1, obj2) {
+	function mergeRecursive(obj1, obj2) {
 
 	  for (var p in obj2) {
 	    try {
 	      // Property in destination object set; update its value.
 	      if ( obj2[p].constructor==Object ) {
-	        obj1[p] = MergeRecursive(obj1[p], obj2[p]);
+	        obj1[p] = mergeRecursive(obj1[p], obj2[p]);
 	
 	      } else {
 	        obj1[p] = obj2[p];
@@ -59,28 +59,14 @@ var RevealChart = window.RevealChart || (function(){
 			var config = parseJSON(comments[j]);
 			if ( config ) {
 				if ( config.data ) {
-					MergeRecursive( chartData, config.data);
-/*
-					for (var attrname in config.data) { 
-						chartData[attrname] = config.data[attrname]; 
-					}
-*/
+					mergeRecursive( chartData, config.data);
 				}
 				if ( config.options ) {
-					MergeRecursive( chartOptions, config.options);
-/*					for (var attrname in config.options) { 
-						chartOptions[attrname] = config.options[attrname]; 
-					}
-*/
+					mergeRecursive( chartOptions, config.options);
 				}
 			}
 		}
 		
-		var legend = null;
-		if ( canvas.id ) {
-			legend = document.querySelector(".legend[id='" + canvas.id + "']"  ); 
-		}
-
 		var lines = CSV.split('\n').filter(function(v){return v!==''});
 		// if labels are not defined, get them from first line
 		if ( chartData.labels === null && lines.length > 0 ) {
@@ -111,10 +97,6 @@ var RevealChart = window.RevealChart || (function(){
 		canvas.chart = new Chart(ctx, { type: canvas.getAttribute("data-chart"), data: chartData, options: chartOptions }); 
 
 
-		if ( legend )  {
-//alert(canvas.chart.generateLegend());
-			legend.innerHTML = canvas.chart.generateLegend() ;
-		}
 	}
 
 	var initializeCharts = function(){
@@ -161,7 +143,7 @@ var RevealChart = window.RevealChart || (function(){
 	// set global chart options
 	var config = chartConfig["defaults"];
 	if ( config ) {
-		MergeRecursive(Chart.defaults, config);
+		mergeRecursive(Chart.defaults, config);
 	}		
 
 	Reveal.addEventListener('ready', function(){
