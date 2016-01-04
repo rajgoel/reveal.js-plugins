@@ -1,6 +1,6 @@
 # Chart
 
-A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to easily add charts using [Chart.js 2.0](https://github.com/nnnick/Chart.js/tree/v2.0-dev). 
+A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to easily add charts using [Chart.js v2.0](http://www.chartjs.org/). 
 
 [Check out the live demo](http://courses.telematique.eu/reveal.js-plugins/chart-demo.html)
 
