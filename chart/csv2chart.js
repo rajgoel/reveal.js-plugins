@@ -105,10 +105,9 @@ var RevealChart = window.RevealChart || (function(){
 		for (var i = 0; i < canvases.length; i++ ){
 			// check if canvas has data-chart attribute
 			if ( canvases[i].hasAttribute("data-chart") ){
-				var CSV = canvases[i].innerHTML;
+				var CSV = canvases[i].innerHTML.trim();
 				var comments = CSV.match(/<!--[\s\S]*?-->/g);
 				CSV = CSV.replace(/<!--[\s\S]*?-->/g,'').replace(/^\s*\n/gm, "") 
-
 				if ( ! canvases[i].hasAttribute("data-chart-src") ) {
 					createChart(canvases[i], CSV, comments);
 				}
