@@ -82,6 +82,20 @@ B, 28, 48, 40, 19, 86, 27, 90
 -->
 </canvas>
 ```
+To provide the chart from an external CSV file, the filename can be specified using the ```data-chart-src``` attribute of the ```canvas``` element. The CSV file is expected to only contain data values, whereas options for drawing the chart can be given as described above.
+
+```html
+<canvas data-chart="bar" data-chart-src="data.csv">
+<!-- 
+{
+"data" : {
+"datasets" : [{ "backgroundColor": "#0f0" }, { "backgroundColor": "#0ff" } ]
+},
+"options": { "responsive": true, "scales": { "xAxes": [{ "stacked": true }] } } 
+}
+-->
+</canvas>
+```
 
 
 
