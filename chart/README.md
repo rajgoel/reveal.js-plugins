@@ -52,7 +52,7 @@ Reveal.initialize({
 	// ...
 });
 ```
-The ```defaults``` parameter  will overwrite ```Chart.defaults```, whereas the other parameters give an array of parameters for the datasets of the specified chart type. With the above configuration, for the first dataset of a line chart the ```borderColor``` will be set to ```rgba(20,220,220,.8)``` and the ```borderDash``` will be set to ```[5,10]```, for the second dataset of a line chart the ```borderColor``` will be set to ```rgba(220,120,120,.8)``` and the ```borderDash``` will be set to ```[0,0]```, for the third dataset of a line chart the ```borderColor``` will be set to ```rgba(20,120,220,.8)``` and the ```borderDash``` will be set to ```[5,10]```. Note that if there are more datasets than elements in the parameter array, the plugin will start again with the first parameter in the array.
+The ```defaults``` parameter  will overwrite ```Chart.defaults```, whereas the other parameters give an array of parameters for the datasets of the specified chart type. The above configuration gives the following style for a line chart. For the first dataset the ```borderColor``` will be set to ```rgba(20,220,220,.8)``` and the ```borderDash``` will be set to ```[5,10]```, for the second dataset the ```borderColor``` will be set to ```rgba(220,120,120,.8)``` and the ```borderDash``` will be set to ```[0,0]```, for the third dataset the ```borderColor``` will be set to ```rgba(20,120,220,.8)``` and the ```borderDash``` will be set to ```[5,10]```. Note that if there are more datasets than elements in the parameter array, the plugin will start again with the first parameter in the array.
 
 ## License
 
