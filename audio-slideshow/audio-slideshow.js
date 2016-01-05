@@ -255,30 +255,34 @@
 		audioElement.addEventListener( 'seeked', function( event ) {
 			videoElement.currentTime = audioElement.currentTime;
 		} );	
+
+		// add silent audio to video to be used as fallback
+		var audioSource = audioElement.querySelector('source[data-audio-silent]');
+		if ( audioSource ) audioElement.removeChild( audioSource );
+		audioSource = document.createElement( 'source' );
+		var videoSilence = new SilentAudio( Math.round(videoElement.duration + .5) ); // create the wave file	
+		audioSource.src= videoSilence.dataURI;
+		audioSource.setAttribute("data-audio-silent", videoElement.duration);
+		audioElement.appendChild(audioSource, audioElement.firstChild);
 	}
 
 	function setupFallbackAudio( audioElement, text, videoElement ) {
-		var audioSource = document.createElement( 'source' );
 		// default file cannot be read
 		if ( textToSpeechURL != null && text != null && text != "" ) {
+			var audioSource = document.createElement( 'source' );
 			audioSource.src = textToSpeechURL + encodeURIComponent(text);
 			audioSource.setAttribute('data-tts',audioElement.id.split( '-' ).pop());
+			audioElement.appendChild(audioSource, audioElement.firstChild);
 		}
 		else {
-			if ( videoElement && videoElement !== null ) {
-				if ( videoElement.duration > defaultDuration ) {
-					var videoSilence = new SilentAudio( Math.round(videoElement.duration + .5) ); // create the wave file	
-					audioSource.src= videoSilence.dataURI;
-					audioSource.id = videoElement.duration + " seconds";
-				}
-			}
-			else {
-			// only add silence if no videoElement defines the minimum duration
+	 		if ( !audioElement.querySelector('source[data-audio-silent]') ) {
+				// create silenet source if not yet existent
+				var audioSource = document.createElement( 'source' );
 				audioSource.src = silence.dataURI; 
-				audioSource.id = defaultDuration + " seconds";
+				audioSource.setAttribute("data-audio-silent", defaultDuration);
+				audioElement.appendChild(audioSource, audioElement.firstChild);
 			}
 		}	
-		audioElement.appendChild(audioSource, audioElement.firstChild);
 	}
 
 	function setupAudioElement( container, indices, audioFile, text, videoElement ) {
@@ -382,7 +386,7 @@
 	   				if (xhr.readyState === 4 && xhr.status >= 200 && xhr.status < 300) {
 						var audioSource = document.createElement( 'source' );
 						audioSource.src = prefix + indices + suffix;
-						audioElement.appendChild(audioSource, audioElement.firstChild);
+						audioElement.insertBefore(audioSource, audioElement.firstChild);
 						audioExists = true;
 					}
 					else {
@@ -395,7 +399,7 @@
 				// fallback if checking of audio file fails (e.g. when running the slideshow locally)
 				var audioSource = document.createElement( 'source' );
 				audioSource.src = prefix + indices + suffix;
-				audioElement.appendChild(audioSource, audioElement.firstChild);
+				audioElement.insertBefore(audioSource, audioElement.firstChild);
 				setupFallbackAudio( audioElement, text, videoElement );
 			}
 		}	
