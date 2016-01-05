@@ -381,10 +381,12 @@
 					if ( videoElement && videoElement !== null &&  videoElement.duration > defaultDuration ) {
 						var videoSilence = new SilentAudio( videoElement.duration ); // create the wave file
 						audioSource.src= videoSilence.dataURI;
+						audioSource.id = videoElement.duration + " seconds";
 					}
 					else {
 					// only add silence if no videoElement defines the minimum duration
 						audioSource.src = silence.dataURI; 
+						audioSource.id = defaultDuration + " seconds";
 					}
 				}	
 				audioElement.appendChild(audioSource, audioElement.firstChild);
