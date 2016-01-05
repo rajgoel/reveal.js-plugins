@@ -257,6 +257,30 @@
 		} );	
 	}
 
+	function setupFallbackAudio( audioElement, text, videoElement ) {
+		var audioSource = document.createElement( 'source' );
+		// default file cannot be read
+		if ( textToSpeechURL != null && text != null && text != "" ) {
+			audioSource.src = textToSpeechURL + encodeURIComponent(text);
+			audioSource.setAttribute('data-tts',audioElement.id.split( '-' ).pop());
+		}
+		else {
+			if ( videoElement && videoElement !== null ) {
+				if ( videoElement.duration > defaultDuration ) {
+					var videoSilence = new SilentAudio( Math.round(videoElement.duration + .5) ); // create the wave file	
+					audioSource.src= videoSilence.dataURI;
+					audioSource.id = videoElement.duration + " seconds";
+				}
+			}
+			else {
+			// only add silence if no videoElement defines the minimum duration
+				audioSource.src = silence.dataURI; 
+				audioSource.id = defaultDuration + " seconds";
+			}
+		}	
+		audioElement.appendChild(audioSource, audioElement.firstChild);
+	}
+
 	function setupAudioElement( container, indices, audioFile, text, videoElement ) {
 		var audioElement = document.createElement( 'audio' );
 		audioElement.setAttribute( 'style', "position: relative; top: 20px; left: 10%; width: 80%;" );
@@ -349,47 +373,30 @@
 			} );
 		}
 		else {
-			var audioExists = false;			
+			var audioExists = false;
 			try {
 				// check if audio file exists 
 				var xhr = new XMLHttpRequest();
-				xhr.open('HEAD', prefix + indices + suffix, false);
-				xhr.send(null);
-				// when we are here, we already have a response, b/c we used Synchronous XHR
-				if (xhr.status === 200) {
-					var audioSource = document.createElement( 'source' );
-					audioSource.src = prefix + indices + suffix;
-					audioElement.appendChild(audioSource, audioElement.firstChild);
-					audioExists = true;
+				xhr.open('HEAD', prefix + indices + suffix, true);
+	 			xhr.onload = function() {
+	   				if (xhr.readyState === 4 && xhr.status >= 200 && xhr.status < 300) {
+						var audioSource = document.createElement( 'source' );
+						audioSource.src = prefix + indices + suffix;
+						audioElement.appendChild(audioSource, audioElement.firstChild);
+						audioExists = true;
+					}
+					else {
+						setupFallbackAudio( audioElement, text, videoElement );
+					}
 				}
-				
+				xhr.send(null);
 			} catch( error ) {
+//console.log("Error checking audio" + audioExists);			
 				// fallback if checking of audio file fails (e.g. when running the slideshow locally)
 				var audioSource = document.createElement( 'source' );
 				audioSource.src = prefix + indices + suffix;
 				audioElement.appendChild(audioSource, audioElement.firstChild);
-			}
-
-			if ( ! audioExists ) {
-				var audioSource = document.createElement( 'source' );
-				// default file cannot be read
-				if ( textToSpeechURL != null && text != null && text != "" ) {
-					audioSource.src = textToSpeechURL + encodeURIComponent(text);
-					audioSource.setAttribute('data-tts',audioElement.id.split( '-' ).pop());
-				}
-				else {
-					if ( videoElement && videoElement !== null &&  videoElement.duration > defaultDuration ) {
-						var videoSilence = new SilentAudio( videoElement.duration ); // create the wave file
-						audioSource.src= videoSilence.dataURI;
-						audioSource.id = videoElement.duration + " seconds";
-					}
-					else {
-					// only add silence if no videoElement defines the minimum duration
-						audioSource.src = silence.dataURI; 
-						audioSource.id = defaultDuration + " seconds";
-					}
-				}	
-				audioElement.appendChild(audioSource, audioElement.firstChild);
+				setupFallbackAudio( audioElement, text, videoElement );
 			}
 		}	
 		container.appendChild( audioElement );
