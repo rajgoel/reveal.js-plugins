@@ -8,7 +8,7 @@ This collections includes the following plugins
 - [Chart](https://github.com/rajgoel/reveal.js-plugins/tree/master/chart)
 - [Menu](https://github.com/denehyg/reveal.js-menu) (by Greg Denehy)
 
-Please note that the menu-plugin is a submodule and has to be downloaded separately.
+Please note that the [menu](https://github.com/denehyg/reveal.js-menu)-plugin is a submodule and has to be downloaded separately.
 
 ## License
 
