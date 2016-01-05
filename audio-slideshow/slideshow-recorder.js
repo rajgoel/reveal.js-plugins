@@ -277,7 +277,7 @@ var Recorder = {
 		fetchAudio( Array.prototype.slice.call(TTS) );
 	}
 	else {
-		alert("There is no audio to fetch from text to speech generator.");
+		alert("Either there is no audio to fetch from the text to speech generator or all audio files are already provided.");
 	}
     }
 
