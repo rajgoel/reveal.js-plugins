@@ -52,37 +52,56 @@ Reveal.initialize({
 	// ...
 });
 ```
-The ```defaults``` parameter  will overwrite ```Chart.defaults```. Furthermore, for any chart type, e.g. line, bar, etc., the parameters for the individual datasets can be specified. Where Chart.js allows to specify a parameter for a particular dataset, the plugin allows to specify an array of values for this parameter, which will automatically be assigned to the datasets. Note that if there are more datasets than elements in the array, the plugin will start again with the first value in the array.
+The ```defaults``` parameter  will overwrite ```Chart.defaults```. Furthermore, for any chart type, e.g. line, bar, etc., the parameters for the individual datasets can be specified. Where Chart.js allows to specify a single parameter for a particular dataset, the plugin allows to specify an array of values for this parameter, which will automatically be assigned to the different datasets. Note that if there are more datasets than elements in the array, the plugin will start again with the first value in the array.
 
 ## Usage
 
-A chart can be easily included in a slide by adding a ```canvas``` element with the ```data-chart``` attribute set to the desired chart type. Comma separated values can be given to specify the chart data. The first column provides the names for the datasets, whereas the first row provides table headers.
+A chart can be included in a slide by adding a ```canvas``` element with the ```data-chart``` attribute set to the desired chart type. 
+
+The chart can be configured within the canvas body by a JSON string embedded into an HTML comment.
 
 ```html
 <canvas data-chart="line">
-Month, January, February, March, April, May, June, July
-A, 65, 59, 80, 81, 56, 55, 40
-B, 28, 48, 40, 19, 86, 27, 90
-</canvas>
-```
-Within the canvas body, HTML comments can be used to configure the chart using JSON. If no table headers are provided, the JSON string must includes respective labels. 
-
-```html
-<canvas class="stretch" data-chart="line">
-A, 65, 59, 80, 81, 56, 55, 40
-<!-- This is a comment that will be ignored -->
-B, 28, 48, 40, 19, 86, 27, 90
 <!-- 
-{ 
-"data" : {
-	"labels" : ["Enero", "Febrero", "Marzo", "Avril", "Mayo", "Junio", "Julio"],
-	"datasets" : [{ "borderColor": "#0f0", "borderDash": ["5","10"] }, { "borderColor": "#0ff" } ]
-	}
+{
+ "data": {
+  "labels": ["January"," February"," March"," April"," May"," June"," July"],
+  "datasets": [{"data":[" 65"," 59"," 80"," 81"," 56"," 55"," 40"],"label":"My first dataset","backgroundColor":"rgba(20,220,220,.8)"},{"data":[" 28"," 48"," 40"," 19"," 86"," 27"," 90"],"label":"My second dataset","backgroundColor":"rgba(220,120,120,.8)"}]
+ }, 
+ "options": { "responsive": "true" }
 }
 -->
 </canvas>
 ```
-To provide the chart from an external CSV file, the filename can be specified using the ```data-chart-src``` attribute of the ```canvas``` element. The CSV file is expected to only contain data values, whereas options for drawing the chart can be given as described above.
+It is possible to provide the chart data by comma separated values and use the JSON string within the HTML comment to configure the chart layout. 
+
+```html
+<canvas class="stretch" data-chart="line">
+My first dataset, 65, 59, 80, 81, 56, 55, 40
+<!-- This is a comment that will be ignored -->
+My second dataset, 28, 48, 40, 19, 86, 27, 90
+<!-- 
+{ 
+ "data" : {
+  "labels" : ["Enero", "Febrero", "Marzo", "Avril", "Mayo", "Junio", "Julio"],
+  "datasets" : [{ "borderColor": "#0f0", "borderDash": ["5","10"] }, { "borderColor": "#0ff" } ]
+ }
+}
+-->
+</canvas>
+```
+
+The layout configuration provided in ```chart``` parameter (see Configuration) will be used by default and only those parameters that are specified in a JSON string are used to overwrite the default values. If no JSON string is provided to configure the chart layout the default configuration is used. Note, that if no labels for the data points are provided by a JSON string, the plugin expects that the first row provides table headers.
+
+```html
+<canvas data-chart="line">
+Month, January, February, March, April, May, June, July
+My first dataset, 65, 59, 80, 81, 56, 55, 40
+My second dataset, 28, 48, 40, 19, 86, 27, 90
+</canvas>
+```
+
+The chart data can also be provided in an external CSV file. To include external data, the filename must be specified using the ```data-chart-src``` attribute of the ```canvas``` element. The CSV file is expected to only contain data values, whereas options for drawing the chart can be given as described above.
 
 ```html
 <canvas data-chart="bar" data-chart-src="data.csv">
