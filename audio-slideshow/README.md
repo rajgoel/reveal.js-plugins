@@ -4,7 +4,7 @@ A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to easil
 The slideshow adds an audio player to the slideshow and plays an audio file provided for each slide and fragment.
 When an audio file has finished playing, the plugin and automatically advances the slideshow to the next slide or fragment. 
 
-[Check out the live demo](http://courses.telematique.eu/audio-slideshow)
+[Check out the live demo](http://courses.telematique.eu/reveal.js-plugins/audio-slideshow-demo.html)
 
 
 ## Installation
