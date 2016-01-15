@@ -1,0 +1,17 @@
+language: node_js
+env: CI=true
+sudo: false
+
+node_js:
+  - '0.10'
+  - '0.12'
+  - v4
+  - v5
+
+install:
+  - npm install
+  - npm install browserify
+
+script:
+  - npm run lint
+  - browserify index.js > /dev/null
