@@ -169,7 +169,7 @@ A plot can be included in a slide by adding a ```div``` element and a JSON strin
 ```
 With the above ```defaults```, the input can be eased, e.g.
 ```html
-<div class="plot" id="myplot2" style="background-color:#fff; width:500px; height:500px; margin: 0 auto;"">
+<div class="plot" id="myplot2" style="background-color:#fff; width:500px; height:500px; margin: 0 auto;">
 <!--
  {
   "xAxis": {"domain": ["-10", "10"]},
