@@ -52,7 +52,9 @@ The code
 produces the output
 
 ```html
-<p>(v,h) = (1, 1)</p>
+<div class="indices">
+ <p>(v,h) = (1, 1)</p>
+</div>
 ```
 The code 
 ```html
@@ -67,7 +69,9 @@ The code
 produces the output
 
 ```html
-<p>This slide has indices (1, 1)</p>
+<div class="indices">
+ <p>This slide has indices (1, 1)</p>
+</div>
 ```
 
 
