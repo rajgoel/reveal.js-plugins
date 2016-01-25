@@ -22,7 +22,7 @@ Reveal.initialize({
 	]
 });
 ```
-## Configuration & usage
+## Configuration & basic usage
 
 The plugin can be configured by providing an ```anything``` option containing an array of ```className```, ```defaults```, and ```f``` within the reveal.js initialization options. 
 
@@ -191,8 +191,78 @@ With the above ```defaults```, the input can be eased, e.g.
 -->
 </div>
 ```
+## More advanced usage
 
+The plugin allows to define functions within the JSON options.
 
+### Example 
+
+In the following example, the function ```options.initialize(container)``` must be defined within the JSON string.
+
+```javascript
+Reveal.initialize({
+	// ...
+	anything: [ 
+	 {
+		className: "anything",
+		initialize: (function(container, options){ if (options && options.initialize) { options.initialize(container)} })
+	 },
+	 // ...
+	],
+	dependencies: [
+		// ... 
+		{ src: 'reveal.js-plugins/anything/d3/d3.v3.min.js' },				
+		{ src: 'reveal.js-plugins/anything/d3/topojson.v1.min.js' },				
+		{ src: 'plugin/anything/anything.js' },
+		// ... 
+	]
+});
+```
+The [d3.js](d3js.org) library can now be used to draw a [globe](http://bl.ocks.org/mbostock/ba63c55dd2dbc3ab0127) within a canvas element. 
+
+```html
+<canvas width=500 height=500 class="anything">
+<!--
+{
+  "initialize": "function(container) { 
+	var width = container.width,
+	    height = container.height;
+	var radius = height / 2 - 5,
+	    scale = radius,
+	    velocity = .02;
+	var projection = d3.geo.orthographic()
+	    .translate([width / 2, height / 2])
+	    .scale(scale)
+	    .clipAngle(90);
+	var context = container.getContext('2d');
+	var path = d3.geo.path()
+	    .projection(projection)
+	    .context(context);
+
+	d3.json('reveal.js-plugins/anything/d3/world-110m.json', function(error, world) {
+	  if (error) throw error;
+	  var land = topojson.feature(world, world.objects.land);
+	  d3.timer(function(elapsed) {
+	    context.clearRect(0, 0, width, height);
+	    projection.rotate([velocity * elapsed, 0]);
+	    context.beginPath();
+	    path(land);
+	    context.fillStyle = '#fff';
+	    context.fill();
+	    context.beginPath();
+	    context.arc(width / 2, height / 2, radius, 0, 2 * Math.PI, true);
+	    context.lineWidth = 2.5;
+	    context.strokeStyle = '#fff';
+	    context.stroke();
+	  });
+	});
+	d3.select(self.frameElement).style('height', height + 'px');
+
+    }"
+}
+-->
+</canvas>
+```
 
 ## License
 
