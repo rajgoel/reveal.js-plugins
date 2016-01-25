@@ -197,7 +197,7 @@ The plugin allows to define functions within the JSON options.
 
 ### Example 
 
-In the following example, the function ```options.initialize(container)``` must be defined within the JSON string.
+In the following example, the function ```options.initialize(container)``` is called for each element of the class ```anything```. The function  is defined within the JSON string. 
 
 ```javascript
 Reveal.initialize({
