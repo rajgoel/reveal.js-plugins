@@ -98,7 +98,7 @@ Reveal.initialize({
 	anything: [ 
 	 {
 		className: "chart",  
-		f: (function(container, options){ container.chart = new Chart(container.getContext("2d"), options);  })
+		initialize: (function(container, options){ container.chart = new Chart(container.getContext("2d"), options);  })
 	 },
 	 // ...
 	],
@@ -148,7 +148,7 @@ Reveal.initialize({
 	 {
 		className: "plot",
 		defaults: {width:500, height: 500, grid:true},
-		f: (function(container, options){ options.target = "#"+container.id; functionPlot(options) })
+		initialize: (function(container, options){ options.target = "#"+container.id; functionPlot(options) })
 	 },
 	 // ...
 	],
