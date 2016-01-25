@@ -1,8 +1,17 @@
 var RevealAnything = window.RevealAnything || (function(){
 	function parseJSON(str) {
+	    str = str.replace(/(\r\n|\n|\r|\t)/gm,""); // remove lien breaks and tabs
 	    var json;
 	    try {
-        	json = JSON.parse(str);
+        	json = JSON.parse(str, function (key, value) {
+    			if (value && (typeof value === 'string') && value.indexOf("function") === 0) {
+			        // we can only pass a function as string in JSON ==> doing a real function
+//			        eval("var jsFunc = " + value);
+				var jsFunc = new Function('return ' + value)();
+			        return jsFunc;
+		 	}
+			return value;
+		});
 	    } catch (e) {
         	return null;
     		}
@@ -61,7 +70,7 @@ var RevealAnything = window.RevealAnything || (function(){
 						break;
 					}
 				}
-// console.log("Options: " + JSON.stringify(options))
+// console.log(config[i].className + " options: " + JSON.stringify(options))
 				initialize(elements[j], options);
 // console.log(elements[j].outerHTML)
 			} 
