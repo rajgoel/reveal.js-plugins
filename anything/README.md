@@ -44,7 +44,7 @@ Reveal.initialize({
 
 With the above configuration the plugin searches for all HTML object with class ```random```. 
 For each of the HTML objects it checks whether there is a JSON string within a comment inside the HTML object.
-Then, it calls the function ```initialize(container, options)``` where ```container``` is the HTML object and ```options``` is the JSON string.
+Then, it calls the function ```function(container, options)``` where ```container``` is the HTML object and ```options``` is the JSON string.
 It is possible to specify the ```defaults``` parameter to be used if no JSON string is provided or not all values required by the function are given in the JSON string.
 
 The code 
