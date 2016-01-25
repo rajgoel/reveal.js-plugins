@@ -1,8 +1,8 @@
 # reveal.js-plugins
 
-This is a collection of plugins for [Reveal.js](https://github.com/hakimel/reveal.js) - a framework for easily creating beautiful presentations using HTML ([Demo](http://lab.hakim.se/reveal-js/)).
+This is a collection of plugins for [Reveal.js](https://github.com/hakimel/reveal.js) - a framework for easily creating beautiful presentations using HTML. Example presentations and demos for these plugins can be found and added [here](https://github.com/rajgoel/reveal.js-plugins/wiki/Example-presentations).
 
-This collections includes the following plugins
+This collections includes the following plugins:
 
 - [Anything](https://github.com/rajgoel/reveal.js-plugins/tree/master/anything) ([Demo](http://courses.telematique.eu/reveal.js-plugins/anything-demo.html)): A plugin for adding plots, charts, or anything else inside an HTML object using a JSON string and a javascript function.
 - [Audio slideshow](https://github.com/rajgoel/reveal.js-plugins/tree/master/audio-slideshow) ([Demo](http://courses.telematique.eu/reveal.js-plugins/audio-slideshow-demo.html)): A plugin for audio playback and recording.
