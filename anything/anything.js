@@ -41,7 +41,13 @@ var RevealAnything = window.RevealAnything || (function(){
 		for (var i = 0; i < config.length; i++ ){
 			// Get all elements of the class
 			var elements = document.getElementsByClassName(config[i].className);
-			var f = config[i].f;
+			var initialize = config[i].initialize;
+			// deprecated parameters
+			if ( !initialize && config[i].f ) {
+				initialize = config[i].f;
+				console.warn('Setting parameter "f" is deprecated! Use "initialize" instead. ');
+			}
+
 			for (var j = 0; j < elements.length; j++ ){
 				var options = config[i].defaults;
 				var comments = elements[j].innerHTML.trim().match(/<!--[\s\S]*?-->/g);
@@ -56,7 +62,7 @@ var RevealAnything = window.RevealAnything || (function(){
 					}
 				}
 // console.log("Options: " + JSON.stringify(options))
-				f(elements[j], options);
+				initialize(elements[j], options);
 // console.log(elements[j].outerHTML)
 			} 
 		}

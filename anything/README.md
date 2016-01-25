@@ -32,46 +32,54 @@ Reveal.initialize({
 	// ...
 	anything: [ 
 	 {
-	  className: "indices",
-	  defaults: {text:"(v,h) = "},
-	  f: (function(container, options){ container.innerHTML = "<p> " + options.text + "(" + Reveal.getIndices().h + ", " + Reveal.getIndices().v +")</p>"; }) 
+	  className: "random", 
+	  defaults: {min: 0, max: 9}, 
+	  initialize: (function(container, options){ 
+	    container.innerHTML = Math.trunc( options.min + Math.random()*(options.max-options.min + 1) ); 
+	    }) 
 	 },
 	 // ...
 	],
 ```
 
-With the above configuration the plugin searches for all HTML object with class ```indices```. 
+With the above configuration the plugin searches for all HTML object with class ```random```. 
 For each of the HTML objects it checks whether there is a JSON string within a comment inside the HTML object.
-Then, it calls the function ```function(container, options)``` where ```container``` is the HTML object and ```options``` is the JSON string.
+Then, it calls the function ```initialize(container, options)``` where ```container``` is the HTML object and ```options``` is the JSON string.
 It is possible to specify the ```defaults``` parameter to be used if no JSON string is provided or not all values required by the function are given in the JSON string.
 
 The code 
 ```html
-<div class="indices"></div>
+<p>
+	Today's winning 3 digit number is : 
+	<span class="random"></span>, 
+	<span class="random"></span>, 
+	<span class="random"></span>.
+</p>
 ```
 produces the output
 
 ```html
-<div class="indices">
- <p>(v,h) = (1, 1)</p>
-</div>
+<p>
+	Today's winning 3 digit number is : 
+	<span class="random">3</span>, 
+	<span class="random">8</span>, 
+	<span class="random">0</span>.
+</p>
 ```
 The code 
 ```html
-<div class="indices">
-<!--
-{
- "text": "This slide has indices "
-}
--->
-</div>
+<p>
+	Today's roll of a die is: 
+	<span class="random"><!-- { "min": 1, "max": 6 } --></span>.
+</p>
 ```
 produces the output
 
 ```html
-<div class="indices">
- <p>This slide has indices (1, 1)</p>
-</div>
+<p>
+	Today's roll of a die is: 
+	<span class="random">4</span>.
+</p>
 ```
 
 
