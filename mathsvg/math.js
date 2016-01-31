@@ -38,11 +38,8 @@ var RevealMathSVG = window.RevealMathSVG || (function(){
 
 		// Reprocess equations in slides when they turn visible
 		Reveal.addEventListener( 'slidechanged', function( event ) {
-
 			MathJax.Hub.Queue( [ 'Typeset', MathJax.Hub, event.currentSlide ] );
-
 		} );
-		
 
 	} );
 
@@ -86,64 +83,62 @@ var RevealMathSVG = window.RevealMathSVG || (function(){
 	}
 
 	function replaceText( svgdest, mathjaxdiv, textcontainer ) {
-                var svgmath = mathjaxdiv.getElementsByClassName( 'MathJax_SVG' )[0].getElementsByTagName( 'svg' )[0];
-                var svgmathinfo = {
-                  width: svgmath.viewBox.baseVal.width, 
-                  height: svgmath.viewBox.baseVal.height
-                };
-                // get graphics nodes
-                var gnodes = svgmath.getElementsByTagName( 'g' )[0].cloneNode( true );
-                var fontsize = svgdest.getAttribute( 'font-size' );
-                var scale = 0.0016 * fontsize;
-                var x =  +svgdest.getAttribute( 'x' );
+		var svgmath = mathjaxdiv.getElementsByClassName( 'MathJax_SVG' )[0].getElementsByTagName( 'svg' )[0];
+		var svgmathinfo = {
+		  width: svgmath.viewBox.baseVal.width, 
+		  height: svgmath.viewBox.baseVal.height
+		};
+		// get graphics nodes
+		var gnodes = svgmath.getElementsByTagName( 'g' )[0].cloneNode( true );
+		var fontsize = svgdest.getAttribute( 'font-size' );
+		var scale = 0.0016 * fontsize;
+		var x =  +svgdest.getAttribute( 'x' );
 		if ( svgdest.getAttribute( 'dx' ) != null ) x = x + svgdest.getAttribute( 'dx' );
-                var y =  +svgdest.getAttribute( 'y' );
+				var y =  +svgdest.getAttribute( 'y' );
 		if ( svgdest.getAttribute( 'dy' ) != null ) x = x + svgdest.getAttribute( 'dy' );
 
-                var x0 = x;
-                var y0 = y;
-                var x1 = -svgmathinfo.width * 0.5;
-                var y1 = svgmathinfo.height * 0.25;
-                gnodes.setAttribute( 'transform', 'translate('+x0+' '+y0+') scale('+scale+') translate('+x1+' '+y1+') matrix(1 0 0 -1 0 0)' );
+		var x0 = x;
+		var y0 = y;
+		var x1 = -svgmathinfo.width * 0.5;
+		var y1 = svgmathinfo.height * 0.25;
+		gnodes.setAttribute( 'transform', 'translate('+x0+' '+y0+') scale('+scale+') translate('+x1+' '+y1+') matrix(1 0 0 -1 0 0)' );
 		textcontainer.parentNode.appendChild( gnodes );
 		svgdest.parentNode.removeChild( svgdest );
-
-    }
-
-    function typeset( mathbucket, text, container ) {
-	var regexp = /^\s*([LlRrCc]?)(\\\(.*\\\)|\$.*\$)\s*$/;
-	var math = text.textContent.match(regexp);
-	if ( math ) {
-		var div = document.createElement( 'div' );
-		if ( !text.getAttribute( 'style' ) ) div.setAttribute( 'style', text.getAttribute( 'style' ) );
-		mathbucket.appendChild(div);
-		var mathmarkup = math[2].replace(/^\$(.*)\$$/,'\\($1\\)');
-		div.appendChild( document.createTextNode( mathmarkup ) );
-		MathJax.Hub.Queue( [ "Typeset",MathJax.Hub,div ] );
-		MathJax.Hub.Queue( [ replaceText, text, div, container ] );
 	}
-    }
 
-    function typesetMathInSVG() {
-	var mathbucket = document.createElement( 'div' );
-	mathbucket.setAttribute( 'id', 'mathjax_svg_bucket' );
-	document.body.appendChild( mathbucket );
+	function typeset( mathbucket, text, container ) {
+		var regexp = /^\s*([LlRrCc]?)(\\\(.*\\\)|\$.*\$)\s*$/;
+		var math = text.textContent.match(regexp);
+		if ( math ) {
+			var div = document.createElement( 'div' );
+			if ( !text.getAttribute( 'style' ) ) div.setAttribute( 'style', text.getAttribute( 'style' ) );
+			mathbucket.appendChild(div);
+			var mathmarkup = math[2].replace(/^\$(.*)\$$/,'\\($1\\)');
+			div.appendChild( document.createTextNode( mathmarkup ) );
+			MathJax.Hub.Queue( [ "Typeset",MathJax.Hub,div ] );
+			MathJax.Hub.Queue( [ replaceText, text, div, container ] );
+		}
+	}
 
-	forEach( document.getElementsByTagName( 'svg' ), function( svg ) {
-		forEach( svg.getElementsByTagName( 'text' ), function( text ) {
+	function typesetMathInSVG() {
+		var mathbucket = document.createElement( 'div' );
+		mathbucket.setAttribute( 'id', 'mathjax_svg_bucket' );
+		document.body.appendChild( mathbucket );
 
-			forEach( text.getElementsByTagName( 'tspan' ), function( tspan ) {
-				if ( !tspan.getAttribute( 'font-size' ) ) tspan.setAttribute( 'font-size', tspan.parentElement.getAttribute( 'font-size' ) );
-				if ( !tspan.getAttribute( 'x' ) ) tspan.setAttribute( 'x', tspan.parentElement.getAttribute( 'x' ) );
-				if ( !tspan.getAttribute( 'y' ) ) tspan.setAttribute( 'y', tspan.parentElement.getAttribute( 'y' ) );
-				typeset( mathbucket, tspan, tspan.parentElement );
+		forEach( document.getElementsByTagName( 'svg' ), function( svg ) {
+			forEach( svg.getElementsByTagName( 'text' ), function( text ) {
+				forEach( text.getElementsByTagName( 'tspan' ), function( tspan ) {
+					if ( !tspan.getAttribute( 'font-size' ) ) tspan.setAttribute( 'font-size', tspan.parentElement.getAttribute( 'font-size' ) );
+					if ( !tspan.getAttribute( 'x' ) ) tspan.setAttribute( 'x', tspan.parentElement.getAttribute( 'x' ) );
+					if ( !tspan.getAttribute( 'y' ) ) tspan.setAttribute( 'y', tspan.parentElement.getAttribute( 'y' ) );
+					typeset( mathbucket, tspan, tspan.parentElement );
+				});
+	
+				typeset( mathbucket, text, text );
 			});
-
-			typeset( mathbucket, text, text );
 		});
-	});
 
-	MathJax.Hub.Queue( [cleanup, mathbucket] );
-    }
+		MathJax.Hub.Queue( [cleanup, mathbucket] );
+	}
 
 })();
