@@ -4,7 +4,7 @@ This is a collection of plugins for [Reveal.js](https://github.com/hakimel/revea
 
 This collections includes the following plugins:
 
-- [Anything](https://github.com/rajgoel/reveal.js-plugins/tree/master/anything) ([Demo](http://courses.telematique.eu/reveal.js-plugins/anything-demo.html)): A plugin for adding plots, charts, or anything else inside an HTML object using a JSON string and a javascript function.
+- [Anything](https://github.com/rajgoel/reveal.js-plugins/tree/master/anything) ([Demo](http://courses.telematique.eu/reveal.js-plugins/anything-demo.html)): A plugin for adding plots, charts, animated SGVs,or anything else inside an HTML object using a JSON string and a javascript function.
 - [Audio slideshow](https://github.com/rajgoel/reveal.js-plugins/tree/master/audio-slideshow) ([Demo](http://courses.telematique.eu/reveal.js-plugins/audio-slideshow-demo.html)): A plugin for audio playback and recording.
 - [Chart](https://github.com/rajgoel/reveal.js-plugins/tree/master/chart) ([Demo](http://courses.telematique.eu/reveal.js-plugins/chart-demo.html)):
  A plugin for using Chart.js v2.0. 
