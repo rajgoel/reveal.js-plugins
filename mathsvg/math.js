@@ -93,9 +93,9 @@ var RevealMathSVG = window.RevealMathSVG || (function(){
 		var fontsize = svgdest.getAttribute( 'font-size' );
 		var scale = 0.0016 * fontsize;
 		var x =  +svgdest.getAttribute( 'x' );
-		if ( svgdest.getAttribute( 'dx' ) != null ) x = x + svgdest.getAttribute( 'dx' );
+		if ( svgdest.hasAttribute( 'dx' ) ) x = x + svgdest.getAttribute( 'dx' );
 		var y =  +svgdest.getAttribute( 'y' );
-		if ( svgdest.getAttribute( 'dy' ) != null ) x = x + svgdest.getAttribute( 'dy' );
+		if ( svgdest.hasAttribute( 'dy' ) ) x = x + svgdest.getAttribute( 'dy' );
 
 		var x0 = x;
 		var y0 = y;
