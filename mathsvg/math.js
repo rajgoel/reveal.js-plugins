@@ -102,8 +102,8 @@ var RevealMathSVG = window.RevealMathSVG || (function(){
 		var x1 = -svgmathinfo.width * 0.5;
 		var y1 = svgmathinfo.height * 0.25;
 		gnodes.setAttribute( 'transform', 'translate('+x0+' '+y0+') scale('+scale+') translate('+x1+' '+y1+') matrix(1 0 0 -1 0 0)' );
-		if ( textcontainer.getAttribute( 'fill' ) ) gnodes.setAttribute( 'fill', textcontainer.getAttribute( 'fill' ) );
-		if ( textcontainer.getAttribute( 'stroke' ) ) gnodes.setAttribute( 'stroke', textcontainer.getAttribute( 'stroke' ) );
+		if ( svgdest.getAttribute( 'fill' ) ) gnodes.setAttribute( 'fill', svgdest.getAttribute( 'fill' ) );
+		if ( svgdest.getAttribute( 'stroke' ) ) gnodes.setAttribute( 'stroke', svgdest.getAttribute( 'stroke' ) );
 
 		textcontainer.parentNode.appendChild( gnodes );
 		svgdest.parentNode.removeChild( svgdest );
@@ -129,14 +129,14 @@ var RevealMathSVG = window.RevealMathSVG || (function(){
 
 		forEach( document.getElementsByTagName( 'svg' ), function( svg ) {
 			forEach( svg.getElementsByTagName( 'text' ), function( text ) {
-/*
 				forEach( text.getElementsByTagName( 'tspan' ), function( tspan ) {
 					if ( !tspan.getAttribute( 'font-size' ) ) tspan.setAttribute( 'font-size', tspan.parentElement.getAttribute( 'font-size' ) );
 					if ( !tspan.getAttribute( 'x' ) ) tspan.setAttribute( 'x', tspan.parentElement.getAttribute( 'x' ) );
 					if ( !tspan.getAttribute( 'y' ) ) tspan.setAttribute( 'y', tspan.parentElement.getAttribute( 'y' ) );
+					if ( !tspan.getAttribute( 'fill' ) && tspan.parentElement.getAttribute( 'fill' ) ) tspan.setAttribute( 'fill', tspan.parentElement.getAttribute( 'fill' ) );
+					if ( !tspan.getAttribute( 'stroke' ) && tspan.parentElement.getAttribute( 'stroke' ) ) tspan.setAttribute( 'stroke', tspan.parentElement.getAttribute( 'stroke' ) );
 					typeset( mathbucket, tspan, tspan.parentElement );
 				});
-*/	
 				typeset( mathbucket, text, text );
 			});
 		});
