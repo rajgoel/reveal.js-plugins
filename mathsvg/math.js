@@ -94,7 +94,7 @@ var RevealMathSVG = window.RevealMathSVG || (function(){
 		var scale = 0.0016 * fontsize;
 		var x =  +svgdest.getAttribute( 'x' );
 		if ( svgdest.getAttribute( 'dx' ) != null ) x = x + svgdest.getAttribute( 'dx' );
-				var y =  +svgdest.getAttribute( 'y' );
+		var y =  +svgdest.getAttribute( 'y' );
 		if ( svgdest.getAttribute( 'dy' ) != null ) x = x + svgdest.getAttribute( 'dy' );
 
 		var x0 = x;
@@ -102,8 +102,8 @@ var RevealMathSVG = window.RevealMathSVG || (function(){
 		var x1 = -svgmathinfo.width * 0.5;
 		var y1 = svgmathinfo.height * 0.25;
 		gnodes.setAttribute( 'transform', 'translate('+x0+' '+y0+') scale('+scale+') translate('+x1+' '+y1+') matrix(1 0 0 -1 0 0)' );
-		if ( svgdest.getAttribute( 'fill' ) ) gnodes.setAttribute( 'fill', svgdest.getAttribute( 'fill' ) );
-		if ( svgdest.getAttribute( 'stroke' ) ) gnodes.setAttribute( 'stroke', svgdest.getAttribute( 'stroke' ) );
+		if ( svgdest.hasAttribute( 'fill' ) ) gnodes.setAttribute( 'fill', svgdest.getAttribute( 'fill' ) );
+		if ( svgdest.hasAttribute( 'stroke' ) ) gnodes.setAttribute( 'stroke', svgdest.getAttribute( 'stroke' ) );
 
 		textcontainer.parentNode.appendChild( gnodes );
 		svgdest.parentNode.removeChild( svgdest );
@@ -130,11 +130,11 @@ var RevealMathSVG = window.RevealMathSVG || (function(){
 		forEach( document.getElementsByTagName( 'svg' ), function( svg ) {
 			forEach( svg.getElementsByTagName( 'text' ), function( text ) {
 				forEach( text.getElementsByTagName( 'tspan' ), function( tspan ) {
-					if ( !tspan.getAttribute( 'font-size' ) ) tspan.setAttribute( 'font-size', tspan.parentElement.getAttribute( 'font-size' ) );
-					if ( !tspan.getAttribute( 'x' ) ) tspan.setAttribute( 'x', tspan.parentElement.getAttribute( 'x' ) );
-					if ( !tspan.getAttribute( 'y' ) ) tspan.setAttribute( 'y', tspan.parentElement.getAttribute( 'y' ) );
-					if ( !tspan.getAttribute( 'fill' ) && tspan.parentElement.getAttribute( 'fill' ) ) tspan.setAttribute( 'fill', tspan.parentElement.getAttribute( 'fill' ) );
-					if ( !tspan.getAttribute( 'stroke' ) && tspan.parentElement.getAttribute( 'stroke' ) ) tspan.setAttribute( 'stroke', tspan.parentElement.getAttribute( 'stroke' ) );
+					if ( !tspan.hasAttribute( 'font-size' ) ) tspan.setAttribute( 'font-size', tspan.parentElement.getAttribute( 'font-size' ) );
+					if ( !tspan.hasAttribute( 'x' ) ) tspan.setAttribute( 'x', tspan.parentElement.getAttribute( 'x' ) );
+					if ( !tspan.hasAttribute( 'y' ) ) tspan.setAttribute( 'y', tspan.parentElement.getAttribute( 'y' ) );
+					if ( !tspan.hasAttribute( 'fill' ) && tspan.parentElement.hasAttribute( 'fill' ) ) tspan.setAttribute( 'fill', tspan.parentElement.getAttribute( 'fill' ) );
+					if ( !tspan.hasAttribute( 'stroke' ) && tspan.parentElement.hasAttribute( 'stroke' ) ) tspan.setAttribute( 'stroke', tspan.parentElement.getAttribute( 'stroke' ) );
 					typeset( mathbucket, tspan, tspan.parentElement );
 				});
 				typeset( mathbucket, text, text );
