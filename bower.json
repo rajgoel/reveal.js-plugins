@@ -15,6 +15,7 @@
   "license": "MIT, Copyright (C) 2016 Asvin Goel",
   "ignore": [
     "**/.*",
+    "menu",
     "node_modules",
     "bower_components",
     "test",
