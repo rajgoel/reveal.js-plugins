@@ -8,7 +8,7 @@
   "description": "A collection of plugins for Reveal.js",
   "keywords": [
     "reveal",
-    "plugins",
+    "plugin",
     "audio",
     "chart"
   ],
