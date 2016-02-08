@@ -14,7 +14,7 @@ This collections includes the following plugins:
 
 ## Download
 
-You can download the plugins using
+You can download the plugins into the ```bower_components``` folder using
 
 ```bower install reveal.js-plugins```
 
