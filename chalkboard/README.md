@@ -1,6 +1,6 @@
 # Chalkboard
 
-An plugin adding a chalkboard to reveal.js Th eplugin is based on [Chalkboard](https://github.com/mmoustafa/Chalkboard) by Mohamed Moustafa.
+An plugin adding a chalkboard to reveal.js. The plugin is based on [Chalkboard](https://github.com/mmoustafa/Chalkboard) by Mohamed Moustafa.
 
 ## Installation
 
