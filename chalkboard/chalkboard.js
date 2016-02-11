@@ -3,8 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard. 
 **
-** Credits:
-** Mohamed Moustafa https://github.com/mmoustafa/Chalkboard
+** Credits: Mohamed Moustafa https://github.com/mmoustafa/Chalkboard
 ******************************************************************/
 
 var RevealChalkboard = window.RevealChalkboard || (function(){
@@ -38,7 +37,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		return path;
 	}
 
-	function setup(){
+	function setup() {
 		chalkboard = document.createElement( 'div' );
 		chalkboard.id = "chalkboard";
 		chalkboard.style.background = 'url("' + path + 'img/bg.png") repeat';
@@ -46,10 +45,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		chalkboard.oncontextmenu = function() { return false; } 
 		chalkboard.classList.add( 'overlay' );
 		document.querySelector( '.reveal' ).appendChild( chalkboard );
-
-		var rect = chalkboard.getBoundingClientRect();
-		width = rect.width;
-		height = rect.height;
+		width = window.innerWidth;
+		height = window.innerHeight;
 
 		var html = '<div class="chalk"></div>';
 		html += '<canvas height="' + height + '" width="' + width + '" id="chalkboard"></canvas>';
@@ -91,22 +88,21 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	 * Opens an overlay for the chalkboard.
 	 */
 	function showChalkboard() {
-		if (chalkboard) {
-			chalkboard.classList.add( 'visible' );
-			isActive = true;
+		if ( !chalkboard ) {
+			setup();
 		}
+		chalkboard.classList.add( 'visible' );
+		isActive = true;
 	}
 
 	/**
-	 * Closes any currently open chalkboard.
+	 * Closes open chalkboard.
 	 */
 	function closeChalkboard() {
-		if (chalkboard) {
-			chalkboard.classList.remove( 'visible' );
-			xLast = null;
-			yLast = null;
-			isActive = false;
-		}
+		chalkboard.classList.remove( 'visible' );
+		xLast = null;
+		yLast = null;
+		isActive = false;
 	}
 
 	document.addEventListener('touchmove', function(evt) {
@@ -144,7 +140,6 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			xLast = mouseX;
 			yLast = mouseY;
 			mouseD = true;
-//console.log( "DOWN: " + mouseX +", " + mouseY);
 			if ( evt.button == 2){
 				chalkboard.style.cursor = 'none';
 				chalkboard.style.cursor = 'url("' + path + 'img/sponge.png"), auto';
@@ -201,10 +196,15 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	}, false);
 
 
-	Reveal.addEventListener( 'ready', function( event ) {
-		setup();
+	window.addEventListener( "resize", function() {
+/*
+		// Below resizes the canvas but drawing suffers
+		ctx.canvas.width  = window.innerWidth;
+		ctx.canvas.height = window.innerHeight;
+		width = window.innerWidth;
+		height = window.innerHeight;
+*/
 	} );
-
 
 })();
 
