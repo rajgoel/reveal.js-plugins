@@ -12,6 +12,14 @@ This collections includes the following plugins:
  An extension of the [math.js](https://github.com/hakimel/reveal.js/#mathjax) plugin allowing to render LaTeX expressions in SVG.
 - [Menu](https://github.com/denehyg/reveal.js-menu) ([Demo](https://denehyg.github.io/reveal.js-menu)): A plugin by Greg Denehy for adding a slideout menu.
 
+## Download
+
+You can download the plugins into the ```bower_components``` folder using
+
+```bower install reveal.js-plugins```
+
+or manually copy this repository into the folder of your reveal.js presentation.
+
 Please note that the [menu](https://github.com/denehyg/reveal.js-menu)-plugin is a submodule and has to be downloaded separately.
 
 ## License
