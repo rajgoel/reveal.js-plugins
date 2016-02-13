@@ -41,7 +41,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		chalkboard = document.createElement( 'div' );
 		chalkboard.id = "chalkboard";
 		chalkboard.style.background = 'url("' + path + 'img/bg.png") repeat';
-		chalkboard.style.cursor = 'url("' + path + 'img/sponge.png"), auto'; // hopefully loads sponge to cache to increase responsiveness
+		var sponge = new Image(); sponge.src = path + "img/sponge.png"; // hopefully loads sponge to cache to increase responsiveness
 		chalkboard.style.cursor = 'url("' + path + 'img/chalk.png"), auto';
 		chalkboard.oncontextmenu = function() { return false; } 
 		chalkboard.classList.add( 'overlay' );
