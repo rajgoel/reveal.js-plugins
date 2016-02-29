@@ -8,13 +8,14 @@
 ** If no audio file is available, a blank audio file with default
 ** duration is played instead.
 **
-** Version: 0.5
+** Version: 0.6
 ** 
 ** License: MIT license (see LICENSE.md)
 **
 ******************************************************************/
 
-(function(){
+var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
+
 	// default parameters
 	var prefix = "audio/";
 	var suffix = ".ogg";
@@ -49,6 +50,8 @@
 		setup();
 //console.debug( "ready ");
 		selectAudio();
+		document.dispatchEvent( new CustomEvent('playbackready') );
+
 	} );
 
 	Reveal.addEventListener( 'slidechanged', function( event ) {
@@ -170,7 +173,7 @@
 
 		var divElement =  document.createElement( 'div' );
 		divElement.className = "audio-controls";
-		divElement.setAttribute( 'style', "width: 50%; height:75px; position: fixed; left: 25%; bottom: 4px;z-index: 10;" );
+		divElement.setAttribute( 'style', "width: 50%; height:75px; position: fixed; left: 25%; bottom: 4px;z-index: 33;" );
 		document.querySelector( ".reveal" ).appendChild( divElement );
 
 		// create audio players for all slides
@@ -337,6 +340,10 @@
 			}
 		} );
 		audioElement.addEventListener( 'play', function( event ) {
+			var evt = new CustomEvent('startplayback');
+			evt.timestamp = 1000 * audioElement.currentTime;
+			document.dispatchEvent( evt );
+
 			if ( timer ) { clearTimeout( timer ); timer = null; }
 			// preload next audio element so that it is available after slide change
 			var indices = Reveal.getIndices();	
@@ -363,6 +370,7 @@
 		} );
 		audioElement.addEventListener( 'pause', function( event ) {
 			if ( timer ) { clearTimeout( timer ); timer = null; }
+			document.dispatchEvent( new CustomEvent('stopplayback') );
 		} );
 		audioElement.addEventListener( 'seeked', function( event ) {
 			if ( timer ) { clearTimeout( timer ); timer = null; }
@@ -405,6 +413,8 @@
 		}	
 		container.appendChild( audioElement );
 	}
+
+
 
 })();
 
