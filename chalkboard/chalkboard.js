@@ -296,9 +296,9 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	function erase(context,x,y){
 		context.save();
 		context.beginPath();
-		context.arc(x+eraserDiameter, y+eraserDiameter, eraserDiameter, 0, 2 * Math.PI, false);
+		context.arc(x, y, eraserDiameter, 0, 2 * Math.PI, false);
 		context.clip();
-		context.clearRect(x - 1, y - 1, eraserDiameter * 2 + 2, eraserDiameter * 2 + 2);
+		context.clearRect(x - eraserDiameter - 1, y - eraserDiameter - 1, eraserDiameter * 2 + 2, eraserDiameter * 2 + 2);
 		context.restore();
 
 	}
@@ -431,7 +431,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			if ( evt.button == 2) {
 				event = { type: "erase", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}]};
 				chalkboard.style.cursor = 'none';
-				chalkboard.style.cursor = 'url("' + path + 'img/sponge.png"), auto';
+				chalkboard.style.cursor = 'url("' + path + 'img/sponge.png") 20 20, auto';
 				erase(ctx,mouseX,mouseY);
 				eraser = true;
 			}
