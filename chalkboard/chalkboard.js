@@ -24,10 +24,6 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	document.querySelector( '.reveal' ).appendChild( chalkboard );
 
 	var config = Reveal.getConfig().chalkboard || {};
-	var keyCode = { toggle: 66, clear: 46, download: 68  };
-	if ( config.keyCode && config.keyCode.toggle ) keyCode.toggle = config.keyCode.toggle;
-	if ( config.keyCode && config.keyCode.clear ) keyCode.clear = config.keyCode.clear;
-	if ( config.keyCode && config.keyCode.download ) keyCode.download = config.keyCode.download;
 
 	var brushDiameter = 7;
 	var eraserDiameter = 20;
@@ -488,35 +484,6 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 	} );
 
-	document.addEventListener('keydown', function( event ) {
-//console.log("Key: " + event.keyCode );
-		switch ( event.keyCode ) {
-			case  keyCode.toggle:
-				if ( chalkboard.classList.contains("visible") ) {
-				// 'b'
-					event = null;
-					recordEvent( { type:"close", begin: Date.now() - slideStart } );
-					closeChalkboard();
-				}
-				else {
-				// 'b'
-					showChalkboard();
-					recordEvent( { type:"open", begin: Date.now() - slideStart } );
-				}
-				break;				
-			case  keyCode.clear:
-				// DEL
-				recordEvent( { type:"clear", begin: Date.now() - slideStart } );
-				clearChalkboard();
-				break;				
-			case  keyCode.download:
-				// 'd'
-				downloadData();
-				break;				
-			default:	
-		}				
-	}, false);
-
 	window.addEventListener( "resize", function() {
 		if ( chalkboard ) {		
 			// Resize the canvas and draw everything again
@@ -605,7 +572,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		document.dispatchEvent( new CustomEvent('stopplayback') );
 	});
 
-	function toggle() {
+	function toggleChalkboard() {
 		if ( chalkboard.classList.contains("visible") ) {
 			event = null;
 			recordEvent( { type:"close", begin: Date.now() - slideStart } );
@@ -616,12 +583,28 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			recordEvent( { type:"open", begin: Date.now() - slideStart } );
 		}
 	};
-	function reset() {
-		storage = { width: width, height: height, data: []}
-	}
 
-	this.toggle = toggle;
-	this.reset = reset;
+	function clearCanvas() {
+		recordEvent( { type:"clear", begin: Date.now() - slideStart } );
+		clearChalkboard();
+	};
+
+	function resetStorage() {
+		var ok = confirm("Please confirm to delete all chalkboard drawings?");
+		if ( ok ) {
+			clearChalkboard();
+			if ( chalkboard.classList.contains("visible") ) {
+				event = null;
+				closeChalkboard();
+			}
+			storage = { width: width, height: height, data: []}
+		}
+	};
+
+	this.toggle = toggleChalkboard;
+	this.clear = clearCanvas;
+	this.reset = resetStorage;
+	this.download = downloadData;
 
 	return this;
 })();
