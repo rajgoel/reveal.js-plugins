@@ -504,17 +504,23 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	window.addEventListener( "resize", function() {
 		if ( chalkboard ) {		
 			// Resize the canvas and draw everything again
+			var slideData = getSlideData( slideIndices );
+			var index = 0;
+			var timestamp = Date.now() - slideStart;
+		        if ( !timeouts.length && slideData.events.length ) {
+				timestamp = slideData.events[slideData.events.length - 1].begin;
+				if ( slideData.events[slideData.events.length - 1].end ) timestamp = slideData.events[slideData.events.length - 1].end;
+			}
+
 			ctx.canvas.width  = window.innerWidth;
 			ctx.canvas.height = window.innerHeight;
 			ctx.lineWidth = brushDiameter;	// reset to original value because resizing screws up the lineWidth		
 			width = window.innerWidth;
 			height = window.innerHeight;
-			if ( width != storage.width || height != storage.height ) {
-				scale = Math.min( width/storage.width, height/storage.height );
-				xOffset = (width - storage.width * scale)/2;
-				yOffset = (height - storage.height * scale)/2;
-			}
-			startPlayback();
+			scale = Math.min( width/storage.width, height/storage.height );
+			xOffset = (width - storage.width * scale)/2;
+			yOffset = (height - storage.height * scale)/2;
+			startPlayback( timestamp );
 		}
 
 	} );
@@ -609,6 +615,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	function resetStorage( force ) {
 		var ok = force || confirm("Please confirm to delete all chalkboard drawings?");
 		if ( ok ) {
+			slideStart = Date.now();
 			clearChalkboard();
 			if ( chalkboard.classList.contains("visible") ) {
 				event = null;
