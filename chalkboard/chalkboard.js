@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard. 
 **
-** Version: 0.1
+** Version: 0.2
 ** 
 ** License: MIT license (see LICENSE.md)
 **
@@ -38,18 +38,9 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	var xOffset = 0;
 	var yOffset = 0;
 
-	var storage = { width: null, height: null, data: []};
-
+	var storage = { width: width, height: height, data: []};
 	if ( config.src != null ) {
 		loadData( config.src );
-	}
-	if ( !storage.width ) storage.width = width;
-	if ( !storage.height ) storage.height = height;
-
-	if ( width != storage.width || height != storage.height ) {
-		scale = Math.min( width / storage.width, height / storage.height);
-		xOffset = (width - storage.width * scale) / 2;
-		yOffset = (height - storage.height * scale) / 2;
 	}
 
 	chalkboard.style.background = 'url("' + path + 'img/bg.png") repeat';
@@ -91,6 +82,54 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		return path;
 	}
 
+	/**
+	 * Load data.
+	 */
+	function loadData( filename ) {
+		var xhr = new XMLHttpRequest();
+		xhr.onload = function() {
+			if (xhr.readyState === 4) {
+				storage = JSON.parse(xhr.responseText);
+				if ( width != storage.width || height != storage.height ) {
+					scale = Math.min( width / storage.width, height / storage.height);
+					xOffset = (width - storage.width * scale) / 2;
+					yOffset = (height - storage.height * scale) / 2;
+				}
+			}
+			else {
+				console.warn( 'Failed to get file ' + filename +". ReadyState: " + xhr.readyState + ", Status: " + xhr.status);
+			}
+		};
+
+		xhr.open( 'GET', filename, true );
+		try {
+			xhr.send();
+		}
+		catch ( error ) {
+			console.warn( 'Failed to get file ' + filename + '. Make sure that the presentation and the file are served by a HTTP server and the file can be found there. ' + error );
+		}
+	}
+
+	/**
+	 * Download data.
+	 */
+	function downloadData() {
+		if ( storage.data != []  ) {
+			var a = document.createElement('a');
+			document.body.appendChild(a);	
+			try {
+				a.download = "chalkboard.json";
+				var blob = new Blob( [ JSON.stringify( storage ) ], { type: "application/json"} );
+				a.href = window.URL.createObjectURL( blob );
+			} catch( error ) {
+				a.innerHTML += " (" + error + ")";
+			}
+			a.click();
+			document.body.removeChild(a);
+		}
+	}
+
+
 	function createPrintout( ) {
 		var patImg = new Image(); 
 		patImg.onload = function () {
@@ -105,11 +144,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 			for (var i = 0; i < storage.data.length; i++) {
 				var slide = Reveal.getSlide( storage.data[i].slide.h, storage.data[i].slide.v );
-//console.log(Reveal.getConfig().width);
 				nextSlide.push( slide.nextSibling );
-
 			}
-//console.log(JSON.stringify(storage) );
 			for (var i = 0; i < storage.data.length; i++) {
 				var slideData = getSlideData( storage.data[i].slide );
 
@@ -172,6 +208,29 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			Reveal.sync();
 		};
 		patImg.src = path + "img/bg.png";
+	}
+
+	/**
+	 * Returns data object for the slide with the given indices.
+	 */
+	function getSlideData( indices ) {
+		if (!indices) indices = slideIndices;
+		for (var i = 0; i < storage.data.length; i++) {
+			if (storage.data[i].slide.h === indices.h && storage.data[i].slide.v === indices.v && storage.data[i].slide.f === indices.f ) {
+				return storage.data[i];
+			}
+		}
+		storage.data.push( { slide: indices, events: [] } );
+		return storage.data[storage.data.length-1];
+	}
+
+	function recordEvent( event ) {
+		var slideData = getSlideData();
+		var i = slideData.events.length;
+		while ( i > 0 && event.begin < slideData.events[i-1].begin ) {
+			i--;
+		}
+		slideData.events.splice( i, 0, event);
 	}
 
 	function startPlayback( timestamp ) {
@@ -254,21 +313,6 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 	};
 	
-
-	/**
-	 * Returns data object for the slide with the given indices.
-	 */
-	function getSlideData( indices ) {
-		if (!indices) indices = slideIndices;
-		for (var i = 0; i < storage.data.length; i++) {
-			if (storage.data[i].slide.h === indices.h && storage.data[i].slide.v === indices.v && storage.data[i].slide.f === indices.f ) {
-				return storage.data[i];
-			}
-		}
-		storage.data.push( { slide: indices, events: [] } );
-		return storage.data[storage.data.length-1];
-	}
-
 	function draw(context,fromX,fromY,toX,toY){
 		context.strokeStyle = 'rgba(255,255,255,'+(0.4+Math.random()*0.2)+')';
 		context.beginPath();
@@ -329,57 +373,6 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 	}
 
-	function recordEvent( event ) {
-		var slideData = getSlideData();
-		var i = slideData.events.length;
-		while ( i > 0 && event.begin < slideData.events[i-1].begin ) {
-//console.log( event.begin + " < " + )
-			i--;
-		}
-		slideData.events.splice( i, 0, event);
-	}
-
-	/**
-	 * Download data.
-	 */
-	function downloadData() {
-		if ( storage.data != []  ) {
-			var a = document.createElement('a');
-			document.body.appendChild(a);	
-			try {
-				a.download = "chalkboard.json";
-				var blob = new Blob( [ JSON.stringify( storage ) ], { type: "application/json"} );
-				a.href = window.URL.createObjectURL( blob );
-			} catch( error ) {
-				a.innerHTML += " (" + error + ")";
-			}
-			a.click();
-			document.body.removeChild(a);
-		}
-	}
-
-	/**
-	 * Load data.
-	 */
-	function loadData( filename ) {
-		var xhr = new XMLHttpRequest();
-		xhr.onload = function() {
-			if (xhr.readyState === 4) {
-				storage = JSON.parse(xhr.responseText);
-			}
-			else {
-				console.warn( 'Failed to get file ' + filename +". ReadyState: " + xhr.readyState + ", Status: " + xhr.status);
-			}
-		};
-
-		xhr.open( 'GET', filename, true );
-		try {
-			xhr.send();
-		}
-		catch ( error ) {
-			console.warn( 'Failed to get file ' + filename + '. Make sure that the presentation and the file are served by a HTTP server and the file can be found there. ' + error );
-		}
-	}
 
 	document.addEventListener('touchmove', function(evt) {
 		clearTimeout( touchTimeout );
@@ -604,15 +597,27 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 	});
 	Reveal.addEventListener( 'autoslideresumed', function( evt ) {
-//console.log("autoslideresumed");
-				var event = new CustomEvent('startplayback');
-				event.timestamp = 0;
-				document.dispatchEvent( event );
+		var event = new CustomEvent('startplayback');
+		event.timestamp = 0;
+		document.dispatchEvent( event );
 	});
 	Reveal.addEventListener( 'autoslidepaused', function( evt ) {
-//console.log("autoslidepaused" );
 		document.dispatchEvent( new CustomEvent('stopplayback') );
 	});
 
+	function toggle() {
+		if ( chalkboard.classList.contains("visible") ) {
+			event = null;
+			recordEvent( { type:"close", begin: Date.now() - slideStart } );
+			closeChalkboard();
+		}
+		else {
+			showChalkboard();
+			recordEvent( { type:"open", begin: Date.now() - slideStart } );
+		}
+	};
+
+	this.toggle = toggle;
+	return this;
 })();
 
