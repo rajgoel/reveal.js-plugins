@@ -616,8 +616,13 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			recordEvent( { type:"open", begin: Date.now() - slideStart } );
 		}
 	};
+	function reset() {
+		storage = { width: width, height: height, data: []}
+	}
 
 	this.toggle = toggle;
+	this.reset = reset;
+
 	return this;
 })();
 
