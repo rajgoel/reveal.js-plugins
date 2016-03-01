@@ -80,6 +80,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
         var event = null;
         var timeouts = [];
 	var touchTimeout = null;
+	var toggleTimeout = null;
+	var playback = false;
 
 	function scriptPath() {
 		// obtain plugin path from the script element
@@ -233,7 +235,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 				return storage.data[i];
 			}
 		}
-		storage.data.push( { slide: indices, events: [] } );
+		storage.data.push( { slide: indices, events: [], duration: 0 } );
 		return storage.data[storage.data.length-1];
 	}
 
@@ -244,6 +246,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			i--;
 		}
 		slideData.events.splice( i, 0, event);
+		slideData.duration = Math.max( slideData.duration, Date.now() - slideStart );
 	}
 
 	function startPlayback( timestamp ) {
@@ -251,7 +254,6 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 //console.log("startPlayback " + timestamp );
 		closeChalkboard();		
 		clearChalkboard();
-		
 		var slideData = getSlideData( slideIndices );
 		var index = 0;
 		while ( index < slideData.events.length && slideData.events[index].begin < timestamp ) {
@@ -259,7 +261,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			index++;
 		} 
 		while ( index < slideData.events.length ) {
-			timeouts.push( setTimeout( playEvent, slideData.events[index].begin - timestamp, slideData.events[index] ) );
+			timeouts.push( setTimeout( playEvent, slideData.events[index].begin - timestamp, slideData.events[index], timestamp ) );
 			index++;
 		} 
 	};
@@ -272,7 +274,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		timeouts = [];
 	};
 
-	function playEvent( event ) {
+	function playEvent( event, timestamp ) {
 		switch ( event.type ) {
 			case "open":
 				showChalkboard();
@@ -284,19 +286,18 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 				clearChalkboard();
 				break;
 			case "draw":
-				drawCurve( event );
+				drawCurve( event, timestamp );
 				break;
 			case "erase":
-				eraseCurve( event );
+				eraseCurve( event, timestamp );
 				break;
 
 		}
 	};
 
-	function drawCurve( event ) {
+	function drawCurve( event, timestamp ) {
 		if  ( event.curve.length > 1 ) {
 			var stepDuration = ( event.end - event.begin )/ ( event.curve.length - 1 );
-			var timestamp = Date.now() - slideStart;
 			for (var i = 1; i < event.curve.length; i++) {
 				timeouts.push( setTimeout( 
 					draw, Math.max(0,event.begin + i * stepDuration - timestamp), ctx, 
@@ -360,8 +361,9 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	 * Opens an overlay for the chalkboard.
 	 */
 	function showChalkboard() {
-		sponge.style.visibility = "hidden"; 
-		chalkboard.classList.add( 'visible' );
+		sponge.style.visibility = "hidden";
+		clearTimeout( toggleTimeout );
+		toggleTimeout = setTimeout ( function() { chalkboard.classList.add( 'visible' ) }, 50 );
 	}
 
 
@@ -370,7 +372,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	 */
 	function closeChalkboard() {
 		if ( chalkboard ) {
-			chalkboard.classList.remove( 'visible' );
+			clearTimeout( toggleTimeout );
+			toggleTimeout = setTimeout ( function() { chalkboard.classList.remove( 'visible' ) }, 50 );
 			xLast = null;
 			yLast = null;
 			event = null;
@@ -507,9 +510,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			var slideData = getSlideData( slideIndices );
 			var index = 0;
 			var timestamp = Date.now() - slideStart;
-		        if ( !timeouts.length && slideData.events.length ) {
-				timestamp = slideData.events[slideData.events.length - 1].begin;
-				if ( slideData.events[slideData.events.length - 1].end ) timestamp = slideData.events[slideData.events.length - 1].end;
+		        if ( !playback ) {
+				timestamp = slideData.duration;
 			}
 
 			ctx.canvas.width  = window.innerWidth;
@@ -527,10 +529,12 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 
 	document.addEventListener('startplayback', function( event ) {
+		playback = true;
 		startPlayback( event.timestamp );				
 	});
 
 	document.addEventListener('stopplayback', function( event ) {
+		playback = false;
 		stopPlayback();				
 	});
 
@@ -554,12 +558,19 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			slideStart = Date.now();
 			slideIndices = Reveal.getIndices();
 			closeChalkboard();				
-			clearChalkboard();				
+			clearChalkboard();
+			if ( !playback ) {
+				var slideData = getSlideData();	
+				startPlayback( slideData.duration );
+				closeChalkboard();				
+			}
 			if ( Reveal.isAutoSliding() ) {
 				var event = new CustomEvent('startplayback');
 				event.timestamp = 0;
 				document.dispatchEvent( event );
 			}
+			
+			
 		}
 	});
 	Reveal.addEventListener( 'fragmentshown', function( evt ) {
@@ -568,6 +579,11 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			slideIndices = Reveal.getIndices();		
 			closeChalkboard();				
 			clearChalkboard();
+			if ( !playback ) {
+				var slideData = getSlideData();	
+				startPlayback( slideData.duration );
+				closeChalkboard();				
+			}
 			if ( Reveal.isAutoSliding() ) {
 				var event = new CustomEvent('startplayback');
 				event.timestamp = 0;
@@ -581,6 +597,11 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			slideIndices = Reveal.getIndices();		
 			closeChalkboard();				
 			clearChalkboard();				
+			if ( !playback ) {
+				var slideData = getSlideData();	
+				startPlayback( slideData.duration );
+				closeChalkboard();				
+			}
 			if ( Reveal.isAutoSliding() ) {
 				document.dispatchEvent( new CustomEvent('stopplayback') );
 			}				
