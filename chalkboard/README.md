@@ -16,7 +16,7 @@ Add the plugins to the dependencies in your presentation as shown below.
 Reveal.initialize({
 	// ...
 	chalkboard: { 
-		// optionally load prerecorded chalkboard drawing from file
+		// optionally load pre-recorded chalkboard drawing from file
 		src: "chalkboard.json",
 	},
 	dependencies: [
@@ -28,7 +28,7 @@ Reveal.initialize({
 	    66: function() { RevealChalkboard.toggle() },	// toggle chalkboard when 'b' is pressed
 	    46: function() { RevealChalkboard.clear() },	// clear chalkboard when 'DEL' is pressed
 	     8: function() { RevealChalkboard.reset() },	// reset all chalkboard data when 'BACKSPACE' is pressed
-	    68: function() { RevealChalkboard.download() },	// downlad chalkboard drawing when 'd' is pressed
+	    68: function() { RevealChalkboard.download() },	// downlad recorded chalkboard drawing when 'd' is pressed
 	},
 	// ...
 
@@ -48,6 +48,10 @@ Reveal.initialize({
 - Click the 'DEL' key to clear the chalkboard </li>
 - Click the 'd' key to download chalkboard drawings</li>
 - Click the 'BACKSPACE' key to delete all chalkboard drawings</li>
+
+## Playback
+
+If the ```autoSlide``` feature is set or if the ```audio-slideshow``` plugin is used, pre-recorded chalkboard drawings can be played. The slideshow plays back the user interaction with the chalkboard in the same way as it was conducted when recording the data.
 
 ## License
 
