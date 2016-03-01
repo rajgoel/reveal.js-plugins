@@ -24,6 +24,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	document.querySelector( '.reveal' ).appendChild( chalkboard );
 
 	var config = Reveal.getConfig().chalkboard || {};
+	var toggleButton = config.toggleButton  || true;
 
 	var brushDiameter = 7;
 	var eraserDiameter = 20;
@@ -33,6 +34,21 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	var scale = 1;
 	var xOffset = 0;
 	var yOffset = 0;
+
+	if ( toggleButton ) {
+		var button = document.createElement( 'div' );
+		button.style.position = "absolute";
+		button.style.zIndex = 30;
+		button.style.fontSize = "24px";
+
+		button.style.left = toggleButton.left || "30px";
+		button.style.bottom = toggleButton.bottom ||  "29px";
+		button.style.top = toggleButton.top ||  "auto";
+		button.style.right = toggleButton.right ||  "auto";
+
+		button.innerHTML = '<a href="#" onclick="RevealChalkboard.toggle(); return false;"><i class="fa fa-pencil-square-o"></i></a>'
+		document.querySelector(".reveal").appendChild( button );
+	}
 
 	var storage = { width: width, height: height, data: []};
 	if ( config.src != null ) {
@@ -44,6 +60,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	var html = '<div class="chalk"><img id="sponge" style="visibility: hidden; position: absolute; top: 0px; left: 0px" src="' + path + 'img/sponge.png"></img></div>';
 	html += '<canvas height="' + height + '" width="' + width + '" id="chalkboard"></canvas>';
 	chalkboard.innerHTML = html;
+
 
 	var sponge = chalkboard.querySelector("img[id=sponge]");
 	var ctx = chalkboard.querySelector("canvas").getContext("2d");
@@ -589,8 +606,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		clearChalkboard();
 	};
 
-	function resetStorage() {
-		var ok = confirm("Please confirm to delete all chalkboard drawings?");
+	function resetStorage( force ) {
+		var ok = force || confirm("Please confirm to delete all chalkboard drawings?");
 		if ( ok ) {
 			clearChalkboard();
 			if ( chalkboard.classList.contains("visible") ) {
