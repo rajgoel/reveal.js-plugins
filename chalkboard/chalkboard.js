@@ -267,7 +267,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			playEvent( slideData.events[index], timestamp );
 			index++;
 		} 
-		while ( index < slideData.events.length ) {
+		while ( playback && index < slideData.events.length ) {
 			timeouts.push( setTimeout( playEvent, slideData.events[index].begin - timestamp, slideData.events[index], slideData.events[index].begin - timestamp ) );
 			index++;
 		} 
@@ -544,6 +544,11 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 
 	} );
+
+	document.addEventListener('seekplayback', function( event ) {
+console.log('seekplayback ' + event.timestamp);
+		startPlayback( event.timestamp );				
+	});
 
 
 	document.addEventListener('startplayback', function( event ) {
