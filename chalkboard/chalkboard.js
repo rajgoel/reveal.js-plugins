@@ -325,7 +325,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 	};
 
-	function eraseCurve( event ) {
+	function eraseCurve( event, timestamp ) {
 		if  ( event.curve.length > 1 ) {
 			var stepDuration = ( event.end - event.begin )/ event.curve.length;
 			for (var i = 0; i < event.curve.length; i++) {
