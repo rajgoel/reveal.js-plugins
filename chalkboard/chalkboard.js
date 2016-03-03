@@ -257,8 +257,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	}
 
 	function startPlayback( timestamp ) {
+//console.log("playback " + timestamp );
 		slideStart = Date.now() - timestamp;
-console.log("playback " + timestamp );
 		closeChalkboard();		
 		clearChalkboard();
 		var slideData = getSlideData( slideIndices );
@@ -282,7 +282,7 @@ console.log("playback " + timestamp );
 	};
 
 	function playEvent( event, timestamp ) {
-console.log( timestamp +": " + JSON.stringify(event));
+//console.log( timestamp +": " + JSON.stringify(event));
 		switch ( event.type ) {
 			case "open":
 				showChalkboard();
@@ -547,13 +547,13 @@ console.log( timestamp +": " + JSON.stringify(event));
 
 
 	document.addEventListener('startplayback', function( event ) {
-console.log('startplayback ' + event.timestamp);
+//console.log('startplayback ' + event.timestamp);
 		playback = true;
 		startPlayback( event.timestamp );				
 	});
 
 	document.addEventListener('stopplayback', function( event ) {
-console.log('stopplayback ');
+//console.log('stopplayback ');
 		playback = false;
 		stopPlayback();				
 	});
@@ -629,13 +629,13 @@ console.log('stopplayback ');
 		}
 	});
 	Reveal.addEventListener( 'autoslideresumed', function( evt ) {
-console.log('autoslideresumed');
+//console.log('autoslideresumed');
 		var event = new CustomEvent('startplayback');
 		event.timestamp = 0;
 		document.dispatchEvent( event );
 	});
 	Reveal.addEventListener( 'autoslidepaused', function( evt ) {
-console.log('autoslidepaused');
+//console.log('autoslidepaused');
 		document.dispatchEvent( new CustomEvent('stopplayback') );
 
 		// advance to end of slide
