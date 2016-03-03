@@ -28,6 +28,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 	var brushDiameter = 7;
 	var eraserDiameter = 20;
+	var readOnly = ( config.src == undefined ) ? false : true;
+	if ( config.readOnly != undefined ) readOnly = config.readOnly;
 
 	var width = window.innerWidth;
 	var height = window.innerHeight;
@@ -110,8 +112,12 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 					xOffset = (width - storage.width * scale) / 2;
 					yOffset = (height - storage.height * scale) / 2;
 				}
+				if ( storage.data.length && readOnly ) {
+					chalkboard.style.cursor = 'default';
+				}
 			}
 			else {
+				readOnly = false;
 				console.warn( 'Failed to get file ' + filename +". ReadyState: " + xhr.readyState + ", Status: " + xhr.status);
 			}
 		};
@@ -121,6 +127,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			xhr.send();
 		}
 		catch ( error ) {
+			readOnly = false;
 			console.warn( 'Failed to get file ' + filename + '. Make sure that the presentation and the file are served by a HTTP server and the file can be found there. ' + error );
 		}
 	}
@@ -251,17 +258,17 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 	function startPlayback( timestamp ) {
 		slideStart = Date.now() - timestamp;
-//console.log("startPlayback " + timestamp );
+console.log("playback " + timestamp );
 		closeChalkboard();		
 		clearChalkboard();
 		var slideData = getSlideData( slideIndices );
 		var index = 0;
 		while ( index < slideData.events.length && slideData.events[index].begin < timestamp ) {
-			playEvent( slideData.events[index] );
+			playEvent( slideData.events[index], timestamp );
 			index++;
 		} 
 		while ( index < slideData.events.length ) {
-			timeouts.push( setTimeout( playEvent, slideData.events[index].begin - timestamp, slideData.events[index], timestamp ) );
+			timeouts.push( setTimeout( playEvent, slideData.events[index].begin - timestamp, slideData.events[index], slideData.events[index].begin - timestamp ) );
 			index++;
 		} 
 	};
@@ -275,6 +282,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	};
 
 	function playEvent( event, timestamp ) {
+console.log( timestamp +": " + JSON.stringify(event));
 		switch ( event.type ) {
 			case "open":
 				showChalkboard();
@@ -299,14 +307,19 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		if  ( event.curve.length > 1 ) {
 			var stepDuration = ( event.end - event.begin )/ ( event.curve.length - 1 );
 			for (var i = 1; i < event.curve.length; i++) {
-				timeouts.push( setTimeout( 
-					draw, Math.max(0,event.begin + i * stepDuration - timestamp), ctx, 
-						xOffset + event.curve[i-1].x*scale,	
-						yOffset + event.curve[i-1].y*scale, 
-						xOffset + event.curve[i].x*scale, 
-						yOffset + event.curve[i].y*scale 
-					) 
-				);
+				if (event.begin + i * stepDuration <= timestamp) {
+					draw(ctx, xOffset + event.curve[i-1].x*scale, yOffset + event.curve[i-1].y*scale, xOffset + event.curve[i].x*scale, yOffset + event.curve[i].y*scale); 
+				}
+				else if ( playback ) {
+					timeouts.push( setTimeout( 
+						draw, Math.max(0,event.begin + i * stepDuration - timestamp), ctx, 
+							xOffset + event.curve[i-1].x*scale,	
+							yOffset + event.curve[i-1].y*scale, 
+							xOffset + event.curve[i].x*scale, 
+							yOffset + event.curve[i].y*scale 
+						) 
+					);
+				}
 			}
 		}
 
@@ -316,12 +329,17 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		if  ( event.curve.length > 1 ) {
 			var stepDuration = ( event.end - event.begin )/ event.curve.length;
 			for (var i = 0; i < event.curve.length; i++) {
-				timeouts.push( setTimeout( 
-					erase, i * stepDuration, ctx, 
-						xOffset + event.curve[i].x * scale, 
-						yOffset + event.curve[i].y * scale 
-					) 
-				);
+				if (event.begin + i * stepDuration <= timestamp) {
+					erase(ctx, xOffset + event.curve[i].x*scale, yOffset + event.curve[i].y*scale); 
+				}
+				else if ( playback ) {
+					timeouts.push( setTimeout( 
+						erase, i * stepDuration, ctx, 
+							xOffset + event.curve[i].x * scale, 
+							yOffset + event.curve[i].y * scale 
+						) 
+					);
+				}
 			}
 		}
 
@@ -415,7 +433,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	}, false);
 
 	document.addEventListener('touchstart', function(evt) {
-		if ( evt.target.id == "chalkboard" ) {
+		if ( !readOnly && evt.target.id == "chalkboard" ) {
 				evt.preventDefault();
 			        var touch = evt.touches[0];
 			        mouseX = touch.pageX;
@@ -455,7 +473,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	}
 
 	document.addEventListener( 'mousedown', function( evt ) {
-		if ( evt.target.id == "chalkboard" ) {
+		if ( !readOnly && evt.target.id == "chalkboard" ) {
 			mouseX = evt.pageX;
 			mouseY = evt.pageY;
 			xLast = mouseX;
@@ -529,11 +547,13 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 
 	document.addEventListener('startplayback', function( event ) {
+console.log('startplayback ' + event.timestamp);
 		playback = true;
 		startPlayback( event.timestamp );				
 	});
 
 	document.addEventListener('stopplayback', function( event ) {
+console.log('stopplayback ');
 		playback = false;
 		stopPlayback();				
 	});
@@ -561,6 +581,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			clearChalkboard();
 			if ( !playback ) {
 				var slideData = getSlideData();	
+//console.log(JSON.stringify(slideData));
 				startPlayback( slideData.duration );
 				closeChalkboard();				
 			}
@@ -608,33 +629,58 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 	});
 	Reveal.addEventListener( 'autoslideresumed', function( evt ) {
+console.log('autoslideresumed');
 		var event = new CustomEvent('startplayback');
 		event.timestamp = 0;
 		document.dispatchEvent( event );
 	});
 	Reveal.addEventListener( 'autoslidepaused', function( evt ) {
+console.log('autoslidepaused');
 		document.dispatchEvent( new CustomEvent('stopplayback') );
+
+		// advance to end of slide
+		closeChalkboard();				
+		clearChalkboard();				
+		var slideData = getSlideData();	
+		startPlayback( slideData.duration );
 	});
 
 	function toggleChalkboard() {
 		if ( chalkboard.classList.contains("visible") ) {
 			event = null;
-			recordEvent( { type:"close", begin: Date.now() - slideStart } );
+			if ( !readOnly ) recordEvent( { type:"close", begin: Date.now() - slideStart } );
 			closeChalkboard();
 		}
 		else {
 			showChalkboard();
-			recordEvent( { type:"open", begin: Date.now() - slideStart } );
+			if ( !readOnly ) recordEvent( { type:"open", begin: Date.now() - slideStart } );
 		}
 	};
 
 	function clearCanvas() {
-		recordEvent( { type:"clear", begin: Date.now() - slideStart } );
-		clearChalkboard();
+		if ( !readOnly ) {
+			recordEvent( { type:"clear", begin: Date.now() - slideStart } );
+			clearChalkboard();
+		}
+	};
+
+	function resetSlide( force ) {
+		var ok = force || confirm("Please confirm to delete chalkboard drawings!");
+		if ( ok ) {
+			slideStart = Date.now();
+			clearChalkboard();
+			if ( chalkboard.classList.contains("visible") ) {
+				event = null;
+				closeChalkboard();
+			}
+			var slideData = getSlideData();	
+			slideData.duration = 0;
+			slideData.events = [];
+		}
 	};
 
 	function resetStorage( force ) {
-		var ok = force || confirm("Please confirm to delete all chalkboard drawings?");
+		var ok = force || confirm("Please confirm to delete all chalkboard drawings!");
 		if ( ok ) {
 			slideStart = Date.now();
 			clearChalkboard();
@@ -648,7 +694,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 	this.toggle = toggleChalkboard;
 	this.clear = clearCanvas;
-	this.reset = resetStorage;
+	this.reset = resetSlide;
+	this.resetAll = resetStorage;
 	this.download = downloadData;
 
 	return this;
