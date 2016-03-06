@@ -49,7 +49,7 @@ Reveal.initialize({
 - Click the 'd' key to download chalkboard drawings</li>
 - Click the 'BACKSPACE' key to delete all chalkboard drawings</li>
 
-## Playback
+## Playback (experimental - will receive major changes soon!)
 
 If the ```autoSlide``` feature is set or if the ```audio-slideshow``` plugin is used, pre-recorded chalkboard drawings can be played. The slideshow plays back the user interaction with the chalkboard in the same way as it was conducted when recording the data.
 
