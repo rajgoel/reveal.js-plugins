@@ -2,7 +2,7 @@
 
 A plugin adding a chalkboard to reveal.js. 
 
-[Check out the live demo](http://courses.telematique.eu/reveal.js-plugins/chart-demo.html)
+[Check out the live demo](http://courses.telematique.eu/reveal.js-plugins/chalkboard-demo.html)
 
 The plugin is based on [Chalkboard](https://github.com/mmoustafa/Chalkboard) by Mohamed Moustafa.
 
@@ -49,7 +49,7 @@ Reveal.initialize({
 - Click the 'd' key to download chalkboard drawings</li>
 - Click the 'BACKSPACE' key to delete all chalkboard drawings</li>
 
-## Playback
+## Playback (experimental - will receive major changes soon!)
 
 If the ```autoSlide``` feature is set or if the ```audio-slideshow``` plugin is used, pre-recorded chalkboard drawings can be played. The slideshow plays back the user interaction with the chalkboard in the same way as it was conducted when recording the data.
 
