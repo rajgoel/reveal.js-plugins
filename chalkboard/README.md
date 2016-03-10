@@ -1,9 +1,9 @@
 # Chalkboard
 
-With this plugin you can add a chalkboard to reveal.js. The plugin provides two possibilities to include handwritten notes to your presentation
+With this plugin you can add a chalkboard to reveal.js. The plugin provides two possibilities to include handwritten notes to your presentation:
 
-- you can make notes directly on the slides, e.g. to comment on certain aspects
-- you can open a chalkboard on which you can make notes
+- you can make notes directly on the slides, e.g. to comment on certain aspects,
+- you can open a chalkboard on which you can make notes.
 
 The main use case in mind when implementing the plugin is classroom usage in which you may want to explain some course content and quickly need to make some notes. 
 
@@ -11,7 +11,7 @@ The plugin records all drawings made so that they can be play backed using the `
 
 [Check out the live demo](http://courses.telematique.eu/reveal.js-plugins/chalkboard-demo.html)
 
-The chalbboar effect is based on [Chalkboard](https://github.com/mmoustafa/Chalkboard) by Mohamed Moustafa.
+The chalkboard effect is based on [Chalkboard](https://github.com/mmoustafa/Chalkboard) by Mohamed Moustafa.
 
 ## Installation
 
