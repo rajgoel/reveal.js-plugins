@@ -80,8 +80,8 @@ If the slideshow is opened in [print mode](https://github.com/hakimel/reveal.js/
 
 The plugin has several configuration options:
 
-- ```src```: Optional filename for pre-recorded drawings
-- ```readOnly```: Configuation option allowing to prevent changes by the use to drawings. If set to ```true``` no changes can be made, if set to false ```false``` changes can be made, if unset no changes to the drawings can be made after navigating away from the slide or fragment. In any case the recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the ```RevealChalkboard.clear()``` function).
+- ```src```: Optional filename for pre-recorded drawings.
+- ```readOnly```: Configuation option allowing to prevent changes to existing drawings. If set to ```true``` no changes can be made, if set to false ```false``` changes can be made, if unset no changes to the drawings can be made after returning to a slide or fragment for which drawings had been recorded before. In any case the recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the ```RevealChalkboard.clear()``` function).
 - ```toggleNotesButton```: If set to ```true``` (default) a button for opening and closing the notes canvas is shown. Alternatively, the css position attributes can be provided if the default posiiton is not appropriate. 
 - ```toggleChalkboardButton```: If set to ```true``` (default) a button for opening and closing the chalkboard is shown. Alternatively, the css position attributes can be provided if the default posiiton is not appropriate. 
 
