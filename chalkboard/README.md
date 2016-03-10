@@ -89,10 +89,10 @@ The following configuration options allow to change the appearance of the notes 
 
 - ```background```: The first value expects a (semi-)transparent color which is used to provide visual feedback that the notes canvas is enabled, the second value expects a filename to a background image for the chalkboard.
 - ```pen```: The first value expects a filename for an image of the pen used for the notes canvas, the second value expects a filename  for an image of the pen used for the chalkboard.
-- ```draw```: The first value expects the function name used for drawing effect for the notes canvas, the second value expects the function name used for drawing effect for the chalkboard.
+- ```draw```: The first value expects the function name used for the drawing effect for the notes canvas, the second value expects the function name used for the drawing effect for the chalkboard.
 - ```color```: The first value gives the color for drawings on the notes canvas, the second value gives the color for drawings on the chalkboard.
 
-All of the configuarations are optional and the default values shown below are used if the options are not provided.
+All of the configurations are optional and the default values shown below are used if the options are not provided.
 
 ```javascript
 Reveal.initialize({
