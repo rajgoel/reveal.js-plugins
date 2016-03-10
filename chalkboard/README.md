@@ -103,10 +103,10 @@ Reveal.initialize({
 		toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
 		toggleNotesButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
 		// configuration options for notes canvas and chalkboard
-		background: [ 'rgba(127,127,127,.1)' , 'reveal.js-plugins/chalkboard/img/blackboard.png' ];
-		pen:  [ 'reveal.js-plugins/chalkboard/img/boardmarker.png', 'reveal.js-plugins/chalkboard/img/chalk.png' ];
-		draw: [ RevealChalkboard.drawWithPen , RevealChalkboard.drawWithChalk ];
-		color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ];
+		background: [ 'rgba(127,127,127,.1)' , 'reveal.js-plugins/chalkboard/img/blackboard.png' ],
+		pen:  [ 'reveal.js-plugins/chalkboard/img/boardmarker.png', 'reveal.js-plugins/chalkboard/img/chalk.png' ],
+		draw: [ RevealChalkboard.drawWithPen , RevealChalkboard.drawWithChalk ],
+		color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ]
 	},
 	// ...
 
