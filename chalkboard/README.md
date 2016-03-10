@@ -35,14 +35,14 @@ Reveal.initialize({
 	    67: function() { RevealChalkboard.toggleNotesCanvas() },	// toggle notes canvas when 'c' is pressed
 	    66: function() { RevealChalkboard.toggleChalkboard() },	// toggle chalkboard when 'b' is pressed
 	    46: function() { RevealChalkboard.clear() },	// clear chalkboard when 'DEL' is pressed
-	     8: function() { RevealChalkboard.reset() },	// reset all chalkboard data when 'BACKSPACE' is pressed
+	     8: function() { RevealChalkboard.reset() },	// reset chalkboard data on current slide when 'BACKSPACE' is pressed
 	    68: function() { RevealChalkboard.download() },	// downlad recorded chalkboard drawing when 'd' is pressed
 	},
 	// ...
 
 });
 ```
-If you want to include buttons for opening and closing the notes canvas or the chalkboard you should make sure that ```font-awesome``` is available. The easiest way is to include 
+In order to include buttons for opening and closing the notes canvas or the chalkboard you should make sure that ```font-awesome``` is available. The easiest way is to include 
 ```
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 ```
@@ -70,6 +70,49 @@ With above configuration the notes canvas is opened and closed when pressing 'c'
 ## Playback
 
 If the ```autoSlide``` feature is set or if the ```audio-slideshow``` plugin is used, pre-recorded chalkboard drawings can be played. The slideshow plays back the user interaction with the chalkboard in the same way as it was conducted when recording the data.
+
+## PDF-Export
+
+If the slideshow is opened in [print mode](https://github.com/hakimel/reveal.js/#pdf-export) the pre-recorded chalkboard drawings (which must be provided in a file, see ```src``` option ) are included in the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings are also included if they had been cleared (using the 'DEL' key). Drawings on the notes canvas are not included in the PDF-file.   
+
+
+## Configuration
+
+The plugin has several configuration options:
+
+- ```src```: Optional filename for pre-recorded drawings
+- ```readOnly```: Configuation option allowing to prevent changes by the use to drawings. If set to ```true``` no changes can be made, if set to false ```false``` changes can be made, if unset no changes to the drawings can be made after navigating away from the slide or fragment. In any case the recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the ```RevealChalkboard.clear()``` function).
+- ```toggleNotesButton```: If set to ```true``` (default) a button for opening and closing the notes canvas is shown. Alternatively, the css position attributes can be provided if the default posiiton is not appropriate. 
+- ```toggleChalkboardButton```: If set to ```true``` (default) a button for opening and closing the chalkboard is shown. Alternatively, the css position attributes can be provided if the default posiiton is not appropriate. 
+
+The following configuration options allow to change the appearance of the notes canvas and the chalkboard. All of these options require two values, the first gives the value for the notes canvas, the second for the chalkboard.
+
+- ```background```: The first value expects a (semi-)transparent color which is used to provide visual feedback that the notes canvas is enabled, the second value expects a filename to a background image for the chalkboard.
+- ```pen```: The first value expects a filename for an image of the pen used for the notes canvas, the second value expects a filename  for an image of the pen used for the chalkboard.
+- ```draw```: The first value expects the function name used for drawing effect for the notes canvas, the second value expects the function name used for drawing effect for the chalkboard.
+- ```color```: The first value gives the color for drawings on the notes canvas, the second value gives the color for drawings on the chalkboard.
+
+All of the configuarations are optional and the default values shown below are used if the options are not provided.
+
+```javascript
+Reveal.initialize({
+	// ...
+	chalkboard: { 
+		src: null,
+		readOnly: undefined; 
+		toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
+		toggleNotesButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
+		// configuration options for notes canvas and chalkboard
+		background: [ 'rgba(127,127,127,.1)' , 'reveal.js-plugins/chalkboard/img/blackboard.png' ];
+		pen:  [ 'reveal.js-plugins/chalkboard/img/boardmarker.png', 'reveal.js-plugins/chalkboard/img/chalk.png' ];
+		draw: [ RevealChalkboard.drawWithPen , RevealChalkboard.drawWithChalk ];
+		color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ];
+	},
+	// ...
+
+});
+```
+
 
 ## License
 
