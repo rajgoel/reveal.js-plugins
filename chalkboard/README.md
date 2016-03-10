@@ -15,7 +15,7 @@ The chalkboard effect is based on [Chalkboard](https://github.com/mmoustafa/Chal
 
 ## Installation
 
-Copy the file ```chalkboard.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/chalkboard```.
+Copy the file ```chalkboard.js``` and the  ```img``` directory into the plugin folder of your reveal.js presentation, i.e. ```plugin/chalkboard```.
 
 Add the plugins to the dependencies in your presentation as shown below. 
 
