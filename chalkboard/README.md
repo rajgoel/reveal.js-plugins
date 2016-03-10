@@ -46,7 +46,7 @@ If you want to include buttons for opening and closing the notes canvas or the c
 ```
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 ```
-to the ```head``` section of you HTML-fiel.
+to the ```head``` section of you HTML-file.
 
 ## Usage
 
