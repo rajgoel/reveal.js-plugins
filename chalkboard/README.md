@@ -73,7 +73,7 @@ If the ```autoSlide``` feature is set or if the ```audio-slideshow``` plugin is 
 
 ## PDF-Export
 
-If the slideshow is opened in [print mode](https://github.com/hakimel/reveal.js/#pdf-export) the pre-recorded chalkboard drawings (which must be provided in a file, see ```src``` option ) are included in the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings are also included if they had been cleared (using the 'DEL' key). Drawings on the notes canvas are not included in the PDF-file.   
+If the slideshow is opened in [print mode](https://github.com/hakimel/reveal.js/#pdf-export) the pre-recorded chalkboard drawings (which must be provided in a file, see ```src``` option) are included in the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings are also included if they had been cleared (using the 'DEL' key). Drawings on the notes canvas are not included in the PDF-file.   
 
 
 ## Configuration
