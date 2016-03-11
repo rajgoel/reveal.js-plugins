@@ -33,10 +33,27 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 ******************************************************************/
 	var config = Reveal.getConfig().chalkboard || {};
 
-	var background = config.background || [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ];
-	var pen = config.pen ||  [ path + 'img/boardmarker.png', path + 'img/chalk.png' ];
-	var draw = config.draw || [ drawWithPen , drawWithChalk ];
-	var color = config.color || [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)'  ];
+	var background, pen, draw, color;
+	var theme = config.theme || "chalkboard"; 
+	switch ( theme ) {
+		case "whiteboard":
+			background = [ 'rgba(127,127,127,.1)' , path + 'img/whiteboard.png' ];
+			pen = [ path + 'img/boardmarker.png', path + 'img/boardmarker.png' ];
+			draw = [ drawWithPen , drawWithPen ];
+			color = [ 'rgba(0,0,255,1)', 'rgba(0,0,255,1)' ];
+			break;
+		default:
+			background = [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ];
+			pen = [ path + 'img/boardmarker.png', path + 'img/chalk.png' ];
+			draw = [ drawWithPen , drawWithChalk ];
+			color = [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)'  ];
+	}
+	
+	if ( config.background ) background = config.background;
+	if ( config.pen ) pen = config.pen;
+	if ( config.draw ) draw = config.draw;
+	if ( config.color ) color = config.color;
+
 	var toggleChalkboardButton = config.toggleChalkboardButton  || true;
 	var toggleNotesButton = config.toggleNotesButton  || true;
 
@@ -913,7 +930,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	};
 
 	function toggleChalkboard() {
-console.log("toggleChalkboard " + mode);
+//console.log("toggleChalkboard " + mode);
 		if ( mode == 1 ) {
 			event = null;
 			if ( !readOnly ) recordEvent( { type:"close", begin: Date.now() - slideStart } );
@@ -976,6 +993,8 @@ console.log("toggleChalkboard " + mode);
 		}
 	};
 
+	this.drawWithPen = drawWithPen;
+	this.drawWithChalk = drawWithChalk;
 	this.toggleNotesCanvas = toggleNotesCanvas;
 	this.toggleChalkboard = toggleChalkboard;
 	this.clear = clear;

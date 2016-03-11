@@ -84,13 +84,13 @@ The plugin has several configuration options:
 - ```readOnly```: Configuation option allowing to prevent changes to existing drawings. If set to ```true``` no changes can be made, if set to false ```false``` changes can be made, if unset no changes to the drawings can be made after returning to a slide or fragment for which drawings had been recorded before. In any case the recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the ```RevealChalkboard.clear()``` function).
 - ```toggleNotesButton```: If set to ```true``` a button for opening and closing the notes canvas is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate. 
 - ```toggleChalkboardButton```: If set to ```true``` a button for opening and closing the chalkboard is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate. 
+- ```theme```: Can be set to either ```chalkboard``` or ```whiteboard```.
 
 The following configuration options allow to change the appearance of the notes canvas and the chalkboard. All of these options require two values, the first gives the value for the notes canvas, the second for the chalkboard.
 
+- ```color```: The first value gives the pen color, the second value gives the color of the chalk.
 - ```background```: The first value expects a (semi-)transparent color which is used to provide visual feedback that the notes canvas is enabled, the second value expects a filename to a background image for the chalkboard.
 - ```pen```: The first value expects a filename for an image of the pen used for the notes canvas, the second value expects a filename  for an image of the pen used for the chalkboard.
-- ```draw```: The first value expects the function name used for the drawing effect for the notes canvas, the second value expects the function name used for the drawing effect for the chalkboard.
-- ```color```: The first value gives the color for drawings on the notes canvas, the second value gives the color for drawings on the chalkboard.
 
 All of the configurations are optional and the default values shown below are used if the options are not provided.
 
@@ -103,10 +103,10 @@ Reveal.initialize({
 		toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
 		toggleNotesButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
 		// configuration options for notes canvas and chalkboard
+		theme: "chalkboard",
+		color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ]
 		background: [ 'rgba(127,127,127,.1)' , 'reveal.js-plugins/chalkboard/img/blackboard.png' ],
 		pen:  [ 'reveal.js-plugins/chalkboard/img/boardmarker.png', 'reveal.js-plugins/chalkboard/img/chalk.png' ],
-		draw: [ RevealChalkboard.drawWithPen , RevealChalkboard.drawWithChalk ],
-		color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ]
 	},
 	// ...
 
