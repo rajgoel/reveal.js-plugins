@@ -846,7 +846,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			clearCanvas( 0 );
 			clearCanvas( 1 );
 			if ( !playback ) {
-				slidechangeTimeout = setTimeout( function() { startPlayback( getSlideDuration(), 0 ) }, transition );
+				slidechangeTimeout = setTimeout( startPlayback, transition, getSlideDuration(), 0 );
 			}
 			if ( Reveal.isAutoSliding() ) {
 				var event = new CustomEvent('startplayback');
