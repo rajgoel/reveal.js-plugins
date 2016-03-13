@@ -56,6 +56,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 	var toggleChalkboardButton = config.toggleChalkboardButton  || true;
 	var toggleNotesButton = config.toggleNotesButton  || true;
+	var transition = config.transition  || 800;
 
 	var readOnly = config.readOnly;
 
@@ -114,6 +115,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
         var event = null;
         var timeouts = [ [], [] ];
 	var touchTimeout = null;
+	var slidechangeTimeout = null;
 	var playback = false;
 
 	function setupDrawingCanvas( id ) {
@@ -451,6 +453,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	 * Clear current canvas.
 	 */
 	function clearCanvas( id ) {
+		if ( id == 0 ) clearTimeout( slidechangeTimeout );
 		drawingCanvas[id].context.clearRect(0,0,drawingCanvas[id].width,drawingCanvas[id].height);
 	}
 
@@ -834,6 +837,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 	});
 	Reveal.addEventListener( 'slidechanged', function( evt ) {
+//		clearTimeout( slidechangeTimeout );
 //console.log('slidechanged');
 		if ( !printMode ) {
 			slideStart = Date.now();
@@ -842,7 +846,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			clearCanvas( 0 );
 			clearCanvas( 1 );
 			if ( !playback ) {
-				startPlayback( getSlideDuration(), 0 );
+				slidechangeTimeout = setTimeout( function() { startPlayback( getSlideDuration(), 0 ) }, transition );
 			}
 			if ( Reveal.isAutoSliding() ) {
 				var event = new CustomEvent('startplayback');
@@ -854,6 +858,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 	});
 	Reveal.addEventListener( 'fragmentshown', function( evt ) {
+//		clearTimeout( slidechangeTimeout );
 //console.log('fragmentshown');
 		if ( !printMode ) {
 			slideStart = Date.now();		
@@ -875,6 +880,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 	});
 	Reveal.addEventListener( 'fragmenthidden', function( evt ) {
+//		clearTimeout( slidechangeTimeout );
 //console.log('fragmenthidden');
 		if ( !printMode ) {
 			slideStart = Date.now();		

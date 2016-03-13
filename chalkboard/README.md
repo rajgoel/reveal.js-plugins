@@ -84,6 +84,7 @@ The plugin has several configuration options:
 - ```readOnly```: Configuation option allowing to prevent changes to existing drawings. If set to ```true``` no changes can be made, if set to false ```false``` changes can be made, if unset no changes to the drawings can be made after returning to a slide or fragment for which drawings had been recorded before. In any case the recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the ```RevealChalkboard.clear()``` function).
 - ```toggleNotesButton```: If set to ```true``` a button for opening and closing the notes canvas is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate. 
 - ```toggleChalkboardButton```: If set to ```true``` a button for opening and closing the chalkboard is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate. 
+- ```transition```: Gives the duration (in milliseconds) of the transition for a slide change, so that the notes canvas is drawn after the transition is completed.
 - ```theme```: Can be set to either ```"chalkboard"``` or ```"whiteboard"```.
 
 The following configuration options allow to change the appearance of the notes canvas and the chalkboard. All of these options require two values, the first gives the value for the notes canvas, the second for the chalkboard.
@@ -102,8 +103,9 @@ Reveal.initialize({
 		readOnly: undefined; 
 		toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
 		toggleNotesButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
-		// configuration options for notes canvas and chalkboard
+		transition: 800,
 		theme: "chalkboard",
+		// configuration options for notes canvas and chalkboard
 		color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ]
 		background: [ 'rgba(127,127,127,.1)' , 'reveal.js-plugins/chalkboard/img/blackboard.png' ],
 		pen:  [ 'reveal.js-plugins/chalkboard/img/boardmarker.png', 'reveal.js-plugins/chalkboard/img/chalk.png' ],
