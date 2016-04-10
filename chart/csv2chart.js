@@ -80,6 +80,9 @@ var RevealChart = window.RevealChart || (function(){
 			chartData.datasets[j].data =  lines[j].split(','); //.filter(function(v){return v!==''});
 			chartData.datasets[j].label = chartData.datasets[j].data[0];
 			chartData.datasets[j].data.shift();
+			for (var k = 0; k < chartData.datasets[j].data.length; k++ ){
+				chartData.datasets[j].data[k] = Number(chartData.datasets[j].data[k]);
+			}
 		}
 
 		// add chart options
@@ -95,7 +98,6 @@ var RevealChart = window.RevealChart || (function(){
 		}		
 
 		canvas.chart = new Chart(ctx, { type: canvas.getAttribute("data-chart"), data: chartData, options: chartOptions }); 
-
 
 	}
 
