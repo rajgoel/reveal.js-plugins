@@ -6,7 +6,7 @@ A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to add s
 
 ## Installation
 
-Copy the files ```ruleJS.all.full.min.js```, ```spreadsheet.js```, and ```spreadsheet.css``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/spreadsheet```.
+Copy the files ```ruleJS.all.full.min.js```, ```spreadsheet.js```, and ```spreadsheet.css``` into the plugin folder of your reveal.js presentation, i.e. ```reveal.js-plugins/spreadsheet```.
 
 Add the plugins to the dependencies in your presentation, as below. 
 
@@ -25,7 +25,7 @@ Reveal.initialize({
 	// ...
 	dependencies: [
 		// ... 
-		{ src: 'plugin/spreadsheet/spreadsheet.js' },
+		{ src: 'reveal.js-plugins//spreadsheet/spreadsheet.js' },
 		// ... 
 	]
 });
@@ -36,8 +36,6 @@ Reveal.initialize({
 ## Usage
 
 A spreadsheet can be included in a slide by adding a ```div``` element with ```class="spreadsheet"```. You can prefill the spreadsheet by providing CSV data inside the ```div``` element.
-
-The chart can be configured within the canvas body by a JSON string embedded into an HTML comment.
 
 ```html
 <div class="spreadsheet">
