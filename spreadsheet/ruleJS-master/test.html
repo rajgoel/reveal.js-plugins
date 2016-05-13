@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>RuleJS - Like excel library to parse formulas.</title>
+
+  <script src="dist/full/ruleJS.all.full.min.js"></script>
+  <link rel="stylesheet" href="test.css">
+
+  <style>
+    .table input[type=text] {
+      width: 50px;
+    }
+  </style>
+</head>
+<body>
+
+<table></table>
+
+<script>
+for (var i=0; i<6; i++) {
+    var row = document.querySelector("table").insertRow(-1);
+    for (var j=0; j<6; j++) {
+        var letter = (i+j == 0) ? "" : String.fromCharCode("A".charCodeAt(0)+j-1);
+        row.insertCell(-1).innerHTML = i&&j ? "<input id='"+ letter+i +"'/>" : i||letter;
+    }
+}
+
+document.querySelector("input[id=A1]").value=5;
+document.querySelector("input[id=B1]").setAttribute("data-formula","2/C1");
+document.querySelector("input[id=C1]").value=6;
+
+var DATA={}, INPUTS=[].slice.call(document.querySelectorAll("input"));
+INPUTS.forEach(function(cell) {
+    cell.onkeypress = function(e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode == '13') {
+            var nextid = this.id.charAt(0) + String.fromCharCode(this.id.charCodeAt(1)+1);
+            document.getElementById(nextid).focus();
+        }	
+    }
+    cell.onfocus = function(e) {
+// show function
+	var formula = cell.getAttribute("data-formula");
+        if ( formula ) {
+		e.target.value = "=" + formula;
+	}
+    };
+    cell.onblur = function(e) {
+        if (e.target.value.charAt(0) == "=") {
+		cell.setAttribute("data-formula", e.target.value.substring(1));
+	}
+	else {
+		cell.removeAttribute("data-formula");
+	}
+        computeAll();
+    };
+    var getter = function() {
+// get function
+        var value = cell.value || "";
+	var formula = cell.getAttribute("data-formula");
+        if ( formula ) {
+console.log("Value: " + JSON.stringify(value));
+	    var result;
+		
+console.log("Formula: " + formula);
+		var rules = new ruleJS('demo1');
+		rules.init();
+		var firstinput = document.querySelector('input');
+console.log(firstinput.outerHTML);
+		var parsed = rules.parse(formula, firstinput);
+console.log("Parsed: " + JSON.stringify(parsed));
+		if ( parsed.error ) {
+			result =  parsed.error;
+		}
+		else {
+			result = parsed.result;
+		}
+	    return result;
+        } else { return isNaN(parseFloat(value)) ? value : parseFloat(value); }
+    };
+    Object.defineProperty(DATA, cell.id, {get:getter});
+    Object.defineProperty(DATA, cell.id.toLowerCase(), {get:getter});
+});
+(window.computeAll = function() {
+    INPUTS.forEach(function(cell) { try { cell.value = DATA[cell.id]; } catch(e) {} });
+})();
+</script>
+
+
+
+
+</body>
+</html>

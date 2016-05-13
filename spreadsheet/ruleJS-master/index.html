@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>RuleJS - Like excel library to parse formulas.</title>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <script src="dist/full/ruleJS.all.full.min.js"></script>
+
+  <style>
+    .table input[type=text] {
+      width: 50px;
+    }
+    #suportedList ul {
+      -webkit-column-count: 4; -webkit-column-gap:20px;
+      -moz-column-count:4; -moz-column-gap:20px;
+      -o-column-count:4; -o-column-gap:20px;
+      column-count:4; column-gap:20px;
+    }
+  </style>
+</head>
+<body>
+<div class="col-xs-12">
+  <section>
+    <h1 class="page-header">RuleJS</h1>
+    <p class="view"><a href="https://github.com/handsontable/RuleJS" target="_blank">View the Project on GitHub <small>handsontable/RuleJS</small></a></p>
+
+    <ul>
+      <li><a href="https://github.com/handsontable/RuleJS/zipball/master">Download <strong>ZIP File</strong></a></li>
+      <li><a href="https://github.com/handsontable/RuleJS/tarball/master">Download <strong>TAR Ball</strong></a></li>
+      <li><a href="https://github.com/handsontable/RuleJS">View On <strong>GitHub</strong></a></li>
+    </ul>
+
+    <h2>JS Library to parse excel formulas (based on <a href="https://github.com/zaach/jison" target="_blank">jison parser</a> and <a href="https://github.com/sutoiku/formula.js" target="_blank">formula</a>).</h2>
+    <p>Supported formulas are listed below.</p>
+  </section>
+
+  <section>
+    <p>List of supported formulas:</p>
+    <div id="suportedList" class="col-xs-6" style="height: 400px; overflow-y: scroll;"></div>
+  </section>
+
+  <div class="clearfix"></div>
+
+  <section>
+    <h1 class="page-header">Demo</h1>
+    <p>Try to parse the formula by typing ex. <code>AND(1,0)</code> into input below and press <kbd>Parse</kbd> button.</p>
+
+    <div class="col-xs-6" style="padding: 0px;" id="demo1">
+
+      <input type="text" id="X1" placeholder="ex. AND(1,0)"><button>Parse</button>
+
+      <p class="bg-info" style="display: none">result: <span id="result"></span></p>
+      <p class="bg-danger" style="display: none">error: <span id="error"></span></p>
+      <p class="clearfix"></p>
+
+      <p>Try to insert formula into input field by typing ex. <code>=A1</code>. It's possible to edit formula by double clicked on input field.</p>
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <td></td>
+          <td>A</td>
+          <td>B</td>
+          <td>C</td>
+          <td>D</td>
+          <td>E</td>
+          <td>F</td>
+          <td>G</td>
+          <td>H</td>
+          <td>I</td>
+          <td>J</td>
+          <td colspan="2" class="text-center">fn(x)</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>1</td>
+          <td><input type="text" id="A1" value="1"></td>
+          <td><input type="text" id="B1" value="2"></td>
+          <td><input type="text" id="C1" value="3"></td>
+          <td><input type="text" id="D1" value="4"></td>
+          <td><input type="text" id="E1" value="5"></td>
+          <td><input type="text" id="F1" value="6"></td>
+          <td><input type="text" id="G1" value="7"></td>
+          <td><input type="text" id="H1" value="8"></td>
+          <td><input type="text" id="I1" value="9"></td>
+          <td><input type="text" id="J1" value="10"></td>
+          <td>SUM(A1:D1, H1)</td>
+          <td><span id="K1" data-formula="SUM(A1:D1, H1)"></span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><input type="text" id="A2" value="-1"></td>
+          <td><input type="text" id="B2" value="-10"></td>
+          <td><input type="text" id="C2" value="2"></td>
+          <td><input type="text" id="D2" value="4"></td>
+          <td><input type="text" id="E2" value="100"></td>
+          <td><input type="text" id="F2" value="1"></td>
+          <td><input type="text" id="G2" value="50"></td>
+          <td><input type="text" id="H2" value="20"></td>
+          <td><input type="text" id="I2" value="200"></td>
+          <td><input type="text" id="J2" value="-100"></td>
+          <td>MAX(A2:J2)</td>
+          <td><span id="K2" data-formula="MAX(A2:J2)"></span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><input type="text" id="A3" value="-1"></td>
+          <td><input type="text" id="B3" value="-40"></td>
+          <td><input type="text" id="C3" value="-53"></td>
+          <td><input type="text" id="D3" value="1"></td>
+          <td><input type="text" id="E3" value="10"></td>
+          <td><input type="text" id="F3" value="30"></td>
+          <td><input type="text" id="G3" value="10"></td>
+          <td><input type="text" id="H3" value="301"></td>
+          <td><input type="text" id="I3" value="-1"></td>
+          <td><input type="text" id="J3" value="-20"></td>
+          <td>MIN(A3:J3)</td>
+          <td><span id="K3" data-formula="MIN(A3:J3)"></span></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><input type="text" id="A4" value="20"></td>
+          <td><input type="text" id="B4" value="50"></td>
+          <td><input type="text" id="C4" value="100"></td>
+          <td><input type="text" id="D4" value="20"></td>
+          <td><input type="text" id="E4" value="1"></td>
+          <td><input type="text" id="F4" value="5"></td>
+          <td><input type="text" id="G4" value="15"></td>
+          <td><input type="text" id="H4" value="25"></td>
+          <td><input type="text" id="I4" value="45"></td>
+          <td><input type="text" id="J4" value="23"></td>
+          <td>AVERAGE(A4:J4):</td>
+          <td><span id="K4" data-formula="AVERAGE(A4:J4)"></span></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><input type="text" id="A5" value="0"></td>
+          <td><input type="text" id="B5" value="10"></td>
+          <td><input type="text" id="C5" value="1"></td>
+          <td><input type="text" id="D5" value="10"></td>
+          <td><input type="text" id="E5" value="2"></td>
+          <td><input type="text" id="F5" value="10"></td>
+          <td><input type="text" id="G5" value="3"></td>
+          <td><input type="text" id="H5" value="10"></td>
+          <td><input type="text" id="I5" value="4"></td>
+          <td><input type="text" id="J5" value="10"></td>
+          <td>SUMIF(A5:J5,'>5')</td>
+          <td><span id="K5" data-formula="SUMIF(A5:J5,'>5')"></span></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+</div>
+
+<script>
+  (function () {
+
+    var rules = new ruleJS('demo1');
+    rules.init();
+
+    var button = document.querySelector('button'),
+        input = document.querySelector('input[type=text]'),
+        result = document.querySelector('#result'),
+        error = document.querySelector('#error');
+
+    button.addEventListener('click', function () {
+      result.parentNode.style.display = 'none';
+      error.parentNode.style.display = 'none';
+
+      var formula = input.value;
+      var parsed = rules.parse(formula, input);
+
+      if (parsed.result !== null) {
+        result.parentNode.style.display = '';
+        result.innerText = parsed.result;
+      }
+
+      if (parsed.error) {
+        error.parentNode.style.display = '';
+        error.innerText = parsed.error;
+      }
+    });
+
+    var listFormulas = (function() {
+      var container = document.querySelector('#suportedList'),
+        ul = document.createElement('ul');
+
+      container.appendChild(ul);
+
+      //var methods = [];
+      //for (var method in rules.helper.SUPPORTED_FORMULAS) {
+      //  methods.push(method);
+      //}
+      //methods.sort();
+
+      var methods = rules.helper.SUPPORTED_FORMULAS.sort();
+
+      methods.forEach(function (item) {
+        var li = document.createElement('li'),
+            a = document.createElement('a');
+
+        a.href = 'http://www.stoic.com/pages/formula/function?function=' + item;
+        a.target = '_blank';
+        a.innerHTML = item;
+
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+
+    })();
+
+  })();
+</script>
+</body>
+</html>

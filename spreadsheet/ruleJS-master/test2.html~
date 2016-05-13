@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>RuleJS - Like excel library to parse formulas.</title>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <script src="dist/full/ruleJS.all.full.min.js"></script>
+
+  <style>
+    .table input[type=text] {
+      width: 50px;
+    }
+    #suportedList ul {
+      -webkit-column-count: 4; -webkit-column-gap:20px;
+      -moz-column-count:4; -moz-column-gap:20px;
+      -o-column-count:4; -o-column-gap:20px;
+      column-count:4; column-gap:20px;
+    }
+  </style>
+</head>
+<body>
+<div class="col-xs-12">
+
+  <section>
+    <h1 class="page-header">Demo 1</h1>
+    <div class="col-xs-6" style="padding: 0px;" id="demo1">
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <td></td>
+          <td>A</td>
+          <td>B</td>
+          <td>C</td>
+          <td colspan="2" class="text-center">fn(x)</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>1</td>
+          <td><input type="text" id="A1" value="-1"></td>
+          <td><input type="text" id="B1" value="-2"></td>
+          <td><input type="text" id="C1" value="-3"></td>
+          <td>SUM(A1:C1)</td>
+          <td><span id="D1" data-formula="SUM(A1:C1)"></span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><input type="text" id="A2" value="-1"></td>
+          <td><input type="text" id="B2" value="-10"></td>
+          <td><input type="text" id="C2" value="2"></td>
+          <td>MAX(A2:C2)</td>
+          <td><span id="D2" data-formula="MAX(A2:C2)"></span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><input type="text" id="A3" value="-1"></td>
+          <td><input type="text" id="B3" value="-40"></td>
+          <td><input type="text" id="C3" value="-53"></td>
+          <td>MIN(A3:C3)</td>
+          <td><span id="D3" data-formula="MIN(A3:C3)"></span></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+
+    <h1 class="page-header">Demo 2</h1>
+    <div class="col-xs-6" style="padding: 0px;" id="demo2">
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <td></td>
+          <td>A</td>
+          <td>B</td>
+          <td>C</td>
+          <td colspan="2" class="text-center">fn(x)</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>1</td>
+          <td><input type="text" id="A1" value="1"></td>
+          <td><input type="text" id="B1" value="2"></td>
+          <td><input type="text" id="C1" value="3"></td>
+          <td>SUM(A1:C1)</td>
+          <td><span id="D1" data-formula="SUM(A1:C1)"></span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><input type="text" id="A2" value="4"></td>
+          <td><input type="text" id="B2" value="5"></td>
+          <td><input type="text" id="C2" value="6"></td>
+          <td>MAX(A2:C2)</td>
+          <td><span id="D2" data-formula="MAX(A2:C2)"></span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><input type="text" id="A3" value="7"></td>
+          <td><input type="text" id="B3" value="8"></td>
+          <td><input type="text" id="C3" value="9"></td>
+          <td>MIN(A3:C3)</td>
+          <td><span id="D3" data-formula="MIN(A3:C3)"></span></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+</div>
+
+<script>
+  (function () {
+    var rules = new ruleJS('demo1');
+    rules.init();
+  })();
+  (function () {
+    var rules = new ruleJS('demo2');
+    rules.init();
+  })();
+</script>
+</body>
+</html>

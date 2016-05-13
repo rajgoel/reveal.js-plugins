@@ -1,0 +1,12 @@
+{
+  "name": "jstat",
+  "homepage": "https://github.com/jstat/jstat",
+  "_release": "0243df188a",
+  "_resolution": {
+    "type": "commit",
+    "commit": "0243df188ac3474c9116a80acc332a8c20125eef"
+  },
+  "_source": "https://github.com/jstat/jstat.git",
+  "_target": "0243df188ac3474c9116a80acc332a8c20125eef",
+  "_originalSource": "https://github.com/jstat/jstat.git"
+}

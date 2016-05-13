@@ -1,0 +1,28 @@
+{
+  "name": "ruleJS",
+  "description": "Javascript parser excel-like formulas",
+  "version": "0.0.3",
+  "main": ["./dist/full/ruleJS.all.full.js"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/handsontable/ruleJS.git"
+  },
+  "authors": [
+    "Handsoncode", "Handsoncode <hello@handsontable.com>"
+  ],
+  "keywords": [
+    "parser",
+    "formula",
+    "excel",
+    "js-excel",
+    "js-formula",
+    "js-functions"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "src",
+    "lib",
+    "test"
+  ]
+}
