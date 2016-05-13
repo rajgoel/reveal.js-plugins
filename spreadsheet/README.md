@@ -1,6 +1,6 @@
 # Spreadsheet
 
-A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to easily add charts using [RuleJS](https://github.com/handsontable/RuleJS). 
+A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to add spreadsheets using [RuleJS](https://github.com/handsontable/RuleJS). 
 
 [Check out the live demo](http://courses.telematique.eu/reveal.js-plugins/spreadsheet-demo.html)
 
