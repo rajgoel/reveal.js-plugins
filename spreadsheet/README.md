@@ -14,7 +14,7 @@ Add the plugins to the dependencies in your presentation, as below.
 <head>
    <!-- ... -->
    <script src="reveal.js-plugins/spreadsheet/ruleJS.all.full.min.js"></script>
-   <link rel="stylesheet" media="screen" href="reveal.js-plugins/spreadsheet/spreadsheet.css">
+   <link rel="stylesheet" href="reveal.js-plugins/spreadsheet/spreadsheet.css">
 </head>
 
 ```
