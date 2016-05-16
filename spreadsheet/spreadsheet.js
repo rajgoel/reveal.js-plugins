@@ -57,7 +57,7 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
             					var nextid = this.id.charAt(0) + String.fromCharCode(this.id.charCodeAt(1)+1);
 						var spreadsheet = e.target.parentElement;
 						while ( spreadsheet.className != "spreadsheet" ) spreadsheet = spreadsheet.parentElement;
-            					spreadsheet.querySelector('input[id="'+nextid+'"]').focus();
+            					(spreadsheet.querySelector('input[id="'+nextid+'"]') || spreadsheet.querySelector('input[id="'+this.id.charAt(0)+'1"]')).focus();
         				}	
     				};
     				input.onfocus = function(e) {
