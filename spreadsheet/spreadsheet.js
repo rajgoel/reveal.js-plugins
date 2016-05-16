@@ -17,7 +17,7 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
 	// default values
 	if (!config.precision) config.precision = 4;
 	if (!config.width) config.width = 150;
-	if (!config.delimiter) config.delimiter = '\t';
+	if (!config.delimiter) config.delimiter = ',';
 
 	var currentSpreadsheet = null;
 	var rules = new ruleJS();
@@ -30,13 +30,15 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
         };
 
 	function createSpreadsheet(spreadsheet, CSV, comments) {
-		spreadsheet.innerHTML = "";		
+		var delimiter = spreadsheet.getAttribute("data-delimiter") || config.delimiter;
+		var width = spreadsheet.getAttribute("data-width") || config.width;
 		var table = document.createElement("table");
+		spreadsheet.innerHTML = "";		
 		spreadsheet.appendChild(table);
 		var lines = CSV.split('\n').filter(function(v){return v!==''});
 		// create empty spreadsheet
 		var rows = spreadsheet.getAttribute("data-rows") || lines.length;
-		var cols = spreadsheet.getAttribute("data-cols") || lines[0].split(config.delimiter).length;	
+		var cols = spreadsheet.getAttribute("data-cols") || lines[0].split(delimiter).length;	
 		for (var i=0; i<=rows; i++) {
 		    var row = table.insertRow(-1);
 		    for (var j=0; j<=cols; j++) {
@@ -48,7 +50,7 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
 				input.id = letter + i;
 				input.setAttribute("data-row",(i-1));
 				input.setAttribute("data-col",(j-1));
-				input.style.width = config.width + "px";
+				input.style.width = width + "px";
     				input.onkeypress = function(e) {
         				var keyCode = e.keyCode || e.which;
         				if (keyCode == '13') {
@@ -90,7 +92,7 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
 
 		// get data values
 		for (var i = 0; i < Math.min(rows,lines.length); i++ ){
-			values = lines[i].split(config.delimiter); 
+			values = lines[i].split(delimiter); 
 			for (var j = 0; j < Math.min(cols, values.length); j++ ){
 				var value = values[j].trim();
 				value = value.replace(/^['"](.+)['"]$/,'$1');
@@ -146,7 +148,6 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
 			var CSV = spreadsheets[i].innerHTML.trim();
 			var comments = CSV.match(/<!--[\s\S]*?-->/g);
 			CSV = CSV.replace(/<!--[\s\S]*?-->/g,'').replace(/^\s*\n/gm, "");
-console.log(CSV);
 			if ( ! spreadsheets[i].hasAttribute("data-csv") ) {
 				createSpreadsheet(spreadsheets[i], CSV, comments);
 			}
@@ -161,7 +162,7 @@ console.log(CSV);
 						console.warn( 'Failed to get file ' + spreadsheet.getAttribute("data-csv") +". ReadyState: " + xhr.readyState + ", Status: " + xhr.status);
 					}
 				};
-				xhr.open( 'GET', canvas.getAttribute("data-csv"), false );
+				xhr.open( 'GET', spreadsheet.getAttribute("data-csv"), false );
 				try {
 					xhr.send();
 				}
