@@ -18,6 +18,7 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
 	if (!config.precision) config.precision = 4;
 	if (!config.width) config.width = 150;
 	if (!config.delimiter) config.delimiter = ',';
+	if (!config.fontsize) config.fontsize = '24';
 
 	var currentSpreadsheet = null;
 	var rules = new ruleJS();
@@ -32,6 +33,7 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
 	function createSpreadsheet(spreadsheet, CSV, comments) {
 		var delimiter = spreadsheet.getAttribute("data-delimiter") || config.delimiter;
 		var width = spreadsheet.getAttribute("data-width") || config.width;
+		var fontsize = spreadsheet.getAttribute("data-fontsize") || config.fontsize;
 		var table = document.createElement("table");
 		spreadsheet.innerHTML = "";		
 		spreadsheet.appendChild(table);
@@ -44,6 +46,7 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
 		    for (var j=0; j<=cols; j++) {
 		        var letter = (i+j == 0) ? "" : String.fromCharCode("A".charCodeAt(0)+j-1);
 			var cell = row.insertCell(-1);
+			cell.style.fontSize = fontsize + "px";
 			if ( i &&j ) {
 				var input = document.createElement("input");
 				input.type = "text";
@@ -51,6 +54,7 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
 				input.setAttribute("data-row",(i-1));
 				input.setAttribute("data-col",(j-1));
 				input.style.width = width + "px";
+				input.style.fontSize = fontsize + "px";
     				input.onkeypress = function(e) {
         				var keyCode = e.keyCode || e.which;
         				if (keyCode == '13') {
