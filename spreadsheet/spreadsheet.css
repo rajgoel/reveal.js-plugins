@@ -21,7 +21,7 @@
      background-color: transparent;
 }
 
-.spreadsheet tr:first-child td, td:first-child {
+.spreadsheet tr:first-child td, .spreadsheet td:first-child {
     background-color: darkgray;
     padding: 1px 3px;
     font-weight: bold;
