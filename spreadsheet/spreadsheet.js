@@ -71,6 +71,14 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
 						e.target.value = "=" + formula;
 					}
     				};
+    				input.onkeydown = function(e) {
+					// stop propagation
+					e.stopImmediatePropagation()();
+    				};
+    				input.onkeypress = function(e) {
+					// stop propagation
+					e.stopImmediatePropagation()();
+    				};
     				input.onblur = function(e) {
        					if (e.target.value.charAt(0) == "=") {
 						e.target.setAttribute("data-formula", e.target.value.substring(1));
