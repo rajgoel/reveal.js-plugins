@@ -41,6 +41,7 @@ Reveal.initialize({
 		prefix: 'audio/', 	// audio files are stored in the "audio" folder
 		suffix: '.ogg',		// audio files have the ".ogg" ending
 		textToSpeechURL: null,  // the URL to the text to speech converter
+		defaultNotes: false, 	// use slide notes as default for the text to speech converter
 		defaultText: false, 	// use slide text as default for the text to speech converter
 		advance: 0, 		// advance to next slide after given time in milliseconds after audio has played, use negative value to not advance 
 		autoplay: false,	// automatically start slideshow
@@ -90,7 +91,11 @@ In order to enable text-to-speech functionality, the parameter ```textToSpeechUR
 For example, in order to use the free text-to-speech generator of [Voice RSS](http://www.voicerss.org/) you can set ```textToSpeechURL: "http://api.voicerss.org/?key=[YOUR_KEY]&hl=en-gb&c=ogg&src="```,
 where ```[YOUR_KEY]``` should be the key that you obtained after [registration at Voice RSS](http://www.voicerss.org/registration.aspx).
 
-If the parameter ```defaultText``` is set to ```true```, the slide or fragment text is sent to the text-to-speech generator. Alternatively, you can use the ```data-audio-text``` attribute for each slide or fragment and each HTML-element, to explicitly specify the text to be sent to the text-to-speech converter.
+The plugin automatically extracts the text to be sent to the text-to-speech generator from the slide content in the following order:
+- If the optional  ```data-audio-text``` attribute is given for the slide or fragment, the value of this attribute is used as the text.
+- If  the  parameter ```defaultNotes``` is set to ```true```, the text given in the notes of the slide are used as the text (note that this option does not work with fragments).
+- If the parameter ```defaultText``` is set to ```true```, the slide or fragment content is used as text.
+
 
 ```html
 <section data-audio-text="This is the text sent to the text-to-speech generator">

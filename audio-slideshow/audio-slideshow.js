@@ -21,6 +21,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 	var suffix = ".ogg";
 	var textToSpeechURL = null; // no text to speech converter
 //	var textToSpeechURL = "http://api.voicerss.org/?key=[YOUR_KEY]&hl=en-gb&c=ogg&src="; // the text to speech converter
+	var defaultNotes = false; // use slide notes as default for the text to speech converter
 	var defaultText = false; // use slide text as default for the text to speech converter
 	var defaultDuration = 5; // value in seconds
 	var advance = 0; // advance to next slide after given time in milliseconds after audio has played, use negative value to not advance 
@@ -50,7 +51,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 		setup();
 //console.debug( "ready ");
 		selectAudio();
-		document.dispatchEvent( new CustomEvent('playbackready') );
+		document.dispatchEvent( new CustomEvent('stopplayback') );
 
 	} );
 
@@ -146,6 +147,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 			if ( config.prefix ) prefix = config.prefix;
 			if ( config.suffix ) suffix = config.suffix;
 			if ( config.textToSpeechURL ) textToSpeechURL = config.textToSpeechURL;
+			if ( config.defaultNotes ) defaultNotes = config.defaultNotes;
 			if ( config.defaultText ) defaultText = config.defaultText;
 			if ( config.defaultDuration ) defaultDuration = config.defaultDuration;
 			if ( config.advance ) advance = config.advance;
@@ -207,6 +209,10 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 			if ( slide.hasAttribute( 'data-audio-text' ) ) {
 				text = slide.getAttribute( 'data-audio-text' );
 			}
+			else if ( defaultNotes && Reveal.getSlideNotes( slide ) ) {
+				// defaultNotes
+				text = Reveal.getSlideNotes( slide );
+			}
 			else if ( defaultText ) {
 				textContainer.innerHTML = slide.innerHTML;
 				// remove fragments
@@ -216,7 +222,8 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 				}
 				text = getText( textContainer);
 			}
-// console.log( h + '.' + v + ": " + text )
+// alert( h + '.' + v + ": " + text );
+// console.log( h + '.' + v + ": " + text );
 		}
 		setupAudioElement( container, h + '.' + v, slide.getAttribute( 'data-audio-src' ), text, slide.querySelector( ':not(.fragment) > video[data-audio-controls]' ) );
 		
@@ -373,6 +380,9 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 			document.dispatchEvent( new CustomEvent('stopplayback') );
 		} );
 		audioElement.addEventListener( 'seeked', function( event ) {
+			var evt = new CustomEvent('seekplayback');
+			evt.timestamp = 1000 * audioElement.currentTime;
+			document.dispatchEvent( evt );
 			if ( timer ) { clearTimeout( timer ); timer = null; }
 		} );
 
