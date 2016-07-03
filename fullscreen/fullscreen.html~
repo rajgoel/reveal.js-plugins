@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Slides</title>
+
+		<meta name="description" content="Slides">
+		<meta name="author" content="Asvin Goel">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="reveal.js/css/reveal.css">
+		<link rel="stylesheet" href="klu.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
+		<!-- Font awesome -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal.js/css/print/pdf.css' : 'reveal.js/css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1> Controls and Measurements for Operational Excellence </h1>
+					<br>
+
+					<table><tr>
+						<td style="vertical-align:top">
+						<img src="KLU.png" alt="Kühne Logistics University" width="90" style="box-shadow:none; "></img>
+						</td>
+						<td style="vertical-align:top">
+						Asvin Goel<br>
+						<a href="mailto:asvin.goel@the-klu.org">asvin.goel@the-klu.org</a>
+						</td>
+						</tr>
+					</table>					
+				</section>
+				<section data-fullscreen>
+					<iframe class="stretch" src="http://www.the-klu.org"></iframe>
+				</section>
+				<section>
+					<iframe class="stretch" data-src="https://docs.google.com/document/d/0AoFkkLP2MB8kdFd4bEJ5VzR2RVdBQkVuSW91WE1zZkE/pub?embedded=true"></iframe>
+				</section>
+				<section data-fullscreen>
+					<iframe class="stretch" data-src="https://www.google.de/maps?source=tldso"></iframe>
+				</section>
+				<section data-fullscreen>
+					<iframe class="stretch" data-src="http://demo.bpmn.io"></iframe>
+				</section>
+				<section>
+					<h1> The end </h1>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="reveal.js/lib/js/head.min.js"></script>
+		<script src="reveal.js/js/reveal.js"></script>
+
+		<script>
+			var MathJaxURL= (window.location.search.match( /offline/gi ) ? "mathjax/MathJax.js" : "http://cdn.mathjax.org/mathjax/latest/MathJax.js");
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: false,
+				center: true,
+				mouseWheel: true,
+				previewLinks: true,
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+				math: {
+				        config: 'TeX-AMS_HTML-full',  // See http://docs.mathjax.org/en/latest/config-files.html
+				        mathjax: MathJaxURL 	// MathJax might require installation of fonts: sudo apt-get install fonts-stix
+				},
+				audio: {
+					prefix: '00-audio/',
+					suffix: '.ogg'
+				},
+				chalkboard: { // font-awesome.min.css must be available
+					src: "chalkboard/chalkboard.json",
+					toggleChalkboardButton: { left: "80px" },
+					toggleNotesButton: { left: "130px" },
+					theme: "whiteboard",
+				},
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'reveal.js/plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'reveal.js/plugin/math/math.js', async: true },
+//					{ src: 'reveal.js/plugin/zoom-js/zoom.js', async: true },
+//					{ src: 'reveal.js/plugin/notes/notes.js', async: true }
+					{ src: 'reveal.js-plugins/menu/menu.js' },
+					{ src: 'fullscreen.js' },
+					{ src: 'reveal.js-plugins/chart/Chart.min.js' },				
+					{ src: 'reveal.js-plugins/chart/csv2chart.js' },				
+					{ src: 'reveal.js-plugins/chalkboard/chalkboard.js' },
+//					{ src: 'reveal.js-plugins/animate/animate.js', condition: function( ) { return !!document.body.classList; } },				
+					{ src: 'reveal.js-plugins/audio-slideshow/slideshow-recorder.js', condition: function( ) { return !!document.body.classList; } },				
+					{ src: 'reveal.js-plugins/audio-slideshow/audio-slideshow.js', condition: function( ) { return !!document.body.classList; } }
+				],
+				keyboard: {
+					67: function() { RevealChalkboard.toggleNotesCanvas() },	// toggle chalkboard when 'c' is pressed
+					66: function() { RevealChalkboard.toggleChalkboard() },	// toggle chalkboard when 'b' is pressed
+					171: function() { RevealChalkboard.clear() },	// clear chalkboard when '+' is pressed
+					8: function() { RevealChalkboard.reset() },	// reset all chalkboard data when 'BACKSPACE' is pressed
+					46: function() { RevealChalkboard.resetAll() },	// reset all chalkboard data when 'BACKSPACE' is pressed
+					90: function() { Recorder.downloadZip(); RevealChalkboard.download(); }, 	// press 'z' to download zip containing audio files
+					84: function() { Recorder.fetchTTS(); }, 	// press 't' to fetch TTS audio files
+					82: function() { Recorder.toggleRecording(); },	// press 'r' to start/stop recording
+				}
+			});
+
+			if ( window.location.search.match( /print-pdf/gi ) ) {
+				window.print();
+			}
+	</script>
+
+
+	</body>
+</html>
