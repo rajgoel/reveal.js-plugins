@@ -10,6 +10,8 @@ This collections includes the following plugins:
  A plugin adding a chalkboard and slide annotation.
 - [Chart](https://github.com/rajgoel/reveal.js-plugins/tree/master/chart) ([Demo](http://courses.telematique.eu/reveal.js-plugins/chart-demo.html)):
  A plugin for using Chart.js v2.0. 
+- [Fullscreen](https://github.com/rajgoel/reveal.js-plugins/tree/master/fullscreen) ([Demo](http://courses.telematique.eu/reveal.js-plugins/fullscreen-demo.html)):
+ A simple plugin allowing to use fullscreen slides.
 - [MathSVG](https://github.com/rajgoel/reveal.js-plugins/tree/master/mathsvg):
  An extension of the [math.js](https://github.com/hakimel/reveal.js/#mathjax) plugin allowing to render LaTeX expressions in SVG.
 - [Menu](https://github.com/denehyg/reveal.js-menu) ([Demo](https://denehyg.github.io/reveal.js-menu)): A plugin by Greg Denehy for adding a slideout menu.
