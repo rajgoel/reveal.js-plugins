@@ -4,7 +4,7 @@
 ** spreadsheet.js is a plugin for reveal.js allowing to integrate
 ** Excel-like tables supporting formulas
 **
-** Version: 0.1
+** Version: 0.1.1
 ** 
 ** License: MIT license (see LICENSE.md)
 **
@@ -73,11 +73,11 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
     				};
     				input.onkeydown = function(e) {
 					// stop propagation
-					e.stopImmediatePropagation()();
+					e.stopPropagation();
     				};
     				input.onkeypress = function(e) {
 					// stop propagation
-					e.stopImmediatePropagation()();
+					e.stopPropagation();
     				};
     				input.onblur = function(e) {
        					if (e.target.value.charAt(0) == "=") {
@@ -108,8 +108,10 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
 			for (var j = 0; j < Math.min(cols, values.length); j++ ){
 				var value = values[j].trim();
 				value = value.replace(/^['"](.+)['"]$/,'$1');
+				value = value.replace('<code>','').replace('</code>','');
 				var cell = spreadsheet.querySelector('input[data-row="' + i + '"][data-col="' + j + '"]');
 			        if (value.charAt(0) == "=") {
+// console.log( value.substring(1) );
 					cell.setAttribute("data-formula", value.substring(1));
 					cell.parentElement.classList.add('formula');
 					updateValue(spreadsheet, cell, value.substring(1));
@@ -117,6 +119,7 @@ var RevealSpreadsheet = window.RevealSpreadsheet || (function(){
 				else {
 					cell.value = value;
 				}
+				updateSpreadsheet( spreadsheet );
 			}
 		}
 
