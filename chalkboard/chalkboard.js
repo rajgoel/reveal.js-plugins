@@ -54,8 +54,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	if ( config.draw ) draw = config.draw;
 	if ( config.color ) color = config.color;
 
-	var toggleChalkboardButton = config.toggleChalkboardButton  || true;
-	var toggleNotesButton = config.toggleNotesButton  || true;
+	var toggleChalkboardButton = config.toggleChalkboardButton == undefined ? true : config.toggleChalkboardButton;
+	var toggleNotesButton = config.toggleNotesButton == undefined ? true : config.toggleNotesButton;
 	var transition = config.transition  || 800;
 
 	var readOnly = config.readOnly;
