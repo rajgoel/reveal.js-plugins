@@ -69,6 +69,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	if ( toggleChalkboardButton ) {
 //console.log("toggleChalkboardButton")
 		var button = document.createElement( 'div' );
+		button.id = "toggle-chalkboard";
 		button.style.vivibility = "visible";
 		button.style.position = "absolute";
 		button.style.zIndex = 30;
@@ -85,6 +86,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	if ( toggleNotesButton ) {
 //console.log("toggleNotesButton")
 		var button = document.createElement( 'div' );
+		button.id = "toggle-notes";
 		button.style.position = "absolute";
 		button.style.zIndex = 30;
 		button.style.fontSize = "24px";
