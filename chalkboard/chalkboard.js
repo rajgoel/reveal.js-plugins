@@ -34,21 +34,25 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	var config = Reveal.getConfig().chalkboard || {};
 
 	var background, pen, draw, color;
-	var theme = config.theme || "chalkboard"; 
+	var theme = config.theme || "chalkboard";
 	switch ( theme ) {
 		case "whiteboard":
-			background = [ 'rgba(127,127,127,.1)' , path + 'img/whiteboard.png' ];
-			pen = [ path + 'img/boardmarker.png', path + 'img/boardmarker.png' ];
+			background = [ 'rgba(127,127,127,.1)' ,
+						   'url(' + path + 'img/white.png)' ];
+			pen = [ 'url(' + path + 'img/boardmarker.png), auto',
+					'url(' + path + 'img/boardmarker.png), auto' ];
 			draw = [ drawWithPen , drawWithPen ];
 			color = [ 'rgba(0,0,255,1)', 'rgba(0,0,255,1)' ];
 			break;
 		default:
-			background = [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ];
-			pen = [ path + 'img/boardmarker.png', path + 'img/chalk.png' ];
+			background = [ 'rgba(127,127,127,.1)' ,
+						   'url(' + path + 'img/blackboard.png)' ];
+			pen = [ 'url(' + path + 'img/boardmarker.png), auto',
+					'url(' + path + 'img/chalk.png), auto' ];
 			draw = [ drawWithPen , drawWithChalk ];
 			color = [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)'  ];
 	}
-	
+
 	if ( config.background ) background = config.background;
 	if ( config.pen ) pen = config.pen;
 	if ( config.draw ) draw = config.draw;
@@ -125,8 +129,9 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		container.id = drawingCanvas[id].id;
 		container.classList.add( 'overlay' );
 		container.setAttribute( 'data-prevent-swipe', '' );
-		container.oncontextmenu = function() { return false; } 
-		container.style.cursor = 'url("' + pen[ id ] + '"), auto';
+		container.oncontextmenu = function() { return false; }
+		container.style.cursor = pen[ id ];
+        console.log(42, container.style.cursor, 42, pen[id], container);
 
 		drawingCanvas[id].width = window.innerWidth;
 		drawingCanvas[id].height = window.innerHeight;
@@ -151,7 +156,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			}
 		}
 		else {
-			container.style.background = 'url("' + background[id] + '") repeat';
+			container.style.background = background[id];
 			container.style.zIndex = "26";
 		}
 
@@ -167,7 +172,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		canvas.width = drawingCanvas[id].width;
 		canvas.height = drawingCanvas[id].height;
 		canvas.setAttribute( 'data-chalkboard', id );
-		canvas.style.cursor = 'url("' + pen[ id ] + '"), auto';
+		canvas.style.cursor = pen[ id ];
 		container.appendChild( canvas );
 		drawingCanvas[id].canvas = canvas;
 
@@ -757,7 +762,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	document.addEventListener( 'mouseup', function( evt ) {
 		if ( event ) {
 			if(evt.button == 2){
-				drawingCanvas[mode].canvas.style.cursor = 'url("' + pen[mode] + '"), auto';
+				drawingCanvas[mode].canvas.style.cursor = pen[mode];
 			}
 			event.end = Date.now() - slideStart;
 			if ( event.type == "erase" || event.curve.length > 1 ) {
@@ -808,13 +813,13 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 					notescanvas.style.background = 'rgba(0,0,0,0)';
 					notescanvas.style.pointerEvents = "none";
 				}
-	
+
 			}
 			else {
-				drawingCanvas[0].container.style.cursor = 'url("' + pen[0] + '"), auto';;
-				drawingCanvas[1].container.style.cursor = 'url("' + pen[1] + '"), auto';;
-				drawingCanvas[0].canvas.style.cursor = 'url("' + pen[0] + '"), auto';;
-				drawingCanvas[1].canvas.style.cursor = 'url("' + pen[1] + '"), auto';;
+				drawingCanvas[0].container.style.cursor = pen[0];
+				drawingCanvas[1].container.style.cursor = pen[1];
+				drawingCanvas[0].canvas.style.cursor = pen[0];
+				drawingCanvas[1].canvas.style.cursor = pen[1];
 			}
 		}
 	}
