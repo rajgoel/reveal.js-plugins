@@ -107,8 +107,10 @@ Reveal.initialize({
 		theme: "chalkboard",
 		// configuration options for notes canvas and chalkboard
 		color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ]
-		background: [ 'rgba(127,127,127,.1)' , 'reveal.js-plugins/chalkboard/img/blackboard.png' ],
-		pen:  [ 'reveal.js-plugins/chalkboard/img/boardmarker.png', 'reveal.js-plugins/chalkboard/img/chalk.png' ],
+		background: [ 'rgba(127,127,127,.1)' ,
+                      'url(reveal.js-plugins/chalkboard/img/blackboard.png)' ],
+		pen:  [ 'url(reveal.js-plugins/chalkboard/img/boardmarker.png), auto',
+                'url(reveal.js-plugins/chalkboard/img/chalk.png), auto' ],
 	},
 	// ...
 
