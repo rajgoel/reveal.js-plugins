@@ -12,18 +12,22 @@
 ******************************************************************/
 
 var RevealChalkboard = window.RevealChalkboard || (function(){
+var RevealChalkboard = window.RevealChalkboard || (function(){
 	var path = scriptPath();
 	function scriptPath() {
 		// obtain plugin path from the script element
-		var path;
+		var src;
 		if (document.currentScript) {
-			path = document.currentScript.src.slice(0, -13);
+			src = document.currentScript.src;
 		} else {
 			var sel = document.querySelector('script[src$="/chalkboard.js"]')
 			if (sel) {
-				path = sel.src.slice(0, -13);
+				src = sel.src;
 			}
 		}
+
+		var path = typeof src === undefined ? src
+			: src.slice(0, src.lastIndexOf("/") + 1);
 //console.log("Path: " + path);
 		return path;
 	}
