@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard. 
 **
-** Version: 0.3
+** Version: 0.4
 ** 
 ** License: MIT license (see LICENSE.md)
 **
@@ -11,7 +11,6 @@
 ** Chalkboard effect by Mohamed Moustafa https://github.com/mmoustafa/Chalkboard
 ******************************************************************/
 
-var RevealChalkboard = window.RevealChalkboard || (function(){
 var RevealChalkboard = window.RevealChalkboard || (function(){
 	var path = scriptPath();
 	function scriptPath() {
@@ -30,7 +29,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			: src.slice(0, src.lastIndexOf("/") + 1);
 //console.log("Path: " + path);
 		return path;
-	}
+}
 
 /*****************************************************************
 ** Configuration
@@ -64,6 +63,9 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 	var readOnly = config.readOnly;
 
+	var legacyFileSupport = config.legacyFileSupport;
+	if ( legacyFileSupport ) { console.warn("Legacy file support is deprecated and may be removed in future versions!") }
+
 /*****************************************************************
 ** Setup
 ******************************************************************/
@@ -73,6 +75,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	if ( toggleChalkboardButton ) {
 //console.log("toggleChalkboardButton")
 		var button = document.createElement( 'div' );
+		button.className = "chalkboard-button";
 		button.id = "toggle-chalkboard";
 		button.style.vivibility = "visible";
 		button.style.position = "absolute";
@@ -90,6 +93,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	if ( toggleNotesButton ) {
 //console.log("toggleNotesButton")
 		var button = document.createElement( 'div' );
+		button.className = "chalkboard-button";
 		button.id = "toggle-notes";
 		button.style.position = "absolute";
 		button.style.zIndex = 30;
@@ -216,6 +220,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 						drawingCanvas[id].canvas.style.cursor = 'default';
 					}
 				}
+//console.log("Drawings loaded");
 			}
 			else {
 				config.readOnly = undefined;
@@ -242,6 +247,14 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		var a = document.createElement('a');
 		document.body.appendChild(a);	
 		try {
+			// cleanup slide data without events
+			for (var id = 0; id < 2; id++) {
+				for (var i = storage[id].data.length-1; i >= 0; i--) {
+					if (storage[id].data[i].events.length == 0) {
+						storage[id].data.splice(i, 1);
+					}
+				}
+			}
 			a.download = "chalkboard.json";
 			var blob = new Blob( [ JSON.stringify( storage ) ], { type: "application/json"} );
 			a.href = window.URL.createObjectURL( blob );
@@ -257,15 +270,27 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	 */
 	function getSlideData( indices, id ) {
 		if ( id == undefined ) id = mode;
-//console.log("ID: " + id + "/" + mode );
 		if (!indices) indices = slideIndices;
+		var data;
 		for (var i = 0; i < storage[id].data.length; i++) {
 			if (storage[id].data[i].slide.h === indices.h && storage[id].data[i].slide.v === indices.v && storage[id].data[i].slide.f === indices.f ) {
-				return storage[id].data[i];
+				data = storage[id].data[i];
+				return data;
+			}
+			if ( !legacyFileSupport && 
+			     ( storage[id].data[i].slide.h > indices.h || 
+                               ( storage[id].data[i].slide.h === indices.h && storage[id].data[i].slide.v > indices.v ) || 
+			       ( storage[id].data[i].slide.h === indices.h && storage[id].data[i].slide.v === indices.v && storage[id].data[i].slide.f > indices.f ) 
+			     )
+			   ) {
+				storage[id].data.splice( i, 0, { slide: indices, events: [], duration: 0 } );
+				data = storage[id].data[i];
+				return data;
 			}
 		}
 		storage[id].data.push( { slide: indices, events: [], duration: 0 } );
-		return storage[id].data[storage[id].data.length-1];
+		data = storage[id].data[storage[id].data.length-1];
+		return data;
 	}
 
 	/**
@@ -290,8 +315,10 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 ** Print
 ******************************************************************/
 	var printMode = ( /print-pdf/gi ).test( window.location.search );
+//console.log("createPrintout" + printMode)
 
 	function createPrintout( ) {
+//console.log( 'Create printout for ' + storage[1].data.length + " slides");
 		drawingCanvas[0].container.classList.remove( 'visible' ); // do not print notes canvas
 
 		var patImg = new Image(); 
@@ -338,7 +365,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 							break;
 						case "erase":
 							for (var k = 0; k < slideData.events[j].curve.length; k++) {
-								erase[1]( imgCtx, 
+								erase( imgCtx, 
 									xOffset + slideData.events[j].curve[k].x*scale, 
 									yOffset + slideData.events[j].curve[k].y*scale
 								);
@@ -346,7 +373,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 							break;
 						case "clear":
 							var newSlide = document.createElement( 'section' );
-							newSlide.classList.add( 'future' );
+							newSlide.classList.add( 'present' );
 							newSlide.innerHTML = '<h1 style="visibility:hidden">Drawing</h1>';
 							newSlide.setAttribute("data-background", 'url("' + imgCanvas.toDataURL("image/png") +'")' );
 							slide.parentElement.insertBefore( newSlide, nextSlide[i] );
@@ -363,12 +390,24 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 							break;
 					}
 				}
-				var newSlide = document.createElement( 'section' );
-				newSlide.classList.add( 'future' );
-				newSlide.innerHTML = '<h1 style="visibility:hidden">Drawing</h1>';
-				newSlide.setAttribute("data-background", 'url("' + imgCanvas.toDataURL("image/png") +'")' );
-				slide.parentElement.insertBefore( newSlide, nextSlide[i] );
+				if ( slideData.events.length ) {
+					var slideCanvas = document.createElement('canvas');
+					slideCanvas.width = width;
+					slideCanvas.height = height;	
+					var ctx = slideCanvas.getContext("2d");
+					ctx.fillStyle = imgCtx.createPattern( patImg ,'repeat');
+					ctx.rect(0,0,slideCanvas.width,slideCanvas.height);
+					ctx.fill();
+					ctx.drawImage(imgCanvas, 0, 0);
 
+					var newSlide = document.createElement( 'section' );
+					newSlide.classList.add( 'future' );
+					newSlide.innerHTML = '<h1 style="visibility:hidden">Drawing</h1>';
+					newSlide.setAttribute("data-background-size", '100% 100%' );
+					newSlide.setAttribute("data-background-repeat", 'norepeat' );
+					newSlide.setAttribute("data-background", 'url("' + slideCanvas.toDataURL("image/png") +'")' );
+					nextSlide[i].parentElement.insertBefore( newSlide, nextSlide[i] );
+				}
 			} 
 			Reveal.sync();
 		};
@@ -501,10 +540,11 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		slideData.duration = Math.max( slideData.duration, Date.now() - slideStart ) + 1;
 	}
 
-	function startPlayback( timestamp, finalMode ) {
-		updateReadOnlyMode();			
-
+	function startPlayback( timestamp, finalMode, resized ) {
 //console.log("playback " + timestamp );
+		if ( resized == undefined ) {
+			updateReadOnlyMode();			
+		}
 		slideStart = Date.now() - timestamp;
 		closeChalkboard();
 		mode = 0;		
@@ -688,9 +728,9 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	document.addEventListener('touchend', function(evt) {
 		clearTimeout( touchTimeout );
 		touchTimeout = null;
+		// hide sponge image
+		drawingCanvas[mode].sponge.style.visibility = "hidden"; 
 		if ( event ) {
-			// hide sponge image
-			drawingCanvas[mode].sponge.style.visibility = "hidden"; 
 			event.end = Date.now() - slideStart;
 			if ( event.type == "erase" || event.curve.length > 1 ) {
 				// do not save a line with a single point only
@@ -713,6 +753,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	}
 
 	document.addEventListener( 'mousedown', function( evt ) {
+//console.log( "Read only: " + readOnly );
 		if ( !readOnly && evt.target.getAttribute('data-chalkboard') == mode ) {
 //console.log( "mousedown: " + evt.target.getAttribute('data-chalkboard') );
 			var ctx = drawingCanvas[mode].context;
@@ -759,9 +800,9 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	} );
 
 	document.addEventListener( 'mouseup', function( evt ) {
+		drawingCanvas[mode].canvas.style.cursor = 'url("' + pen[mode] + '"), auto';
 		if ( event ) {
 			if(evt.button == 2){
-				drawingCanvas[mode].canvas.style.cursor = 'url("' + pen[mode] + '"), auto';
 			}
 			event.end = Date.now() - slideStart;
 			if ( event.type == "erase" || event.curve.length > 1 ) {
@@ -795,11 +836,12 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 //console.log( drawingCanvas[id].scale + "/" + drawingCanvas[id].xOffset + "/" +drawingCanvas[id].yOffset );
 		}
 //console.log( window.innerWidth + "/" + window.innerHeight);
-		startPlayback( timestamp, mode );
+		startPlayback( timestamp, mode, true );
 
 	} );
 
 	function updateReadOnlyMode() {
+//console.log("updateReadOnlyMode");
 		if ( config.readOnly == undefined ) {
 			readOnly = ( getSlideDuration() > 0 );	
 			if ( readOnly ) {
@@ -1016,4 +1058,3 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 	return this;
 })();
-
