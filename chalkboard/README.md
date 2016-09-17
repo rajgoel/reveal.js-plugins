@@ -108,6 +108,7 @@ Reveal.initialize({
 		// configuration options for notes canvas and chalkboard
 		color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ]
 		background: [ 'rgba(127,127,127,.1)' , 'reveal.js-plugins/chalkboard/img/blackboard.png' ],
+		pen:  [ 'url(reveal.js-plugins/chalkboard/img/boardmarker.png), auto', 'url(reveal.js-plugins/chalkboard/img/chalk.png), auto' ],
 		pen:  [ 'reveal.js-plugins/chalkboard/img/boardmarker.png', 'reveal.js-plugins/chalkboard/img/chalk.png' ],
 	},
 	// ...
@@ -115,6 +116,7 @@ Reveal.initialize({
 });
 ```
 
+**Note:** Customisation of pens has changed since version 0.5 of the plugin, it is now possible to use standard cursors, e.g. by setting ```pen:  [ 'crosshair', 'pointer' ]```. Please update your parameters if migrating from an older version.
 
 ## License
 

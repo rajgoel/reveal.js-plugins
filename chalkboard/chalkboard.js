@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard. 
 **
-** Version: 0.4
+** Version: 0.5
 ** 
 ** License: MIT license (see LICENSE.md)
 **
@@ -41,13 +41,15 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	switch ( theme ) {
 		case "whiteboard":
 			background = [ 'rgba(127,127,127,.1)' , path + 'img/whiteboard.png' ];
-			pen = [ path + 'img/boardmarker.png', path + 'img/boardmarker.png' ];
+			pen = [ 'url(' + path + 'img/boardmarker.png), auto',
+				'url(' + path + 'img/boardmarker.png), auto' ];
 			draw = [ drawWithPen , drawWithPen ];
 			color = [ 'rgba(0,0,255,1)', 'rgba(0,0,255,1)' ];
 			break;
 		default:
 			background = [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ];
-			pen = [ path + 'img/boardmarker.png', path + 'img/chalk.png' ];
+			pen = [ 'url(' + path + 'img/boardmarker.png), auto',
+				'url(' + path + 'img/chalk.png), auto' ];
 			draw = [ drawWithPen , drawWithChalk ];
 			color = [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)'  ];
 	}
@@ -134,7 +136,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		container.classList.add( 'overlay' );
 		container.setAttribute( 'data-prevent-swipe', '' );
 		container.oncontextmenu = function() { return false; } 
-		container.style.cursor = 'url("' + pen[ id ] + '"), auto';
+		container.style.cursor = pen[ id ];
 
 		drawingCanvas[id].width = window.innerWidth;
 		drawingCanvas[id].height = window.innerHeight;
@@ -175,7 +177,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		canvas.width = drawingCanvas[id].width;
 		canvas.height = drawingCanvas[id].height;
 		canvas.setAttribute( 'data-chalkboard', id );
-		canvas.style.cursor = 'url("' + pen[ id ] + '"), auto';
+		canvas.style.cursor = pen[ id ];
 		container.appendChild( canvas );
 		drawingCanvas[id].canvas = canvas;
 
@@ -790,7 +792,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	} );
 
 	document.addEventListener( 'mouseup', function( evt ) {
-		drawingCanvas[mode].canvas.style.cursor = 'url("' + pen[mode] + '"), auto';
+		drawingCanvas[mode].canvas.style.cursor = pen[mode];
 		if ( event ) {
 			if(evt.button == 2){
 			}
@@ -847,10 +849,10 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	
 			}
 			else {
-				drawingCanvas[0].container.style.cursor = 'url("' + pen[0] + '"), auto';;
-				drawingCanvas[1].container.style.cursor = 'url("' + pen[1] + '"), auto';;
-				drawingCanvas[0].canvas.style.cursor = 'url("' + pen[0] + '"), auto';;
-				drawingCanvas[1].canvas.style.cursor = 'url("' + pen[1] + '"), auto';;
+				drawingCanvas[0].container.style.cursor = pen[0];
+				drawingCanvas[1].container.style.cursor = pen[1];
+				drawingCanvas[0].canvas.style.cursor = pen[0];
+				drawingCanvas[1].canvas.style.cursor = pen[1];
 			}
 		}
 	}
