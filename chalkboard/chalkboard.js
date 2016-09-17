@@ -372,41 +372,14 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 							}
 							break;
 						case "clear":
-							var newSlide = document.createElement( 'section' );
-							newSlide.classList.add( 'present' );
-							newSlide.innerHTML = '<h1 style="visibility:hidden">Drawing</h1>';
-							newSlide.setAttribute("data-background", 'url("' + imgCanvas.toDataURL("image/png") +'")' );
-							slide.parentElement.insertBefore( newSlide, nextSlide[i] );
-
-							var imgCanvas = document.createElement('canvas');
-							imgCanvas.width = width;
-							imgCanvas.height = height;
-							var imgCtx = imgCanvas.getContext("2d");
-							imgCtx.fillStyle = imgCtx.createPattern( patImg ,'repeat');
-							imgCtx.rect(0,0,imgCanvas.width,imgCanvas.height);
-							imgCtx.fill();
+							addPrintout( nextSlide[i], imgCanvas, patImg );
 							break;
 						default:
 							break;
 					}
 				}
 				if ( slideData.events.length ) {
-					var slideCanvas = document.createElement('canvas');
-					slideCanvas.width = width;
-					slideCanvas.height = height;	
-					var ctx = slideCanvas.getContext("2d");
-					ctx.fillStyle = imgCtx.createPattern( patImg ,'repeat');
-					ctx.rect(0,0,slideCanvas.width,slideCanvas.height);
-					ctx.fill();
-					ctx.drawImage(imgCanvas, 0, 0);
-
-					var newSlide = document.createElement( 'section' );
-					newSlide.classList.add( 'future' );
-					newSlide.innerHTML = '<h1 style="visibility:hidden">Drawing</h1>';
-					newSlide.setAttribute("data-background-size", '100% 100%' );
-					newSlide.setAttribute("data-background-repeat", 'norepeat' );
-					newSlide.setAttribute("data-background", 'url("' + slideCanvas.toDataURL("image/png") +'")' );
-					nextSlide[i].parentElement.insertBefore( newSlide, nextSlide[i] );
+					addPrintout( nextSlide[i], imgCanvas, patImg );
 				}
 			} 
 			Reveal.sync();
@@ -414,7 +387,24 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		patImg.src = background[1];
 	}
 
+	function addPrintout( nextSlide, imgCanvas, patImg ) {
+		var slideCanvas = document.createElement('canvas');
+		slideCanvas.width = Reveal.getConfig().width;
+		slideCanvas.height = Reveal.getConfig().height;	
+		var ctx = slideCanvas.getContext("2d");
+		ctx.fillStyle = ctx.createPattern( patImg ,'repeat');
+		ctx.rect(0,0,slideCanvas.width,slideCanvas.height);
+		ctx.fill();
+		ctx.drawImage(imgCanvas, 0, 0);
 
+		var newSlide = document.createElement( 'section' );
+		newSlide.classList.add( 'present' );
+		newSlide.innerHTML = '<h1 style="visibility:hidden">Drawing</h1>';
+		newSlide.setAttribute("data-background-size", '100% 100%' );
+		newSlide.setAttribute("data-background-repeat", 'norepeat' );
+		newSlide.setAttribute("data-background", 'url("' + slideCanvas.toDataURL("image/png") +'")' );
+		nextSlide.parentElement.insertBefore( newSlide, nextSlide );
+	}
 
 /*****************************************************************
 ** Drawings
