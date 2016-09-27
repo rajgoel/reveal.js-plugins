@@ -375,6 +375,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 							break;
 						case "clear":
 							addPrintout( nextSlide[i], imgCanvas, patImg );
+							imgCtx.clearRect(0,0,imgCanvas.width,imgCanvas.height);
+							imgCtx.fill();
 							break;
 						default:
 							break;
