@@ -82,7 +82,6 @@ var Recorder = {
 			Recorder.audioStream = stream;
 			Recorder.recordRTC = window.RecordRTC( stream, { type: 'audio' }, { bufferSize: 256 } );
 			Recorder.recordRTC.startRecording();
-
 			// Draw red circle over auto slide control
 			var context = Recorder.canvas.getContext( '2d' );
 			context.beginPath();
@@ -92,6 +91,8 @@ var Recorder = {
 			context.fill();
 			context.strokeStyle = '#f00';
 			context.stroke();
+			// Let others know recording has started
+			document.dispatchEvent( new CustomEvent('startrecording') );
 		}, function( error ) {
 			alert( 'Something went wrong in accessing the microphone. (error code ' + error.code + ')' );
 		} );
@@ -109,6 +110,8 @@ var Recorder = {
 		context.fill();
 		context.strokeStyle = '#f00';
 		context.stroke();
+		// Let others know recording has started
+		document.dispatchEvent( new CustomEvent('startrecording') );
 	}
     },
 
@@ -142,7 +145,8 @@ var Recorder = {
 	// Remove red circle over auto slide control
 	var context = this.canvas.getContext( '2d' );
 	context.clearRect ( 0 , 0 , this.canvas.width , this.canvas.height );
-
+	// Let others know recording has stopped
+	document.dispatchEvent( new CustomEvent('stoprecording') );
     },
 
     next : function next() {
