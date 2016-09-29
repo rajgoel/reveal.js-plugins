@@ -524,6 +524,11 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		stopPlayback();				
 	});
 
+	document.addEventListener('startrecording', function( event ) {
+//console.log('event startrecording ' + event.timestamp);
+		startRecording();				
+	});
+
 	function recordEvent( event ) {
 		var slideData = getSlideData();
 		var i = slideData.events.length;
@@ -532,6 +537,12 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 		slideData.events.splice( i, 0, event);
 		slideData.duration = Math.max( slideData.duration, Date.now() - slideStart ) + 1;
+	}
+
+	function startRecording() {
+		resetSlide( true );
+		updateReadOnlyMode();
+		slideStart = Date.now();
 	}
 
 	function startPlayback( timestamp, finalMode, resized ) {
@@ -1000,6 +1011,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	function resetSlide( force ) {
 		var ok = force || confirm("Please confirm to delete chalkboard drawings on this slide!");
 		if ( ok ) {
+//console.log("resetSlide ");
 			stopPlayback();
 			slideStart = Date.now();			
 			event = null;
@@ -1045,6 +1057,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	this.drawWithChalk = drawWithChalk;
 	this.toggleNotesCanvas = toggleNotesCanvas;
 	this.toggleChalkboard = toggleChalkboard;
+	this.startRecording = startRecording;
 	this.clear = clear;
 	this.reset = resetSlide;
 	this.resetAll = resetStorage;
