@@ -1,6 +1,6 @@
 # Chart
 
-A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to easily add charts using [Chart.js v2.0](http://www.chartjs.org/). 
+A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to easily add charts using [Chart.js v2.3](http://www.chartjs.org/). 
 
 [Check out the live demo](http://courses.telematique.eu/reveal.js-plugins/chart-demo.html)
 
@@ -24,7 +24,7 @@ Reveal.initialize({
 ## Configuration
 
 The plugin has several parameters that you can set for your presentation by providing an ```chart``` option in the reveal.js initialization options. 
-Note that all configuration parameters are optional and the defaults of [Chart.js 2.0](http://nnnick.github.io/Chart.js/docs-v2/) will be used for parameters that are not specified.
+Note that all configuration parameters are optional and the defaults of [Chart.js 2.3](http://nnnick.github.io/Chart.js/docs-v2/) will be used for parameters that are not specified.
 
 
 ```javascript
