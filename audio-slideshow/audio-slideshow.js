@@ -28,6 +28,8 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 	var autoplay = false; // automatically start slideshow
 	var playerOpacity = .05; // opacity when the mouse is far from to the audioplayer
 	var startAtFragment = false; // when moving to a slide, start at the current fragment or at the start of the slide
+	var onlyIfLocalAudio = false; // only show audio player if local audio file exists
+	var externalPlayerCSS = false; // use external CSS for class 'audio-controls' to style audio player
 	// ------------------
 
 	var silence;
@@ -153,6 +155,8 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 			if ( config.advance ) advance = config.advance;
 			if ( config.autoplay ) autoplay = config.autoplay;
 			if ( config.playerOpacity ) playerOpacity = config.playerOpacity;
+			if ( config.onlyIfLocalAudio ) onlyIfLocalAudio = config.onlyIfLocalAudio;
+			if ( config.externalPlayerCSS ) externalPlayerCSS = config.externalPlayerCSS;
 		}
 
 		if ( 'ontouchstart' in window || navigator.msMaxTouchPoints ) {
@@ -175,7 +179,9 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 
 		var divElement =  document.createElement( 'div' );
 		divElement.className = "audio-controls";
-		divElement.setAttribute( 'style', "width: 50%; height:75px; position: fixed; left: 25%; bottom: 4px;z-index: 33;" );
+		if ( !externalPlayerCSS ) {
+			divElement.setAttribute( 'style', "width: 50%; height:75px; position: fixed; left: 25%; bottom: 4px;z-index: 33;" );
+		}
 		document.querySelector( ".reveal" ).appendChild( divElement );
 
 		// create audio players for all slides
@@ -426,8 +432,10 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 				audioElement.insertBefore(audioSource, audioElement.firstChild);
 				setupFallbackAudio( audioElement, text, videoElement );
 			}
-		}	
-		container.appendChild( audioElement );
+		}
+		if ( audioFile != null || !onlyIfLocalAudio ) {
+			container.appendChild( audioElement );
+		}
 	}
 
 
