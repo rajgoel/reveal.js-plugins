@@ -12,11 +12,11 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
-	<link rel="stylesheet" href="https://rajgoel.github.io/reveal.js/css/reveal.css">
-	<link rel="stylesheet" href="https://rajgoel.github.io/reveal.js/css/theme/black.css" id="theme">
+	<link rel="stylesheet" href="../reveal.js/css/reveal.css">
+	<link rel="stylesheet" href="../reveal.js/css/theme/black.css" id="theme">
 
 	<!-- Code syntax highlighting -->
-	<link rel="stylesheet" href="https://rajgoel.github.io/reveal.js/lib/css/zenburn.css">
+	<link rel="stylesheet" href="../reveal.js/lib/css/zenburn.css">
 	<!-- Font awesome -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
@@ -25,13 +25,13 @@
 			var link = document.createElement( 'link' );
 			link.rel = 'stylesheet';
 			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'https://rajgoel.github.io/reveal.js/css/print/pdf.css' : 'https://rajgoel.github.io/reveal.js/css/print/paper.css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '../reveal.js/css/print/pdf.css' : '../reveal.js/css/print/paper.css';
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 
 	</script>
 	<script async defer src="https://buttons.github.io/buttons.js"></script>
 	<!--[if lt IE 9]>
-	<script src="https://rajgoel.github.io/reveal.js/lib/js/html5shiv.js"></script>
+	<script src="../reveal.js/lib/js/html5shiv.js"></script>
 	<![endif]-->
 </head>
 
@@ -95,7 +95,7 @@
 		</div>
 	</div>
 
-	<script src="https://rajgoel.github.io/reveal.js/lib/js/head.min.js"></script>
+	<script src="../reveal.js/lib/js/head.min.js"></script>
 	<script src="../reveal.js/js/reveal.js"></script>
 
 	<script src="broadcast/RTCMultiConnection.js"></script>
@@ -177,9 +177,9 @@
 			transition: Reveal.getQueryHash().transition || 'default', // none/fade/slide/convex/concave/zoom
 				// Optional libraries used to extend on reveal.js
 			dependencies: [
-				{ src: 'https://rajgoel.github.io/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
-				{ src: 'https://rajgoel.github.io/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-				{ src: 'https://rajgoel.github.io/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+				{ src: '../reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+				{ src: '../reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+				{ src: '../reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 				{ src: 'broadcast/bCrypt.js'},
 				{ src: 'broadcast/broadcast.js'},
 				{ src: 'menu/menu.js'},
