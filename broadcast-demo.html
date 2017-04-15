@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Broadcasts with Reveal.js</title>
+
+	<meta name="description" content="A plugin for reveal.js">
+	<meta name="author" content="Asvin Goel">
+
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+	<link rel="stylesheet" href="https://rajgoel.github.io/reveal.js/css/reveal.css">
+	<link rel="stylesheet" href="https://rajgoel.github.io/reveal.js/css/theme/black.css" id="theme">
+
+	<!-- Code syntax highlighting -->
+	<link rel="stylesheet" href="https://rajgoel.github.io/reveal.js/lib/css/zenburn.css">
+	<!-- Font awesome -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<!--	<link rel="stylesheet" href="reveal.js-plugins/menu/font-awesome-4.3.0/css/font-awesome.min.css">  -->
+
+	<!-- Printing and PDF exports -->
+	<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'https://rajgoel.github.io/reveal.js/css/print/pdf.css' : 'https://rajgoel.github.io/reveal.js/css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+
+	</script>
+	<script async defer src="https://buttons.github.io/buttons.js"></script>
+	<!--[if lt IE 9]>
+	<script src="https://rajgoel.github.io/reveal.js/lib/js/html5shiv.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+	<div class="reveal">
+		<!-- Any section element inside of this container is displayed as a slide -->
+		<div class="slides">
+			<section>
+				<h1>Broadcasts with Reveal.js</h1>
+				<p>
+					<small>Created by <a href="http://www.telematique.eu" >Asvin Goel</a></small>
+				</p>
+			</section>
+			<section>
+			   <section>
+				<h2>Master</h2>
+				<div>The master is the initiator of a broadcast.</div>
+			   </section>
+			   <section>
+				<h3>Broadcast ID</h3>
+				<div>A broadcast id must be defined by the master.</div>
+				<div>Please enter or change the broadcast id below:</div>
+				<div><input type="text" id="broadcastid" style="font-size:70%;" onchange="updateURL();" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"></div>
+			   </section>
+			   <section>
+				<h3>Provide password</h3>
+				<div>A password is required to start a broadcast.</div>
+				<div> Please enter a password (or simply use the preset password) below:</div>
+				<div><input type="password" id="password" style="font-size:70%;" value="123456"></div>
+			   </section>
+			   <section>
+				<h3>Start broadcast</h3>
+				<div>Click <a href="#" onclick="RevealBroadcast.start( { id: document.getElementById('broadcastid').value, password: document.getElementById('password').value } ); return false;"><i class="fa fa-rss"></i></a> to start the broadcast with the given id.</div>
+			   </section>
+			</section>
+			<section>
+			   <section>
+				<h2>Client</h2>
+				<div>A client can join an existing broadcast.</div>
+			   </section>
+			   <section>
+				<h2>Broadcast ID</h2>
+				<div>
+					Each client must use the broadcast id of the master, e.g., for this presentation, the master may share below link to the client<br> 
+					<a id="broadcasturl"></a>
+				</div> 
+			   </section>
+			   <section>
+				<h2>Join broadcast</h2>
+				<div>Click <a href="#" onclick="RevealBroadcast.connect( { id: document.getElementById('broadcastid').value } ); return false;"><i class="fa fa-toggle-right"></i></a> to connect to the broadcast with id <span style="color:red" id="currentid"></span>.</div>
+			   </section>
+			</section>
+			<section>
+			<h2>The end</h2>
+
+				<p>Check out other plugins by clicking on &nbsp;<a href="#" onclick="RevealMenu.toggle(); return false;"><i class="fa fa-bars"></i></a>&nbsp; and then on "Plugins <i class="fa fa-external-link"></i>".</p>
+				<p>Have a look at the source code & documentation on <a href="https://github.com/rajgoel/reveal.js-plugins">Github</a>.</p>
+				<a aria-label="Download rajgoel/reveal.js-plugins on GitHub" data-style="mega" href="https://github.com/rajgoel/reveal.js-plugins/archive/master.zip" class="github-button">Download</a>
+				<a aria-label="Star rajgoel/reveal.js-plugins on GitHub" data-count-aria-label="# stargazers on GitHub" data-count-api="/repos/rajgoel/reveal.js-plugins#stargazers_count" data-count-href="/rajgoel/reveal.js-plugins/stargazers" data-style="mega" href="https://github.com/rajgoel/reveal.js-plugins" class="github-button">Star</a>					
+			</section>
+		</div>
+	</div>
+
+	<script src="https://rajgoel.github.io/reveal.js/lib/js/head.min.js"></script>
+	<script src="https://rajgoel.github.io/reveal.js/js/reveal.js"></script>
+
+	<script src="reveal.js-plugins/broadcast/RTCMultiConnection.js"></script>
+	<script src="reveal.js-plugins/broadcast/socket.io.js"></script>
+
+	<script>
+		// Manage presentation specific handling of broadcast id
+		// (optional)
+		function addParam(url, param, value) {
+			var a = document.createElement('a'), regex = /(?:\?|&amp;|&)+([^=]+)(?:=([^&]*))*/g;
+			var match, str = []; a.href = url; param = encodeURIComponent(param);
+			while (match = regex.exec(a.search))
+				if (param != match[1]) str.push(match[1]+(match[2]?"="+match[2]:""));
+			str.push(param+(value?"="+ encodeURIComponent(value):""));
+			a.search = str.join("&");
+			return a.href;
+		}
+
+		function updateURL() {
+			document.getElementById("broadcasturl").href = addParam(window.location.href, "broadcastid", document.getElementById('broadcastid').value );
+			document.getElementById("broadcasturl").innerHTML = addParam(window.location.href, "broadcastid", document.getElementById('broadcastid').value );
+			document.getElementById("currentid").innerHTML = document.getElementById('broadcastid').value;
+		}
+		
+		function getRandomString() {
+		    if (window.crypto && window.crypto.getRandomValues && navigator.userAgent.indexOf('Safari') === -1) {
+			var a = window.crypto.getRandomValues(new Uint32Array(3)),
+				token = '';
+			for (var i = 0, l = a.length; i < l; i++) {
+				token += a[i].toString(36);
+			}
+			return token;
+		    } else {
+			return (Math.random() * new Date().getTime()).toString(36).replace(/\./g, '');
+		    }
+		}
+		function getParameterByName(name, url) {
+		    if (!url) {
+		      url = window.location.href;
+		    }
+		    name = name.replace(/[\[\]]/g, "\\$&");
+		    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+		        results = regex.exec(url);
+		    if (!results) return null;
+		    if (!results[2]) return '';
+		    return decodeURIComponent(results[2].replace(/\+/g, " "));
+		}
+
+		document.getElementById("broadcastid").value = getParameterByName('broadcastid') || getRandomString();
+		updateURL();
+
+		// Full list of configuration options available here:
+		// https://github.com/hakimel/reveal.js#configuration
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			history: true,
+			center: true,
+			mouseWheel: true,
+			previewLinks: true,
+			broadcast: {
+				secret: '$2a$05$hhgakVn1DWBfgfSwMihABeYToIBEiQGJ.ONa.HWEiNGNI6mxFCy8S',
+				connection: {
+					socketURL: 'https://rtcmulticonnection.herokuapp.com:443/'
+				},
+			},
+			menu: { // Menu works best with font-awesome installed: sudo apt-get install fonts-font-awesome
+				themes: false,
+				transitions: false,
+				markers: true,
+				hideMissingTitles: true,
+					custom: [
+				{ title: 'Plugins', icon: '<i class="fa fa-external-link"></i>', src: 'toc.html' },
+				{ title: 'About', icon: '<i class="fa fa-info"></i>', src: 'about.html' }
+				    ]
+
+			},
+			theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+			transition: Reveal.getQueryHash().transition || 'default', // none/fade/slide/convex/concave/zoom
+				// Optional libraries used to extend on reveal.js
+			dependencies: [
+				{ src: 'https://rajgoel.github.io/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+				{ src: 'https://rajgoel.github.io/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+				{ src: 'https://rajgoel.github.io/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+				{ src: 'broadcast/bCrypt.js'},
+				{ src: 'broadcast/broadcast.js'},
+				{ src: 'menu/menu.js'},
+			],
+		});
+	</script>
+<a href="https://github.com/rajgoel/reveal.js-plugins"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png"></a>
+
+</body>
+</html>
