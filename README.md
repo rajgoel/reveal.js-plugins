@@ -24,7 +24,7 @@ You can download the plugins into the ```bower_components``` folder using
 
 ```bower install reveal.js-plugins```
 
-or manually copy this repository into the folder of your reveal.js presentation.
+or manually copy this repository next to the folder of your reveal.js presentation.
 
 Please note that the [menu](https://github.com/denehyg/reveal.js-menu)-plugin is a submodule and has to be downloaded separately.
 
