@@ -6,6 +6,7 @@ This collections includes the following plugins:
 
 - [Anything](https://github.com/rajgoel/reveal.js-plugins/tree/master/anything) ([Demo](http://courses.telematique.eu/reveal.js-plugins/anything-demo.html)): A plugin for adding plots, charts, animated SVGs,or anything else inside an HTML object using a JSON string and a javascript function.
 - [Audio slideshow](https://github.com/rajgoel/reveal.js-plugins/tree/master/audio-slideshow) ([Demo](http://courses.telematique.eu/reveal.js-plugins/audio-slideshow-demo.html)): A plugin for audio playback and recording.
+- [Broadcast](https://github.com/rajgoel/reveal.js-plugins/tree/master/broadcast) ([Demo](https://rajgoel.github.io/reveal.js-demos/broadcast-demo.html)): An extension of th emultiplex plugin allowin to broadcast audio and video.
 - [Chalkboard](https://github.com/rajgoel/reveal.js-plugins/tree/master/chalkboard) ([Demo](http://courses.telematique.eu/reveal.js-plugins/chalkboard-demo.html)):
  A plugin adding a chalkboard and slide annotation.
 - [Chart](https://github.com/rajgoel/reveal.js-plugins/tree/master/chart) ([Demo](http://courses.telematique.eu/reveal.js-plugins/chart-demo.html)):
