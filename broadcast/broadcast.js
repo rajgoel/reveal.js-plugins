@@ -193,11 +193,11 @@ var RevealBroadcast = window.RevealBroadcast || (function(){
 				alert('Broadcast already exists!');
 			}
 
-			function post() {
+			function post( e ) {
 				socket.emit(connection.socketCustomEvent, {
 					sender: connection.userid,
-					type: "reveal-state-changed",
-					state: Reveal.getState()
+					state: Reveal.getState(),
+					content: e.content || null
 				});
 			};
 		
@@ -209,7 +209,7 @@ var RevealBroadcast = window.RevealBroadcast || (function(){
 			Reveal.addEventListener( 'overviewshown', post );
 			Reveal.addEventListener( 'paused', post );
 			Reveal.addEventListener( 'resumed', post );
-
+			document.addEventListener( 'send', post ); // broadcast custom events sent by other plugins
 		});
 
             });
@@ -226,7 +226,6 @@ console.log( participantId + " joined");
 		// Send current state so that new participant will move to the same slide
 		connection.socket.emit(connection.socketCustomEvent, {
 			sender: connection.userid,
-			type: "reveal-state-changed",
 			state: Reveal.getState()
 		});
             };
@@ -243,6 +242,13 @@ console.log( participantId + " joined");
 				console.log("Received: " + JSON.stringify( message ) );
 				if ( message.state ) {
 					Reveal.setState(message.state);
+				}
+				if ( message.content ) {
+// console.log("Received: " + JSON.stringify(message.content));
+					// forward custom events to other plugins
+					var event = new CustomEvent('received');
+					event.content = message.content;
+					document.dispatchEvent( event );
 				}
 			});
 
@@ -465,13 +471,13 @@ console.log("Stream ended!");
 		var div = document.createElement("div")
 		div.className = 'broadcast-preview';
 		div.style.cssText = 'position:fixed;top:0;right:0;z-index:50;box-shadow:10px 10px 5px rgba(0,0,0,.3);';
-		var previewWidth = 0.33 * document.querySelector('.slides').getBoundingClientRect().width;
 		div.style.width = 0.33 * Reveal.getConfig().width *  Reveal.getScale()  + "px";
-		div.innerHTML = '<video id="broadcast-mediaplayer" style="width:100%;height:100%" ></video>'
+		div.style.height = 0.75 * 0.33 * Reveal.getConfig().width *  Reveal.getScale()  + "px";
+		div.innerHTML = '<img src="' + path + "nosignal.gif" + '" style="width:100%;height:100%;position:absolute;z-index:-1"></img>' 
+				+ '<video id="broadcast-mediaplayer" style="width:100%;height:100%;"></video>';
 		var reveal = document.querySelector('.reveal');
 		reveal.parentNode.insertBefore( div, reveal );
 		mediaPlayer = document.getElementById('broadcast-mediaplayer');
-		mediaPlayer.poster= path + "nosignal.gif"
 		var preview = document.querySelector('.broadcast-preview');
 
 		if ( preview ) {
