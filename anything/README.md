@@ -4,7 +4,7 @@ A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to add a
 The plugin allows you to define a class for which the content of all HTML object of this class will be modified by a given javascript function. 
 Inside the HTML object you can provide a comment containing a JSON string that will be used by function to customise the content.   
 
-[Check out the live demo](http://courses.telematique.eu/reveal.js-plugins/anything-demo.html)
+[Check out the live demo](https://rajgoel.github.io/reveal.js-demos/anything-demo.html)
 
 ## Installation
 
