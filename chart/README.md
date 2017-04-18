@@ -2,7 +2,7 @@
 
 A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to easily add charts using [Chart.js v2.3](http://www.chartjs.org/). 
 
-[Check out the live demo](http://courses.telematique.eu/reveal.js-plugins/chart-demo.html)
+[Check out the live demo](https://rajgoel.github.io/reveal.js-demos/chart-demo.html)
 
 ## Installation
 
