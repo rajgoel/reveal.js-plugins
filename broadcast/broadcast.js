@@ -228,6 +228,11 @@ console.log( participantId + " joined");
 			sender: connection.userid,
 			state: Reveal.getState()
 		});
+		// inform other plugins
+		var event = new CustomEvent('newclient');
+		event.content = { id: participantId, preferences: userPreferences };
+		document.dispatchEvent( event );
+
             };
 
 	};
@@ -501,6 +506,7 @@ console.log("Stream ended!");
 			// resize preview 
 			var preview = document.querySelector('.broadcast-preview');
 			preview.style.width = 0.33 * Reveal.getConfig().width *  Reveal.getScale() + "px";
+			preview.style.height = 0.75 * 0.33 * Reveal.getConfig().width *  Reveal.getScale() + "px";
 			var rect = preview.getBoundingClientRect();
 			// maintain preview orientation
 			var presentation = document.querySelector('.reveal').getBoundingClientRect();
