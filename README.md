@@ -16,7 +16,7 @@ This collections includes the following plugins:
 - [MathSVG](https://github.com/rajgoel/reveal.js-plugins/tree/master/mathsvg):
  An extension of the [math.js](https://github.com/hakimel/reveal.js/#mathjax) plugin allowing to render LaTeX expressions in SVG.
 - [Menu](https://github.com/denehyg/reveal.js-menu) ([Demo](https://denehyg.github.io/reveal.js-menu)): A plugin by Greg Denehy for adding a slideout menu.
-- [Spreadsheet](https://github.com/rajgoel/reveal.js-plugins/tree/master/spreadsheet) ([Demo]https://rajgoel.github.io/reveal.js-demos/spreadsheet-demo.html)):
+- [Spreadsheet](https://github.com/rajgoel/reveal.js-plugins/tree/master/spreadsheet) ([Demo](https://rajgoel.github.io/reveal.js-demos/spreadsheet-demo.html)):
  A plugin for adding Excel-like spreadsheets with formulas.
 
 ## Download
