@@ -4,19 +4,19 @@ This is a collection of plugins for [Reveal.js](https://github.com/hakimel/revea
 
 This collections includes the following plugins:
 
-- [Anything](https://github.com/rajgoel/reveal.js-plugins/tree/master/anything) ([Demo](https://github.com/rajgoel/reveal.js-plugins/anything-demo.html)): A plugin for adding plots, charts, animated SVGs,or anything else inside an HTML object using a JSON string and a javascript function.
+- [Anything](https://github.com/rajgoel/reveal.js-plugins/tree/master/anything) ([Demo](https://github.com/rajgoel/reveal.js-demos/anything-demo.html)): A plugin for adding plots, charts, animated SVGs,or anything else inside an HTML object using a JSON string and a javascript function.
 - [Audio slideshow](https://github.com/rajgoel/reveal.js-plugins/tree/master/audio-slideshow) ([Demo](https://rajgoel.github.io/reveal.js-demos/audio-slideshow-demo.html)): A plugin for audio playback and recording.
 - [Broadcast](https://github.com/rajgoel/reveal.js-plugins/tree/master/broadcast) ([Demo](https://rajgoel.github.io/reveal.js-demos/broadcast-demo.html)): An extension of the multiplex plugin allowing to broadcast audio and video.
-- [Chalkboard](https://github.com/rajgoel/reveal.js-plugins/tree/master/chalkboard) ([Demo](https://github.com/rajgoel/reveal.js-plugins/chalkboard-demo.html)):
+- [Chalkboard](https://github.com/rajgoel/reveal.js-plugins/tree/master/chalkboard) ([Demo](https://github.com/rajgoel/reveal.js-demos/chalkboard-demo.html)):
  A plugin adding a chalkboard and slide annotation.
-- [Chart](https://github.com/rajgoel/reveal.js-plugins/tree/master/chart) ([Demo](https://github.com/rajgoel/reveal.js-plugins/chart-demo.html)):
+- [Chart](https://github.com/rajgoel/reveal.js-plugins/tree/master/chart) ([Demo](https://github.com/rajgoel/reveal.js-demos/chart-demo.html)):
  A plugin for using Chart.js v2.0. 
-- [Fullscreen](https://github.com/rajgoel/reveal.js-plugins/tree/master/fullscreen) ([Demo](https://github.com/rajgoel/reveal.js-plugins/fullscreen-demo.html)):
+- [Fullscreen](https://github.com/rajgoel/reveal.js-plugins/tree/master/fullscreen) ([Demo](https://github.com/rajgoel/reveal.js-demos/fullscreen-demo.html)):
  A simple plugin allowing to use fullscreen slides.
 - [MathSVG](https://github.com/rajgoel/reveal.js-plugins/tree/master/mathsvg):
  An extension of the [math.js](https://github.com/hakimel/reveal.js/#mathjax) plugin allowing to render LaTeX expressions in SVG.
 - [Menu](https://github.com/denehyg/reveal.js-menu) ([Demo](https://denehyg.github.io/reveal.js-menu)): A plugin by Greg Denehy for adding a slideout menu.
-- [Spreadsheet](https://github.com/rajgoel/reveal.js-plugins/tree/master/spreadsheet) ([Demo](https://github.com/rajgoel/reveal.js-plugins/spreadsheet-demo.html)):
+- [Spreadsheet](https://github.com/rajgoel/reveal.js-plugins/tree/master/spreadsheet) ([Demo](https://github.com/rajgoel/reveal.js-demos/spreadsheet-demo.html)):
  A plugin for adding Excel-like spreadsheets with formulas.
 
 ## Download
