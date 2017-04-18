@@ -138,6 +138,22 @@ var RevealChart = window.RevealChart || (function(){
 		}
 	}
 
+	function redrawChart( chart ){
+		chart.options.animations = false;
+		var data = [];
+		for (var i = 0; i < chart.data.datasets.length; i++) {
+			data.push( chart.data.datasets[i].data );
+			chart.data.datasets[i].data = [];
+		}
+		chart.update();
+
+		chart.options.animations = true;
+		for (var i = 0; i < chart.data.datasets.length; i++) {
+			chart.data.datasets[i].data = data[i];
+		}
+		setTimeout( function() { chart.update() }, 500); // wait for slide transition 
+	}
+
 	// check if chart option is given or not
 	var chartConfig = Reveal.getConfig().chart || {};
 
@@ -153,8 +169,8 @@ var RevealChart = window.RevealChart || (function(){
 			var canvases = Reveal.getCurrentSlide().querySelectorAll("canvas[data-chart]");
 			for (var i = 0; i < canvases.length; i++ ){
 				if ( canvases[i].chart ){
-					// bug redraw canvas - animation doesn't work here
-					canvases[i].chart.render();
+					// rendering not as it should be
+					// redrawChart( canvases[i].chart );
 				}
 			}
 		
