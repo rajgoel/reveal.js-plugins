@@ -528,7 +528,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 					}
 					break;
 				case 'drawSegment':
-					drawSegment(message.content.x, message.content.y);
+					drawSegment(message.content.x, message.content.y, message.content.erase);
 					break;
 				case 'stopDrawing':
 					stopDrawing();
