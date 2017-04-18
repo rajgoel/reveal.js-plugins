@@ -2,7 +2,7 @@
 
 A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to add spreadsheets using [RuleJS](https://github.com/handsontable/RuleJS). 
 
-[Check out the live demo](http://courses.telematique.eu/reveal.js-plugins/spreadsheet-demo.html)
+[Check out the live demo](https://rajgoel.github.io/reveal.js-demos/spreadsheet-demo.html)
 
 ## Installation
 
