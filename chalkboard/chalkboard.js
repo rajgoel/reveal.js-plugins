@@ -517,14 +517,21 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 				case 'closeChalkboard':
 					closeChalkboard();
 					break;
-				case 'mouseDown':
-					mouseDown(message.content.x, message.content.y, message.content.erase);
+				case 'startDrawing':
+					startDrawing(message.content.x, message.content.y, message.content.erase);
 					break;
-				case 'mouseMove':
-					mouseMove(message.content.x, message.content.y);
+				case 'startErasing':
+					if ( event ) {
+						event.type = "erase";
+						event.begin = Date.now() - slideStart;
+						erase(drawingCanvas[mode].context, message.content.x, message.content.y);
+					}
 					break;
-				case 'mouseUp':
-					mouseUp();
+				case 'drawSegment':
+					drawSegment(message.content.x, message.content.y);
+					break;
+				case 'stopDrawing':
+					stopDrawing();
 					break;
 				case 'init':
 					storage = message.content.storage;
@@ -740,119 +747,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 	};
 
-/*****************************************************************
-** User interface
-******************************************************************/
 
-
-// TODO: check all touchevents
-	document.addEventListener('touchstart', function(evt) {
-		if ( !readOnly && evt.target.getAttribute('data-chalkboard') == mode ) {
-			var ctx = drawingCanvas[mode].context;
-			var scale = drawingCanvas[mode].scale;
-			var xOffset = drawingCanvas[mode].xOffset;
-			var yOffset = drawingCanvas[mode].yOffset;
-
-			evt.preventDefault();
-		        var touch = evt.touches[0];
-		        mouseX = touch.pageX;
-		        mouseY = touch.pageY;
-			xLast = mouseX;
-			yLast = mouseY;
-			event = { type: "draw", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}] };
-			touchTimeout = setTimeout( showSponge, 500, mouseX, mouseY );
-		}	
-	}, false);
-
-	document.addEventListener('touchmove', function(evt) {
-		clearTimeout( touchTimeout );
-		touchTimeout = null;
-		if ( event ) {
-			var ctx = drawingCanvas[mode].context;
-			var scale = drawingCanvas[mode].scale;
-			var xOffset = drawingCanvas[mode].xOffset;
-			var yOffset = drawingCanvas[mode].yOffset;
-
-		        var touch = evt.touches[0];
-        		mouseX = touch.pageX;
-        		mouseY = touch.pageY;
-        		if (mouseY < drawingCanvas[mode].height && mouseX < drawingCanvas[mode].width) {
-        		    evt.preventDefault();
-				event.curve.push({x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale});
-				if ( event.type == "erase" ) {
-					drawingCanvas[mode].sponge.style.left = (mouseX - eraserDiameter) +"px" ; 
-					drawingCanvas[mode].sponge.style.top = (mouseY - eraserDiameter) +"px" ; 
-			                erase(ctx, mouseX, mouseY);
-				}
-				else {
-			                draw[mode](ctx, xLast, yLast, mouseX, mouseY);
-				}
-				xLast = mouseX;
-				yLast = mouseY;
-			}
-		}
-	}, false);
-
-	document.addEventListener('touchend', function(evt) {
-		clearTimeout( touchTimeout );
-		touchTimeout = null;
-		// hide sponge image
-		drawingCanvas[mode].sponge.style.visibility = "hidden"; 
-		if ( event ) {
-			event.end = Date.now() - slideStart;
-			if ( event.type == "erase" || event.curve.length > 1 ) {
-				// do not save a line with a single point only
-				recordEvent( event );
-			}
-			event = null;
-		}
-	}, false);
-
-	function showSponge(x,y) {
-		if ( event ) {
-			event.type = "erase";
-			event.begin = Date.now() - slideStart;
-			// show sponge image 
-			drawingCanvas[mode].sponge.style.left = (x - eraserDiameter) +"px" ;
-			drawingCanvas[mode].sponge.style.top = (y - eraserDiameter) +"px" ;
-			drawingCanvas[mode].sponge.style.visibility = "visible";
-			erase(drawingCanvas[mode].context,x,y);
-		}
-	}
-
-	document.addEventListener( 'mousedown', function( evt ) {
-//console.log( "Read only: " + readOnly );
-		if ( !readOnly && evt.target.getAttribute('data-chalkboard') == mode ) {
-//console.log( "mousedown: " + evt.target.getAttribute('data-chalkboard') );
-			var ctx = drawingCanvas[mode].context;
-			var scale = drawingCanvas[mode].scale;
-			var xOffset = drawingCanvas[mode].xOffset;
-			var yOffset = drawingCanvas[mode].yOffset;
-
-			mouseX = evt.pageX;
-			mouseY = evt.pageY;
-			mouseDown( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, ( evt.button == 2) );
-		// broadcast
-		var message = new CustomEvent('send');
-		message.content = { sender: 'chalkboard-plugin', type: 'mouseDown', x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( evt.button == 2) };
-		document.dispatchEvent( message );
-
-/*
-			xLast = mouseX;
-			yLast = mouseY;
-			if ( evt.button == 2) {
-				event = { type: "erase", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}]};
-				drawingCanvas[mode].canvas.style.cursor = 'url("' + path + 'img/sponge.png") ' + eraserDiameter + ' ' + eraserDiameter + ', auto';
-				erase(ctx,mouseX,mouseY);
-			}
-			else {
-				event = { type: "draw", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}] };
-			}		
-*/
-		}
-	} );
-
-	function mouseDown( x, y, erase ) {
+	function startDrawing( x, y, erase ) {
 			var scale = drawingCanvas[mode].scale;
 			var xOffset = drawingCanvas[mode].xOffset;
 			var yOffset = drawingCanvas[mode].yOffset;
@@ -868,20 +764,198 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			}		
 	}
 
-	document.addEventListener( 'mousemove', function( evt ) {
+
+	function showSponge(x,y) {
 		if ( event ) {
-			var ctx = drawingCanvas[mode].context;
+			event.type = "erase";
+			event.begin = Date.now() - slideStart;
+			// show sponge image 
+			drawingCanvas[mode].sponge.style.left = (x - eraserDiameter) +"px" ;
+			drawingCanvas[mode].sponge.style.top = (y - eraserDiameter) +"px" ;
+			drawingCanvas[mode].sponge.style.visibility = "visible";
+			erase(drawingCanvas[mode].context,x,y);
+			// broadcast
+			var message = new CustomEvent('send');
+			message.content = { sender: 'chalkboard-plugin', type: 'startErasing', x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale };
+			document.dispatchEvent( message );
+		}
+	}
+
+	function drawSegment( x, y ) {
+		var ctx = drawingCanvas[mode].context;
+		var scale = drawingCanvas[mode].scale;
+		var xOffset = drawingCanvas[mode].xOffset;
+		var yOffset = drawingCanvas[mode].yOffset;
+		event.curve.push({x: x, y: y});
+		if(y * scale + yOffset < drawingCanvas[mode].height && x * scale + xOffset < drawingCanvas[mode].width) {
+			if ( event.type == "erase" ) {
+				erase(ctx,x * scale + xOffset, y * scale + yOffset);
+			}
+			else {
+				draw[mode](ctx, xLast, yLast, x * scale + xOffset, y * scale + yOffset);
+			}
+			xLast = x * scale + xOffset;
+			yLast = y * scale + yOffset;
+		}
+	}
+
+	function stopDrawing() {
+		if ( event ) {
+			event.end = Date.now() - slideStart;
+			if ( event.type == "erase" || event.curve.length > 1 ) {
+				// do not save a line with a single point only
+				recordEvent( event );
+			}
+			event = null;
+		}
+	}
+
+
+/*****************************************************************
+** User interface
+******************************************************************/
+
+
+// TODO: check all touchevents
+	document.addEventListener('touchstart', function(evt) {
+		if ( !readOnly && evt.target.getAttribute('data-chalkboard') == mode ) {
+//			var ctx = drawingCanvas[mode].context;
+			var scale = drawingCanvas[mode].scale;
+			var xOffset = drawingCanvas[mode].xOffset;
+			var yOffset = drawingCanvas[mode].yOffset;
+
+			evt.preventDefault();
+		        var touch = evt.touches[0];
+		        mouseX = touch.pageX;
+		        mouseY = touch.pageY;
+			startDrawing( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, false );
+			// broadcast
+			var message = new CustomEvent('send');
+			message.content = { sender: 'chalkboard-plugin', type: 'startDrawing', x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: false };
+			document.dispatchEvent( message );
+/*
+			xLast = mouseX;
+			yLast = mouseY;
+			event = { type: "draw", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}] };
+*/
+			touchTimeout = setTimeout( showSponge, 500, mouseX, mouseY );
+		}	
+	}, false);
+
+	document.addEventListener('touchmove', function(evt) {
+		clearTimeout( touchTimeout );
+		touchTimeout = null;
+		if ( event ) {
+//			var ctx = drawingCanvas[mode].context;
+			var scale = drawingCanvas[mode].scale;
+			var xOffset = drawingCanvas[mode].xOffset;
+			var yOffset = drawingCanvas[mode].yOffset;
+
+		        var touch = evt.touches[0];
+        		mouseX = touch.pageX;
+        		mouseY = touch.pageY;
+        		if (mouseY < drawingCanvas[mode].height && mouseX < drawingCanvas[mode].width) {
+        		    	evt.preventDefault();
+				// move sponge
+				if ( event.type == "erase" ) {
+					drawingCanvas[mode].sponge.style.left = (mouseX - eraserDiameter) +"px" ; 
+					drawingCanvas[mode].sponge.style.top = (mouseY - eraserDiameter) +"px" ; 
+				}
+			}
+
+			drawSegment( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale );
+			// broadcast
+			var message = new CustomEvent('send');
+			message.content = { sender: 'chalkboard-plugin', type: 'drawSegment', x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale };
+			document.dispatchEvent( message );
+/*
+        		if (mouseY < drawingCanvas[mode].height && mouseX < drawingCanvas[mode].width) {
+        		    	evt.preventDefault();
+				event.curve.push({x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale});
+				if ( event.type == "erase" ) {
+					drawingCanvas[mode].sponge.style.left = (mouseX - eraserDiameter) +"px" ; 
+					drawingCanvas[mode].sponge.style.top = (mouseY - eraserDiameter) +"px" ; 
+			                erase(ctx, mouseX, mouseY);
+				}
+				else {
+			                draw[mode](ctx, xLast, yLast, mouseX, mouseY);
+				}
+				xLast = mouseX;
+				yLast = mouseY;
+			}
+*/
+		}
+	}, false);
+
+
+	document.addEventListener('touchend', function(evt) {
+		clearTimeout( touchTimeout );
+		touchTimeout = null;
+		// hide sponge image
+		drawingCanvas[mode].sponge.style.visibility = "hidden"; 
+		stopDrawing();
+		// broadcast
+		var message = new CustomEvent('send');
+		message.content = { sender: 'chalkboard-plugin', type: 'stopDrawing' };
+		document.dispatchEvent( message );
+/*
+		if ( event ) {
+			event.end = Date.now() - slideStart;
+			if ( event.type == "erase" || event.curve.length > 1 ) {
+				// do not save a line with a single point only
+				recordEvent( event );
+			}
+			event = null;
+		}
+*/
+	}, false);
+
+	document.addEventListener( 'mousedown', function( evt ) {
+//console.log( "Read only: " + readOnly );
+		if ( !readOnly && evt.target.getAttribute('data-chalkboard') == mode ) {
+//console.log( "mousedown: " + evt.target.getAttribute('data-chalkboard') );
+//			var ctx = drawingCanvas[mode].context;
 			var scale = drawingCanvas[mode].scale;
 			var xOffset = drawingCanvas[mode].xOffset;
 			var yOffset = drawingCanvas[mode].yOffset;
 
 			mouseX = evt.pageX;
 			mouseY = evt.pageY;
-			mouseMove( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale );
-		// broadcast
-		var message = new CustomEvent('send');
-		message.content = { sender: 'chalkboard-plugin', type: 'mouseMove', x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale };
-		document.dispatchEvent( message );
+			startDrawing( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, ( evt.button == 2) );
+			// broadcast
+			var message = new CustomEvent('send');
+			message.content = { sender: 'chalkboard-plugin', type: 'startDrawing', x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( evt.button == 2) };
+			document.dispatchEvent( message );
+/*
+			xLast = mouseX;
+			yLast = mouseY;
+			if ( evt.button == 2) {
+				event = { type: "erase", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}]};
+				drawingCanvas[mode].canvas.style.cursor = 'url("' + path + 'img/sponge.png") ' + eraserDiameter + ' ' + eraserDiameter + ', auto';
+				erase(ctx,mouseX,mouseY);
+			}
+			else {
+				event = { type: "draw", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}] };
+			}		
+*/
+		}
+	} );
+
+
+	document.addEventListener( 'mousemove', function( evt ) {
+		if ( event ) {
+//			var ctx = drawingCanvas[mode].context;
+			var scale = drawingCanvas[mode].scale;
+			var xOffset = drawingCanvas[mode].xOffset;
+			var yOffset = drawingCanvas[mode].yOffset;
+
+			mouseX = evt.pageX;
+			mouseY = evt.pageY;
+			drawSegment( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale );
+			// broadcast
+			var message = new CustomEvent('send');
+			message.content = { sender: 'chalkboard-plugin', type: 'drawSegment', x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale };
+			document.dispatchEvent( message );
 /*
 			event.curve.push({x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale});
 			if(mouseY < drawingCanvas[mode].height && mouseX < drawingCanvas[mode].width) {
@@ -898,32 +972,15 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 	} );
 
-	function mouseMove( x, y ) {
-			var ctx = drawingCanvas[mode].context;
-			var scale = drawingCanvas[mode].scale;
-			var xOffset = drawingCanvas[mode].xOffset;
-			var yOffset = drawingCanvas[mode].yOffset;
-			event.curve.push({x: x, y: y});
-			if(y * scale + yOffset < drawingCanvas[mode].height && x * scale + xOffset < drawingCanvas[mode].width) {
-				if ( event.type == "erase" ) {
-					erase(ctx,x * scale + xOffset, y * scale + yOffset);
-				}
-				else {
-					draw[mode](ctx, xLast, yLast, x * scale + xOffset, y * scale + yOffset);
-				}
-				xLast = x * scale + xOffset;
-				yLast = y * scale + yOffset;
-			}
-	}
 	
 	document.addEventListener( 'mouseup', function( evt ) {
 		drawingCanvas[mode].canvas.style.cursor = pen[mode];
 		if ( event ) {
-			mouseUp();
-		// broadcast
-		var message = new CustomEvent('send');
-		message.content = { sender: 'chalkboard-plugin', type: 'mouseUp' };
-		document.dispatchEvent( message );
+			stopDrawing();
+			// broadcast
+			var message = new CustomEvent('send');
+			message.content = { sender: 'chalkboard-plugin', type: 'stopDrawing' };
+			document.dispatchEvent( message );
 /*			if(evt.button == 2){
 			}
 			event.end = Date.now() - slideStart;
@@ -936,14 +993,6 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 	} );
 
-	function mouseUp() {
-			event.end = Date.now() - slideStart;
-			if ( event.type == "erase" || event.curve.length > 1 ) {
-				// do not save a line with a single point only
-				recordEvent( event );
-			}
-			event = null;
-	}
 
 	window.addEventListener( "resize", function() {
 //console.log("resize");
