@@ -244,12 +244,11 @@ console.log( participantId + " joined");
 		connection.connectSocket(function(socket) {
 			// Receive custom event
 			socket.on(connection.socketCustomEvent, function(message) {
-				console.log("Received: " + JSON.stringify( message ) );
+console.log("Received: " + JSON.stringify( message ) );
 				if ( message.state ) {
 					Reveal.setState(message.state);
 				}
 				if ( message.content ) {
-// console.log("Received: " + JSON.stringify(message.content));
 					// forward custom events to other plugins
 					var event = new CustomEvent('received');
 					event.content = message.content;
