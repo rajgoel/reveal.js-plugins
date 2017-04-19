@@ -51,7 +51,7 @@ To start a broadcast you can include a button in the slideshow which calls the f
 <input type="password" id="password" value="">
 <a href="#" onclick="RevealBroadcast.start( { id: document.getElementById('broadcastid').value, password: document.getElementById('password').value } ); return false;">Start broadcast</a>
 ```
-After clicking the ```Start broadcast``` button a draggable overlay for the video is shown. Initially, the video shows a snowy image. After connecting to the server and after the user has allowed acces to camera and microphone, the video captured by the camera is shown.
+After clicking the ```Start broadcast``` button, a draggable overlay for the video is shown. Initially, the video shows a snowy image. After connecting to the server and after the user has allowed acces to camera and microphone, the video captured by the camera is shown.
 
 ## Join broadcast
 
@@ -61,7 +61,7 @@ To join a broadcast you can include a button in the slideshow which calls the fu
 <input type="text" id="broadcastid" value="">
 <a href="#" onclick="RevealBroadcast.connect( { id: document.getElementById('broadcastid').value } ); return false;">Join broadcast</a>
 ```
-After clicking the ```Join broadcast``` button a draggable overlay for the video is shown. Initially, the video shows a snowy image. After connecting to the server, the client receives audio and video of the master and the slides are updated whith every update by the master.
+After clicking the ```Join broadcast``` button, a draggable overlay for the video is shown. Initially, the video shows a snowy image. After connecting to the server, the client receives audio and video of the master and the slides are updated whith every update by the master.
 
 ## Custom events
 
@@ -88,11 +88,11 @@ document.addEventListener( 'received', function ( message ) {
   }
 });
 ```
-Whenever a new client joins the broadcast the broadcast plugins sends a ```newclient``` event. You can react to the event by broadcasting initialisation information to all clients
+Whenever a new client joins the broadcast the broadcast plugins sends a ```newclient``` event. You can react to the event, e.g., by broadcasting initialisation information to all clients.
 
 ```javascript
 document.addEventListener( 'newclient', function() {
-  // New client has joined. Thus, broadcast initialisation info. 
+  // (re-)send initialisation info as new client has joined
   var message = new CustomEvent('send');
   message.content = { 
     sender: 'someplugin', 
