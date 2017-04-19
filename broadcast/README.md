@@ -104,8 +104,6 @@ document.addEventListener( 'newclient', function() {
 ```
 In the [demo](https://rajgoel.github.io/reveal.js-demos/broadcast-demo.html) all drawings created with the ```chalkboard.js``` plugin are broadcasted to the clients. Checkout the source code of ```chalkboard.js``` plugin for an example of the implementation.
 
-## Credits
-
 ## License
 
 MIT licensed
