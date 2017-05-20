@@ -424,7 +424,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
   		context.stroke();
 	}
 
-	function drawWithChalk(context,fromX,fromY,toX,toY){
+	function drawWithChalk(context,fromX,fromY,toX,toY) {
 		var brushDiameter = 7;
 		context.lineWidth = brushDiameter;
 		context.lineCap = 'round';
@@ -448,15 +448,16 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	    		context.clearRect( xRandom, yRandom, Math.random()*2+2, Math.random()+1);
 		}
 	}
-	function erase(context,x,y){
+
+	function eraseWithSponge(context,x,y) {
 		context.save();
 		context.beginPath();
 		context.arc(x, y, eraserDiameter, 0, 2 * Math.PI, false);
 		context.clip();
 		context.clearRect(x - eraserDiameter - 1, y - eraserDiameter - 1, eraserDiameter * 2 + 2, eraserDiameter * 2 + 2);
 		context.restore();
-
 	}
+
 
 
 	/**
@@ -755,6 +756,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 
 	function startDrawing( x, y, erase ) {
+			var ctx = drawingCanvas[mode].context;
 			var scale = drawingCanvas[mode].scale;
 			var xOffset = drawingCanvas[mode].xOffset;
 			var yOffset = drawingCanvas[mode].yOffset;
@@ -763,7 +765,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			if ( erase == true) {
 				event = { type: "erase", begin: Date.now() - slideStart, end: null, curve: [{x: x, y: y}]};
 				drawingCanvas[mode].canvas.style.cursor = 'url("' + path + 'img/sponge.png") ' + eraserDiameter + ' ' + eraserDiameter + ', auto';
-				erase(ctx,x * scale + xOffset, y * scale + yOffset);
+				eraseWithSponge(ctx, x * scale + xOffset, y * scale + yOffset);
 			}
 			else {
 				event = { type: "draw", begin: Date.now() - slideStart, end: null, curve: [{x: x, y: y}] };
@@ -799,7 +801,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		event.curve.push({x: x, y: y});
 		if(y * scale + yOffset < drawingCanvas[mode].height && x * scale + xOffset < drawingCanvas[mode].width) {
 			if ( erase ) {
-				erase(ctx,x * scale + xOffset, y * scale + yOffset);
+				eraseWithSponge(ctx, x * scale + xOffset, y * scale + yOffset);
 			}
 			else {
 				draw[mode](ctx, xLast, yLast, x * scale + xOffset, y * scale + yOffset);
@@ -923,7 +925,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	document.addEventListener( 'mousedown', function( evt ) {
 //console.log( "Read only: " + readOnly );
 		if ( !readOnly && evt.target.getAttribute('data-chalkboard') == mode ) {
-//console.log( "mousedown: " + evt.target.getAttribute('data-chalkboard') );
+//console.log( "mousedown: " + evt.button );
 //			var ctx = drawingCanvas[mode].context;
 			var scale = drawingCanvas[mode].scale;
 			var xOffset = drawingCanvas[mode].xOffset;
