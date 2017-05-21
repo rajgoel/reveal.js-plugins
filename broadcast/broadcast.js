@@ -63,6 +63,8 @@ var RevealBroadcast = window.RevealBroadcast || (function(){
 	var broadcastId =  window.location.pathname;
 	if ( config.broadcastId ) broadcastId = config.broadcastId;
 	if ( config.master ) master = config.master;
+	var width = config.width || 640;
+	var height = config.height || 480;
 	var mediaPlayer = null;
 	var defaults = {
 		enableScalableBroadcast: true,
@@ -476,7 +478,7 @@ console.log("Stream ended!");
 		div.className = 'broadcast-preview';
 		div.style.cssText = 'position:fixed;top:0;right:0;z-index:50;box-shadow:10px 10px 5px rgba(0,0,0,.3);';
 		div.style.width = 0.33 * Reveal.getConfig().width *  Reveal.getScale()  + "px";
-		div.style.height = 0.75 * 0.33 * Reveal.getConfig().width *  Reveal.getScale()  + "px";
+		div.style.height = height / width * 0.33 * Reveal.getConfig().width *  Reveal.getScale()  + "px";
 		div.innerHTML = '<img src="' + path + "nosignal.gif" + '" style="width:100%;height:100%;position:absolute;z-index:-1"></img>' 
 				+ '<video id="broadcast-mediaplayer" style="width:100%;height:100%;"></video>';
 		var reveal = document.querySelector('.reveal');
@@ -505,13 +507,22 @@ console.log("Stream ended!");
 			// resize preview 
 			var preview = document.querySelector('.broadcast-preview');
 			preview.style.width = 0.33 * Reveal.getConfig().width *  Reveal.getScale() + "px";
-			preview.style.height = 0.75 * 0.33 * Reveal.getConfig().width *  Reveal.getScale() + "px";
+			preview.style.height = height / width * 0.33 * Reveal.getConfig().width *  Reveal.getScale() + "px";
 			var rect = preview.getBoundingClientRect();
 			// maintain preview orientation
 			var presentation = document.querySelector('.reveal').getBoundingClientRect();
 			preview.style.left = h_elem * presentation.width - preview.getBoundingClientRect().width/2 + presentation.width/2 + "px";
 			preview.style.top = v_elem * presentation.height - preview.getBoundingClientRect().height/2 + presentation.height/2 + 'px';
 		});
+
+		mediaPlayer.addEventListener( 'loadeddata' , function( evt ) {
+			width = mediaPlayer.videoWidth;
+			height = mediaPlayer.videoHeight;
+			var preview = document.querySelector('.broadcast-preview');
+			preview.style.width = 0.33 * Reveal.getConfig().width *  Reveal.getScale() + "px";
+			preview.style.height = height / width * 0.33 * Reveal.getConfig().width *  Reveal.getScale() + "px";
+		});
+		
 	}
 
 	this.start = prestart;
