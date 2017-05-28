@@ -480,7 +480,7 @@ console.log("Stream ended!");
 		div.style.width = 0.33 * Reveal.getConfig().width *  Reveal.getScale()  + "px";
 		div.style.height = height / width * 0.33 * Reveal.getConfig().width *  Reveal.getScale()  + "px";
 		div.innerHTML = '<img src="' + path + "nosignal.gif" + '" style="width:100%;height:100%;position:absolute;z-index:-1"></img>' 
-				+ '<video id="broadcast-mediaplayer" style="width:100%;height:100%;"></video>';
+				+ '<video id="broadcast-mediaplayer" style="width:100%;height:100%;" autoplay></video>';
 		var reveal = document.querySelector('.reveal');
 		reveal.parentNode.insertBefore( div, reveal );
 		mediaPlayer = document.getElementById('broadcast-mediaplayer');
