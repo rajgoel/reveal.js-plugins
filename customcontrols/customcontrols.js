@@ -12,10 +12,10 @@
 var RevealCustomControls = window.RevealCustomControls || (function(){
 	var config = Reveal.getConfig().customcontrols || 
 		{ 
-			slideNumberCSS : 'position: fixed; display: block; right: 50px; top: auto; left: auto; width: 50px; bottom: 30px; z-index: 31; font-family: Helvetica, sans-serif; font-size:  12px; line-height: 1; padding: 5px; text-align: center; border-radius: 10px; background-color: rgba(128,128,128,.5)',
+			slideNumberCSS : 'position: fixed; display: block; right: 90px; top: auto; left: auto; width: 50px; bottom: 30px; z-index: 31; font-family: Helvetica, sans-serif; font-size:  12px; line-height: 1; padding: 5px; text-align: center; border-radius: 10px; background-color: rgba(128,128,128,.5)',
 			controls: [ 
-				{ icon: '<i class="fa fa-caret-left"></i>', css: 'position: fixed; right: 125px; bottom: 30px; z-index: 30; font-size: 24px;', action: 'Reveal.prev(); return false;' }, 
-				{ icon: '<i class="fa fa-caret-right"></i>', css: 'position: fixed; right: 25px; bottom: 30px; z-index: 30; font-size: 24px;', action: 'Reveal.next(); return false;' }, 
+				{ icon: '<i class="fa fa-caret-left"></i>', css: 'position: fixed; right: 60px; bottom: 30px; z-index: 30; font-size: 24px;', action: 'Reveal.prev(); return false;' }, 
+				{ icon: '<i class="fa fa-caret-right"></i>', css: 'position: fixed; right: 30px; bottom: 30px; z-index: 30; font-size: 24px;', action: 'Reveal.next(); return false;' }, 
 			] 
 		};
 
