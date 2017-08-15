@@ -62,4 +62,4 @@ The configuration should be self explaining and any number of controls can be ad
 
 MIT licensed
 
-Copyright (C) 2016 Asvin Goel
+Copyright (C) 2017 Asvin Goel
