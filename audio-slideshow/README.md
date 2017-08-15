@@ -48,10 +48,14 @@ Reveal.initialize({
 		defaultDuration: 5,	// default duration in seconds if no audio is available 
 		playerOpacity: 0.05,	// opacity value of audio player if unfocused
 		startAtFragment: false, // when moving to a slide, start at the current fragment or at the start of the slide
+		onlyIfLocalAudio = false, // only show audio player if local audio file exists
+		externalPlayerCSS = false, // use external CSS for class 'audio-controls' to style audio player
 	},
 	// ...
 });
 ```
+
+The audio player comes with a fixed default CSS style.  By setting the parameter ```externalPlayerCSS``` to ```true```, the player's CSS class ```audio-controls``` does not receive any attributes but can be defined externally.
 
 You can configure keyboard shortcuts for the ```slideshow-recorder.js``` plugin by configuring the ```keyboard``` option in the reveal.js initialization options. 
 
@@ -125,6 +129,8 @@ After stopping the recorder, you can use the audio controls to check your record
 #### Slides without audio
 
 If no audio file and no text is provided for a slide or fragment, the slide advances after the duration specified by the ```defaultDuration``` parameter.
+
+If the ```onlyIfLocalAudio``` parameter is set to ```true```, no audio player is shown if no local audio file is present.
 
 #### Options for automatically advancing to next slide
 
