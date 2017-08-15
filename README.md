@@ -12,7 +12,7 @@ This collections includes the following plugins:
 - [Chart](https://github.com/rajgoel/reveal.js-plugins/tree/master/chart) ([Demo](https://rajgoel.github.io/reveal.js-demos/chart-demo.html)):
  A plugin for using Chart.js v2.0. 
 - [Custom controls](https://github.com/rajgoel/reveal.js-plugins/tree/master/customcontrols) ([Demo](https://rajgoel.github.io/reveal.js-demos/customcontrols-demo.html)): 
- A plugin for customization of controls 
+ A plugin for customization of controls.
 - [Fullscreen](https://github.com/rajgoel/reveal.js-plugins/tree/master/fullscreen) ([Demo](https://rajgoel.github.io/reveal.js-demos/fullscreen-demo.html)):
  A simple plugin allowing to use fullscreen slides.
 - [MathSVG](https://github.com/rajgoel/reveal.js-plugins/tree/master/mathsvg):
