@@ -30,7 +30,6 @@ var RevealCustomControls = window.RevealCustomControls || (function(){
 	}
 
 	Reveal.addEventListener( 'ready', function( event ) {
-		Reveal.configure( { controls : false } );
 		if ( Reveal.getConfig().slideNumber && config.slideNumberCSS ) {
 			var slideNumber = document.querySelector(".reveal .slide-number");
 			slideNumber.style.cssText = config.slideNumberCSS;

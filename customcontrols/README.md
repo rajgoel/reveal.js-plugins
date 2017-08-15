@@ -11,10 +11,11 @@ With this plugin you can add custom controls to reveal.js which allow arbitrary 
 
 Copy the file ```customcontrols.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/customcontrols```.
 
-Add the plugin to the dependencies in your presentation as shown below. 
+Add the plugin to the dependencies in your presentation and turn off the default controls as shown below:
 
 ```javascript
 Reveal.initialize({
+	controls: false,
 	// ...
 	dependencies: [
 		// ... 
