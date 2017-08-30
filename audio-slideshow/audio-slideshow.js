@@ -305,7 +305,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 
 	function setupAudioElement( container, indices, audioFile, text, videoElement ) {
 		var audioElement = document.createElement( 'audio' );
-		audioElement.setAttribute( 'style', "position: relative; bottom: 20px; left: 10%; width: 80%;" );
+		audioElement.setAttribute( 'style', "position: relative; top: 20px; left: 10%; width: 80%;" );
 		audioElement.id = "audioplayer-" + indices;
 		audioElement.style.display = "none";
 		audioElement.setAttribute( 'controls', '' );
