@@ -28,7 +28,8 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 	var autoplay = false; // automatically start slideshow
 	var playerOpacity = .05; // opacity when the mouse is far from to the audioplayer
 	var startAtFragment = false; // when moving to a slide, start at the current fragment or at the start of the slide
-	var style = "width: 50%; height:75px; position: fixed; left: 25%; bottom: 4px;z-index: 33;"; // style used for audio controls
+	var playerStyle = "position: relative; bottom: 20px; left: 10%; width: 80%;"; // style used for audio controls
+	var hoverStyle = "width: 50%; height:75px; position: fixed; left: 25%; bottom: 4px;z-index: 33;"; // style used for hover around audio controls 
 	// ------------------
 
 	var silence;
@@ -154,7 +155,8 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 			if ( config.advance ) advance = config.advance;
 			if ( config.autoplay ) autoplay = config.autoplay;
 			if ( config.playerOpacity ) playerOpacity = config.playerOpacity;
-			if ( config.style ) style = config.style;
+			if ( config.playerStyle ) playerStyle = config.playerStyle;
+			if ( config.hoverStyle ) hoverStyle = config.hoverStyle;
 		}
 
 		if ( 'ontouchstart' in window || navigator.msMaxTouchPoints ) {
@@ -177,7 +179,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 
 		var divElement =  document.createElement( 'div' );
 		divElement.className = "audio-controls";
-		divElement.setAttribute( 'style', style );
+		divElement.setAttribute( 'style', hoverStyle );
 		document.querySelector( ".reveal" ).appendChild( divElement );
 
 		// create audio players for all slides
@@ -305,7 +307,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 
 	function setupAudioElement( container, indices, audioFile, text, videoElement ) {
 		var audioElement = document.createElement( 'audio' );
-		audioElement.setAttribute( 'style', "position: relative; top: 20px; left: 10%; width: 80%;" );
+		audioElement.setAttribute( 'style', playerStyle );
 		audioElement.id = "audioplayer-" + indices;
 		audioElement.style.display = "none";
 		audioElement.setAttribute( 'controls', '' );
