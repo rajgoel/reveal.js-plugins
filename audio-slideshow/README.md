@@ -47,6 +47,7 @@ Reveal.initialize({
 		autoplay: false,	// automatically start slideshow
 		defaultDuration: 5,	// default duration in seconds if no audio is available 
 		playerOpacity: 0.05,	// opacity value of audio player if unfocused
+		playerStyle: 'position: fixed; bottom: 4px; left: 25%; width: 50%; height:75px; z-index: 33;', // style used for container of audio controls 
 		startAtFragment: false, // when moving to a slide, start at the current fragment or at the start of the slide
 	},
 	// ...
