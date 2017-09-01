@@ -145,16 +145,16 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 		// set parameters
 		var config = Reveal.getConfig().audio;
 		if ( config ) {
-			if ( config.prefix ) prefix = config.prefix;
-			if ( config.suffix ) suffix = config.suffix;
-			if ( config.textToSpeechURL ) textToSpeechURL = config.textToSpeechURL;
-			if ( config.defaultNotes ) defaultNotes = config.defaultNotes;
-			if ( config.defaultText ) defaultText = config.defaultText;
-			if ( config.defaultDuration ) defaultDuration = config.defaultDuration;
-			if ( config.advance ) advance = config.advance;
-			if ( config.autoplay ) autoplay = config.autoplay;
-			if ( config.playerOpacity ) playerOpacity = config.playerOpacity;
-			if ( config.playerStyle ) playerStyle = config.playerStyle;
+			if ( config.prefix != null ) prefix = config.prefix;
+			if ( config.suffix != null ) suffix = config.suffix;
+			if ( config.textToSpeechURL != null ) textToSpeechURL = config.textToSpeechURL;
+			if ( config.defaultNotes != null ) defaultNotes = config.defaultNotes;
+			if ( config.defaultText != null ) defaultText = config.defaultText;
+			if ( config.defaultDuration != null ) defaultDuration = config.defaultDuration;
+			if ( config.advance != null ) advance = config.advance;
+			if ( config.autoplay != null ) autoplay = config.autoplay;
+			if ( config.playerOpacity != null  ) playerOpacity = config.playerOpacity;
+			if ( config.playerStyle != null ) playerStyle = config.playerStyle;
 		}
 
 		if ( 'ontouchstart' in window || navigator.msMaxTouchPoints ) {
