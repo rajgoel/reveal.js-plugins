@@ -367,7 +367,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 							break;
 						case "erase":
 							for (var k = 0; k < slideData.events[j].curve.length; k++) {
-								erase( imgCtx, 
+								eraseWithSponge( imgCtx, 
 									xOffset + slideData.events[j].curve[k].x*scale, 
 									yOffset + slideData.events[j].curve[k].y*scale
 								);
@@ -525,7 +525,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 					if ( event ) {
 						event.type = "erase";
 						event.begin = Date.now() - slideStart;
-						erase(drawingCanvas[mode].context, message.content.x, message.content.y);
+						eraseWithSponge(drawingCanvas[mode].context, message.content.x, message.content.y);
 					}
 					break;
 				case 'drawSegment':
@@ -739,11 +739,11 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			var stepDuration = ( event.end - event.begin )/ event.curve.length;
 			for (var i = 0; i < event.curve.length; i++) {
 				if (event.begin + i * stepDuration <= (Date.now() - slideStart)) {
-					erase(ctx, xOffset + event.curve[i].x*scale, yOffset + event.curve[i].y*scale); 
+					eraseWithSponge(ctx, xOffset + event.curve[i].x*scale, yOffset + event.curve[i].y*scale); 
 				}
 				else if ( playback ) {
 					timeouts.push( setTimeout( 
-						erase, Math.max(0,event.begin + i * stepDuration - (Date.now() - slideStart)), ctx, 
+						eraseWithSponge, Math.max(0,event.begin + i * stepDuration - (Date.now() - slideStart)), ctx, 
 							xOffset + event.curve[i].x * scale, 
 							yOffset + event.curve[i].y * scale 
 						) 
@@ -781,7 +781,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			drawingCanvas[mode].sponge.style.left = (x - eraserDiameter) +"px" ;
 			drawingCanvas[mode].sponge.style.top = (y - eraserDiameter) +"px" ;
 			drawingCanvas[mode].sponge.style.visibility = "visible";
-			erase(drawingCanvas[mode].context,x,y);
+			eraseWithSponge(drawingCanvas[mode].context,x,y);
 			// broadcast
 			var message = new CustomEvent('send');
 			message.content = { sender: 'chalkboard-plugin', type: 'startErasing', x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale };
@@ -887,7 +887,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 				if ( event.type == "erase" ) {
 					drawingCanvas[mode].sponge.style.left = (mouseX - eraserDiameter) +"px" ; 
 					drawingCanvas[mode].sponge.style.top = (mouseY - eraserDiameter) +"px" ; 
-			                erase(ctx, mouseX, mouseY);
+			                eraseWithSponge(ctx, mouseX, mouseY);
 				}
 				else {
 			                draw[mode](ctx, xLast, yLast, mouseX, mouseY);
@@ -944,7 +944,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			if ( evt.button == 2) {
 				event = { type: "erase", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}]};
 				drawingCanvas[mode].canvas.style.cursor = 'url("' + path + 'img/sponge.png") ' + eraserDiameter + ' ' + eraserDiameter + ', auto';
-				erase(ctx,mouseX,mouseY);
+				eraseWithSponge(ctx,mouseX,mouseY);
 			}
 			else {
 				event = { type: "draw", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}] };
@@ -972,7 +972,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			event.curve.push({x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale});
 			if(mouseY < drawingCanvas[mode].height && mouseX < drawingCanvas[mode].width) {
 				if ( event.type == "erase" ) {
-					erase(ctx,mouseX,mouseY);
+					eraseWithSponge(ctx,mouseX,mouseY);
 				}
 				else {
 					draw[mode](ctx, xLast, yLast, mouseX,mouseY);
