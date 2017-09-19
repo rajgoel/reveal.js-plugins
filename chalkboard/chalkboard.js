@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard. 
 **
-** Version: 0.5
+** Version: 0.6
 ** 
 ** License: MIT license (see LICENSE.md)
 **
@@ -220,7 +220,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	function loadData( filename ) {
 		var xhr = new XMLHttpRequest();
 		xhr.onload = function() {
-			if (xhr.readyState === 4) {
+			if (xhr.readyState === 4 && xhr.status != 404 ) {
 				storage = JSON.parse(xhr.responseText);
 				for (var id = 0; id < storage.length; id++) {
 					if ( drawingCanvas[id].width != storage[id].width || drawingCanvas[id].height != storage[id].height ) {
@@ -356,6 +356,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 				nextSlide.push( slide.nextSibling );
 			}
 			for (var i = 0; i < storage[1].data.length; i++) {
+console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + storage[1].data[i].slide.v );
 				var parent = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v ).parentElement;
 				var slideData = getSlideData( storage[1].data[i].slide, 1 );
 
