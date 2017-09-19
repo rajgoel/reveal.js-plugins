@@ -356,6 +356,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 				nextSlide.push( slide.nextSibling );
 			}
 			for (var i = 0; i < storage[1].data.length; i++) {
+				var parent = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v ).parentElement;
 				var slideData = getSlideData( storage[1].data[i].slide, 1 );
 
 				var imgCanvas = document.createElement('canvas');
@@ -388,7 +389,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 							}
 							break;
 						case "clear":
-							addPrintout( nextSlide[i], imgCanvas, patImg );
+							addPrintout( parent, nextSlide[i], imgCanvas, patImg );
 							imgCtx.clearRect(0,0,imgCanvas.width,imgCanvas.height);
 							imgCtx.fill();
 							break;
@@ -397,7 +398,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 					}
 				}
 				if ( slideData.events.length ) {
-					addPrintout( nextSlide[i], imgCanvas, patImg );
+					addPrintout( parent, nextSlide[i], imgCanvas, patImg );
 				}
 			} 
 			Reveal.sync();
@@ -405,7 +406,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		patImg.src = background[1];
 	}
 
-	function addPrintout( nextSlide, imgCanvas, patImg ) {
+	function addPrintout( parent, nextSlide, imgCanvas, patImg ) {
 		var slideCanvas = document.createElement('canvas');
 		slideCanvas.width = Reveal.getConfig().width;
 		slideCanvas.height = Reveal.getConfig().height;	
@@ -421,7 +422,12 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		newSlide.setAttribute("data-background-size", '100% 100%' );
 		newSlide.setAttribute("data-background-repeat", 'norepeat' );
 		newSlide.setAttribute("data-background", 'url("' + slideCanvas.toDataURL("image/png") +'")' );
-		nextSlide.parentElement.insertBefore( newSlide, nextSlide );
+		if ( nextSlide != null ) {
+			parent.insertBefore( newSlide, nextSlide );
+		}
+		else {
+			parent.append( newSlide );
+		}
 	}
 
 /*****************************************************************
