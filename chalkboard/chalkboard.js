@@ -72,6 +72,16 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 ** Setup
 ******************************************************************/
 
+	function whenReady( callback ) {
+		// wait for drawings to be loaded and markdown to be parsed
+		if ( loaded == null || document.querySelector('section[data-markdown]:not([data-markdown-parsed])') ) {
+			setTimeout( whenReady, 100, callback )
+		}
+		else {
+			callback();
+		}
+	}
+
 	var eraserDiameter = 20;
 
 	if ( toggleChalkboardButton ) {
@@ -198,6 +208,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		];
 //console.log( JSON.stringify(storage));
 
+	var loaded = null;
 	if ( config.src != null ) {
 		loadData( config.src );
 	}
@@ -222,12 +233,14 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 						drawingCanvas[id].canvas.style.cursor = 'default';
 					}
 				}
+				loaded = true;
 //console.log("Drawings loaded");
 			}
 			else {
 				config.readOnly = undefined;
 				readOnly = undefined;
 				console.warn( 'Failed to get file ' + filename +". ReadyState: " + xhr.readyState + ", Status: " + xhr.status);
+				loaded = false;
 			}
 		};
 
@@ -239,6 +252,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			config.readOnly = undefined;
 			readOnly = undefined;
 			console.warn( 'Failed to get file ' + filename + '. Make sure that the presentation and the file are served by a HTTP server and the file can be found there. ' + error );
+			loaded = false;
 		}
 	}
 
@@ -1074,7 +1088,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			updateReadOnlyMode();			
 		}
 		else {
-			createPrintout();
+			whenReady( createPrintout );
 		}
 	});
 	Reveal.addEventListener( 'slidechanged', function( evt ) {
