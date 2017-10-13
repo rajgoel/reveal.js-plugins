@@ -138,20 +138,10 @@ var RevealChart = window.RevealChart || (function(){
 		}
 	}
 
-	function redrawChart( chart ){
-		chart.options.animations = false;
-		var data = [];
-		for (var i = 0; i < chart.data.datasets.length; i++) {
-			data.push( chart.data.datasets[i].data );
-			chart.data.datasets[i].data = [];
-		}
-		chart.update();
-
-		chart.options.animations = true;
-		for (var i = 0; i < chart.data.datasets.length; i++) {
-			chart.data.datasets[i].data = data[i];
-		}
-		setTimeout( function() { chart.update() }, 500); // wait for slide transition 
+	function recreateChart(canvas) {
+		var config = canvas.chart.config;
+		canvas.chart.destroy();
+		setTimeout( function() { canvas.chart = new Chart(canvas, config); }, 500); // wait for slide transition
 	}
 
 	// check if chart option is given or not
@@ -168,9 +158,10 @@ var RevealChart = window.RevealChart || (function(){
 		Reveal.addEventListener('slidechanged', function(){
 			var canvases = Reveal.getCurrentSlide().querySelectorAll("canvas[data-chart]");
 			for (var i = 0; i < canvases.length; i++ ){
-				if ( canvases[i].chart ){
-					// rendering not as it should be
-					// redrawChart( canvases[i].chart );
+				if ( canvases[i].chart
+						 && canvases[i].chart.config.options.animation
+						 && ! canvases[i].classList.contains("stretch") ) { // doesn't work/look nice with stretch
+					recreateChart( canvases[i] );
 				}
 			}
 		
