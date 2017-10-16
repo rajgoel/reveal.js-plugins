@@ -4,7 +4,7 @@
 ** csv2chart.js is a plugin for reveal.js allowing to integrate
 ** Chart.js in reveal.js
 **
-** Version: 0.1
+** Version: 0.2
 ** 
 ** License: MIT license (see LICENSE.md)
 **
@@ -158,9 +158,7 @@ var RevealChart = window.RevealChart || (function(){
 		Reveal.addEventListener('slidechanged', function(){
 			var canvases = Reveal.getCurrentSlide().querySelectorAll("canvas[data-chart]");
 			for (var i = 0; i < canvases.length; i++ ){
-				if ( canvases[i].chart
-						 && canvases[i].chart.config.options.animation
-						 && ! canvases[i].classList.contains("stretch") ) { // doesn't work/look nice with stretch
+				if ( canvases[i].chart && canvases[i].chart.config.options.animation ) { 
 					recreateChart( canvases[i] );
 				}
 			}

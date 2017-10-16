@@ -54,6 +54,8 @@ Reveal.initialize({
 ```
 The ```defaults``` parameter  will overwrite ```Chart.defaults```. Furthermore, for any chart type, e.g. line, bar, etc., the parameters for the individual datasets can be specified. Where Chart.js allows to specify a single parameter for a particular dataset, the plugin allows to specify an array of values for this parameter, which will automatically be assigned to the different datasets. Note that if there are more datasets than elements in the array, the plugin will start again with the first value in the array.
 
+
+
 ## Usage
 
 A chart can be included in a slide by adding a ```canvas``` element with the ```data-chart``` attribute set to the desired chart type. 
@@ -125,10 +127,44 @@ The chart data can also be provided in an external CSV file. To include external
 </canvas>
 ```
 
+## Animation
+
+The plugin recreates the charts on a slide change to show the Chart.js animations. These animation can be turned off globally in the configuration by
+
+```javascript
+Reveal.initialize({
+	// ...
+  chart: {
+	  defaults: { 
+		  global: { 
+			animation: null,
+			// ...		
+		  }, 
+		  // ...
+	  },
+  },
+  // ...
+});
+```
+
+or within a chart, e.g. by
+
+```html
+<canvas class="stretch" data-chart="line">
+<!--
+{
+ "data": {
+	// ...
+ }, 
+ "options": { "responsive": "true", "animation": "" }
+}
+-->
+</canvas>
+```
 
 
 ## License
 
 MIT licensed
 
-Copyright (C) 2016 Asvin Goel
+Copyright (C) 2017 Asvin Goel
