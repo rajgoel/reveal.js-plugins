@@ -30,12 +30,13 @@ Note that all configuration parameters are optional and the defaults of [Chart.j
 ```javascript
 Reveal.initialize({
 	// ...
-  chart: {
-	defaults: { 
-		global: { 
-			title: { fontColor: "#FFF" }, 
-			legend: {
-				labels: { fontColor: "#FFF" },
+	chart: {
+		defaults: { 
+			global: { 
+				title: { fontColor: "#FFF" }, 
+				legend: {
+					labels: { fontColor: "#FFF" },
+				},
 			},
 			scale: { 
 				scaleLabel: { fontColor: "#FFF" }, 
