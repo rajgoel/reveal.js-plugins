@@ -89,6 +89,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 	} );
 
 	function selectAudio( previousAudio ) {
+		if ( !!window.location.search.match( /receiver/gi ) ) return;
 		if ( currentAudio ) {
 			currentAudio.pause();
 			currentAudio.style.display = "none";
