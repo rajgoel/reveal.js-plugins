@@ -29,7 +29,7 @@ var RevealChart = window.RevealChart || (function(){
 	  for (var p in obj2) {
 	    try {
 	      // Property in destination object set; update its value.
-	      if ( obj2[p].constructor==Object ) {
+	      if ( obj1[p].constructor==Object && obj2[p].constructor==Object ) {
 	        obj1[p] = mergeRecursive(obj1[p], obj2[p]);
 	
 	      } else {
