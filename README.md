@@ -13,6 +13,8 @@ This collections includes the following plugins:
  A plugin for using Chart.js v2.0. 
 - [Custom controls](https://github.com/rajgoel/reveal.js-plugins/tree/master/customcontrols) ([Demo](https://rajgoel.github.io/reveal.js-demos/customcontrols-demo.html)): 
  A plugin for customization of controls.
+- [Embed tweet](https://github.com/rajgoel/reveal.js-plugins/tree/master/embed-tweet) ([Demo](https://rajgoel.github.io/reveal.js-demos/embed-tweet-demo.html)):
+ A plugin allowing to easily embed tweets in your slides.
 - [Fullscreen](https://github.com/rajgoel/reveal.js-plugins/tree/master/fullscreen) ([Demo](https://rajgoel.github.io/reveal.js-demos/fullscreen-demo.html)):
  A simple plugin allowing to use fullscreen slides.
 - [MathSVG](https://github.com/rajgoel/reveal.js-plugins/tree/master/mathsvg):
@@ -35,5 +37,5 @@ Please note that the [menu](https://github.com/denehyg/reveal.js-menu)-plugin is
 
 MIT licensed
 
-Copyright (C) 2016 Asvin Goel
+Copyright (C) 2017 Asvin Goel
 
