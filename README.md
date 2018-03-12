@@ -23,6 +23,10 @@ This collections includes the following plugins:
 - [Spreadsheet](https://github.com/rajgoel/reveal.js-plugins/tree/master/spreadsheet) ([Demo](https://rajgoel.github.io/reveal.js-demos/spreadsheet-demo.html)):
  A plugin for adding Excel-like spreadsheets with formulas.
 
+## Getting started
+
+The source code of the demos can be found here: https://github.com/rajgoel/reveal.js-demos.
+
 ## Download
 
 You can download the plugins into the ```bower_components``` folder using
