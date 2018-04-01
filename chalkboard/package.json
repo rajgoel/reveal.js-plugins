@@ -1,0 +1,26 @@
+{
+  "name": "reveal.js-chalkboard",
+  "version": "1.0.0",
+  "description": "Add a blackboard to your reveal.js presentations",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rajgoel/reveal.js-plugins.git"
+  },
+  "keywords": [
+    "reveal",
+    "chalkboard",
+    "blackboard"
+  ],
+  "author": "Asvin Goel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rajgoel/reveal.js-plugins.git/issues"
+  },
+  "homepage": "https://github.com/rajgoel/reveal.js-plugins/blob/master/chalkboard/README.md",
+  "dependencies": {
+    "npm": "^5.8.0"
+  }
+}
