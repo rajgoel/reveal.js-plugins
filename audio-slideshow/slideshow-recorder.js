@@ -4,7 +4,7 @@
 ** The slide show recorder is a plugin for reveal.js allowing to
 ** record audio for a slide deck. 
 **
-** Version: 0.3
+** Version: 0.4
 ** 
 ** License: MIT license (see LICENSE.md)
 **
@@ -98,7 +98,8 @@ var Recorder = {
 		} );
 	}
 	else {
-		this.audio.src = URL.createObjectURL( this.audioStream );
+//		this.audio.src = URL.createObjectURL( this.audioStream ); // deprecated since FF54
+		this.audio.srcObject = this.audioStream;
 		this.audio.volume = 0.0;
 		this.recordRTC.startRecording();
 		// Draw red circle over auto slide control
@@ -361,60 +362,6 @@ var Recorder = {
 
 })();
 
-
-/*****************************************************************
-** RecordRTC.js
-******************************************************************/
-
-// Last time updated at Feb 12, 2015, 08:32:23
-
-// links:
-// Open-Sourced: https://github.com/muaz-khan/RecordRTC
-// http://cdn.WebRTC-Experiment.com/RecordRTC.js
-// Browsers Support::
-// Chrome (all versions) [ audio ]
-// Firefox ( >= 29 ) [ audio in ogg ]
-// Opera (all versions) [ same as chrome ]
-// Android (Chrome) [ no audio ]
-// Android (Opera) [ no audio ]
-// Android (Firefox) [ no audio ]
-//------------------------------------
-// Muaz Khan     - www.MuazKhan.com
-// MIT License   - www.WebRTC-Experiment.com/licence
-//------------------------------------
-// Note: RecordRTC.js is using other libraries; you need to accept their licences as well.
-//------------------------------------
-// 1. RecordRTC.js
-// 3. Cross-Browser-Declarations.js
-// 4. Storage.js
-// 5. MediaStreamRecorder.js
-// 6. StereoRecorder.js
-// 7. StereoAudioRecorder.js
-//------------------------------------
-
-'use strict';
-// ____________
-// RecordRTC.js
-
-/**
- * {@link https://github.com/muaz-khan/RecordRTC|RecordRTC} is a JavaScript-based media-recording library for modern web-browsers (supporting WebRTC getUserMedia API). It is optimized for different devices and browsers to bring all client-side (pluginfree) recording solutions in single place.
- * @summary JavaScript audio/video recording library runs top over WebRTC getUserMedia API.
- * @license {@link https://www.webrtc-experiment.com/licence/|MIT}
- * @author {@link https://www.MuazKhan.com|Muaz Khan}
- * @typedef RecordRTC
- * @class
- * @example
- * var recordRTC = RecordRTC(mediaStream, {
- *     type: 'video' // audio or video or gif or canvas
- * });
- *
- * // or, you can even use keyword "new"
- * var recordRTC = new RecordRTC(mediaStream[, config]);
- * @see For further information:
- * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
- */
-
-function RecordRTC(e,o){function t(){o.disableLogs||console.debug("started recording "+o.type+" stream.");var t=isChrome?window.StereoRecorder:window.MediaStreamRecorder;return o.recorderType&&(t=o.recorderType),s=new t(e),s=mergeProps(s,o),s.onAudioProcessStarted=function(){o.onAudioProcessStarted&&o.onAudioProcessStarted()},s.onGifPreview=function(e){o.onGifPreview&&o.onGifPreview(e)},s.record(),d}function r(e){function t(){for(var t in s)d&&(d[t]=s[t]),r&&(r[t]=s[t]);var n=s.blob;if(e){var i=URL.createObjectURL(n);e(i)}o.disableLogs||console.debug(n.type,"->",bytesToSize(n.size)),o.autoWriteToDisk&&a(function(e){var t={};t[o.type+"Blob"]=e})}if(!s)return console.warn(c);var r=this;o.disableLogs||console.warn("Stopped recording "+o.type+" stream."),"gif"!==o.type?s.stop(t):(s.stop(),t())}function n(){return s?void(s.pause?s.pause():o.disableLogs||console.warn('This recording library is having no "pause" method.')):console.warn(c)}function i(){return s?void(s.resume?s.resume():o.disableLogs||console.warn('This recording library is having no "resume" method.')):console.warn(c)}function a(e,t){function r(e){var o=URL.createObjectURL(new Blob([e.toString(),"this.onmessage =  function (e) {readFile(e.data);}"],{type:"application/javascript"})),t=new Worker(o);return URL.revokeObjectURL(o),t}if(!e)throw"Pass a callback function over getDataURL.";var n=t?t.blob:s.blob;if(!n)return o.disableLogs||console.warn("Blob encoder did not yet finished its job."),void setTimeout(function(){a(e,t)},1e3);if(window.Worker){var i=r(function(e){postMessage((new FileReaderSync).readAsDataURL(e))});i.onmessage=function(o){e(o.data)},i.postMessage(n)}else{var d=new FileReader;d.readAsDataURL(n),d.onload=function(o){e(o.target.result)}}}if(o=o||{},!e)throw"MediaStream is mandatory.";o.type||(o.type="audio");var s,d=this,c='It seems that "startRecording" is not invoked for '+o.type+" recorder.",u={startRecording:t,stopRecording:r,pauseRecording:n,resumeRecording:i,getBlob:function(){return s?s.blob:console.warn(c)},getDataURL:a,toURL:function(){return s?URL.createObjectURL(s.blob):console.warn(c)},save:function(e){if(!s){var o=this;return setTimeout(function(){o.save(e)},2e3),console.warn(c)}var t=document.createElement("a");t.href=URL.createObjectURL(s.blob),t.target="_blank",t.download=(e||Math.round(9999999999*Math.random())+888888888)+"."+s.blob.type.split("/")[1];var r=new MouseEvent("click",{view:window,bubbles:!0,cancelable:!0});t.dispatchEvent(r),(window.URL||window.webkitURL).revokeObjectURL(t.href)},blob:null,bufferSize:0,sampleRate:0,buffer:null,view:null};if(!this)return u;for(var f in u)this[f]=u[f];return u}function mergeProps(e,o){o=reformatProps(o);for(var t in o)"function"!=typeof o[t]&&(e[t]=o[t]);return e}function reformatProps(e){var o={};for(var t in e)if(-1!==t.indexOf("-")){var r=t.split("-"),n=r[0]+r[1].split("")[0].toUpperCase()+r[1].substr(1);o[n]=e[t]}else o[t]=e[t];return o}function bytesToSize(e){var o=1e3,t=["Bytes","KB","MB","GB","TB"];if(0===e)return"0 Bytes";var r=parseInt(Math.floor(Math.log(e)/Math.log(o)),10);return(e/Math.pow(o,r)).toPrecision(3)+" "+t[r]}function MediaStreamRecorder(e){var o=this;if(o.mimeType&&"video/webm"!==o.mimeType&&e.getVideoTracks&&e.getVideoTracks().length){var t=new AudioContext,r=t.createMediaStreamSource(e),n=t.createMediaStreamDestination();r.connect(n),e=n.stream}var i=!1;this.record=function(){a=new window.MediaRecorder(e),a.ondataavailable=function(e){if(!i){if(!e.data.size)return void(o.disableLogs||console.warn("Recording of",e.data.type,"failed."));i=!0,o.blob=new Blob([e.data],{type:e.data.type||o.mimeType||"audio/ogg"}),o.callback&&o.callback()}},a.onerror=function(e){o.disableLogs||console.warn(e),a.stop(),o.record(0)},a.start(0),o.onAudioProcessStarted&&o.onAudioProcessStarted()},this.stop=function(e){a&&(this.callback=e,"recording"===a.state&&a.stop())},this.pause=function(){a&&"recording"===a.state&&(a.pause(),this.disableLogs||console.debug("Paused recording."))},this.resume=function(){a&&"paused"===a.state&&(a.resume(),this.disableLogs||console.debug("Resumed recording."))};var a}function StereoRecorder(e){var o=this;this.record=function(){t=new StereoAudioRecorder(e,this),t.onAudioProcessStarted=function(){o.onAudioProcessStarted&&o.onAudioProcessStarted()},t.record()},this.stop=function(e){t&&t.stop(function(){for(var r in t)o[r]=t[r];e&&e()})},this.pause=function(){t&&t.pause()},this.resume=function(){t&&t.resume()};var t}function StereoAudioRecorder(e,o){function t(e,o){function t(e){function o(e,o){for(var t=new Float64Array(o),r=0,n=e.length,i=0;n>i;i++){var a=e[i];t.set(a,r),r+=a.length}return t}function t(e,o){for(var t=e.length+o.length,r=new Float64Array(t),n=0,i=0;t>i;)r[i++]=e[n],r[i++]=o[n],n++;return r}function r(e,o,t){for(var r=t.length,n=0;r>n;n++)e.setUint8(o+n,t.charCodeAt(n))}var n=e.leftBuffers,i=e.rightBuffers,a=e.sampleRate;n=o(n[0],n[1]),i=o(i[0],i[1]);var s=t(n,i),d=s.length,c=44+2*d,u=new ArrayBuffer(c),f=new DataView(u);r(f,0,"RIFF");var l=4;f.setUint32(l,44+2*d,!0),r(f,8,"WAVE"),r(f,12,"fmt "),f.setUint32(16,16,!0),f.setUint16(20,1,!0),f.setUint16(22,2,!0),f.setUint32(24,a,!0),f.setUint32(28,a*l,!0),f.setUint16(32,l,!0),f.setUint16(34,16,!0),r(f,36,"data"),f.setUint32(40,2*d,!0);for(var w,b=44,p=0;d>p;p++,b+=2){var g=Math.max(-1,Math.min(1,s[p])),v=0>g?32768*g:32767*g;e.leftChannel?(v!==w&&f.setInt16(b,v,!0),w=v):f.setInt16(b,v,!0)}postMessage({buffer:u,view:f})}var n=r(t);n.onmessage=function(e){o(e.data.buffer,e.data.view)},n.postMessage(e)}function r(e){var o=URL.createObjectURL(new Blob([e.toString(),"this.onmessage =  function (e) {"+e.name+"(e.data);}"],{type:"application/javascript"})),t=new Worker(o);return URL.revokeObjectURL(o),t}if(!e.getAudioTracks().length)throw"Your stream has no audio tracks.";var n=this,i=[],a=[],s=!1,d=0;this.record=function(){i.length=a.length=0,d=0,s=!0},this.stop=function(e){s=!1,u.disconnect(),t({sampleRate:w,leftChannel:o.leftChannel,leftBuffers:[i,d],rightBuffers:[a,d]},function(o,t){n.blob=new Blob([t],{type:"audio/wav"}),n.buffer=new ArrayBuffer(t),n.view=t,n.sampleRate=w,n.bufferSize=l,n.length=d,e&&e(),p=!1})},Storage.AudioContextConstructor||(Storage.AudioContextConstructor=new Storage.AudioContext);var c=Storage.AudioContextConstructor,u=c.createMediaStreamSource(e),f=[0,256,512,1024,2048,4096,8192,16384],l="undefined"==typeof o.bufferSize?4096:o.bufferSize;-1===f.indexOf(l)&&(o.disableLogs||console.warn("Legal values for buffer-size are "+JSON.stringify(f,null,"	")));var w="undefined"!=typeof o.sampleRate?o.sampleRate:c.sampleRate||44100;if((22050>w||w>96e3)&&(o.disableLogs||console.warn("sample-rate must be under range 22050 and 96000.")),c.createJavaScriptNode)__stereoAudioRecorderJavacriptNode=c.createJavaScriptNode(l,2,2);else{if(!c.createScriptProcessor)throw"WebAudio API has no support on this browser.";__stereoAudioRecorderJavacriptNode=c.createScriptProcessor(l,2,2)}u.connect(__stereoAudioRecorderJavacriptNode),l=__stereoAudioRecorderJavacriptNode.bufferSize,o.disableLogs||(console.log("sample-rate",w),console.log("buffer-size",l));var b=!1;this.pause=function(){b=!0,o.disableLogs||console.debug("Paused recording.")},this.resume=function(){b=!1,o.disableLogs||console.debug("Resumed recording.")};var p=!1;__stereoAudioRecorderJavacriptNode.onaudioprocess=function(o){if(!b){if(e.ended)return void(__stereoAudioRecorderJavacriptNode.onaudioprocess=function(){});if(!s)return void u.disconnect();p||(p=!0,n.onAudioProcessStarted&&n.onAudioProcessStarted());var t=o.inputBuffer.getChannelData(0),r=o.inputBuffer.getChannelData(1);i.push(new Float32Array(t)),a.push(new Float32Array(r)),d+=l}},__stereoAudioRecorderJavacriptNode.connect(c.destination)}window.requestAnimationFrame||(window.requestAnimationFrame=window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame),window.cancelAnimationFrame||(window.cancelAnimationFrame=window.webkitCancelAnimationFrame||window.mozCancelAnimationFrame),window.AudioContext||(window.AudioContext=window.webkitAudioContext||window.mozAudioContext),window.URL=window.URL||window.webkitURL,navigator.getUserMedia=navigator.webkitGetUserMedia||navigator.mozGetUserMedia,window.webkitMediaStream&&(window.MediaStream=window.webkitMediaStream);var isChrome=!!navigator.webkitGetUserMedia;0===location.href.indexOf("file:")&&console.error("Please load this HTML file on HTTP or HTTPS.");var Storage={AudioContext:window.AudioContext||window.webkitAudioContext},__stereoAudioRecorderJavacriptNode;
 
 /*****************************************************************
 ** jszip.js

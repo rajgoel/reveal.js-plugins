@@ -18,6 +18,7 @@ Reveal.initialize({
 	// ...
 	dependencies: [
 		// ... 
+		{ src: 'plugin/audio-slideshow/RecordRTC.js', condition: function( ) { return !!document.body.classList; } },				
 		{ src: 'plugin/audio-slideshow/slideshow-recorder.js', condition: function( ) { return !!document.body.classList; } },				
 		{ src: 'plugin/audio-slideshow/audio-slideshow.js', condition: function( ) { return !!document.body.classList; } },
 		// ... 
@@ -163,7 +164,6 @@ For other browser and mobile devices the functionality may be limited or the plu
 
 The ```slideshow-recorder.js```  plugin is based on [RecordRTC.js](https://github.com/muaz-khan/WebRTC-Experiment/tree/master/RecordRTC) and supports recording on recent desktop versions of Firefox, Chrome, and Opera. 
 For other browser and mobile devices recording may not work at all.
-Some known issues are listed [here](https://github.com/muaz-khan/WebRTC-Experiment/tree/master/RecordRTC#possible-issuesfailures).
 
 ### Recording and fetching audio files on Chrome
 
