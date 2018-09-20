@@ -26,9 +26,7 @@ Reveal.initialize({
 To embed a tweet, simply determine its URL and include the following code in your slides:
 
 ```html
-<pre><code data-trim>
-	<div class="tweet" data-src="TWEET_URL"></div>
-</code></pre>
+<div class="tweet" data-src="TWEET_URL"></div>
 ```
 
 ## License
