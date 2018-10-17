@@ -851,6 +851,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 
 // TODO: check all touchevents
 	document.addEventListener('touchstart', function(evt) {
+//console.log("Touch start");
 		if ( !readOnly && evt.target.getAttribute('data-chalkboard') == mode ) {
 //			var ctx = drawingCanvas[mode].context;
 			var scale = drawingCanvas[mode].scale;
@@ -876,6 +877,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	}, false);
 
 	document.addEventListener('touchmove', function(evt) {
+//console.log("Touch move");
 		clearTimeout( touchTimeout );
 		touchTimeout = null;
 		if ( event ) {
@@ -944,6 +946,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	}, false);
 
 	document.addEventListener( 'mousedown', function( evt ) {
+//console.log("Mouse down");
 //console.log( "Read only: " + readOnly );
 		if ( !readOnly && evt.target.getAttribute('data-chalkboard') == mode ) {
 //console.log( "mousedown: " + evt.button );
@@ -954,10 +957,10 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 
 			mouseX = evt.pageX;
 			mouseY = evt.pageY;
-			startDrawing( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, ( evt.button == 2) );
+			startDrawing( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, ( evt.button == 2 || evt.button == 1) );
 			// broadcast
 			var message = new CustomEvent('send');
-			message.content = { sender: 'chalkboard-plugin', type: 'startDrawing', x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( evt.button == 2) };
+			message.content = { sender: 'chalkboard-plugin', type: 'startDrawing', x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( evt.button == 2 || evt.button == 1) };
 			document.dispatchEvent( message );
 /*
 			xLast = mouseX;
@@ -974,8 +977,8 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		}
 	} );
 
-
 	document.addEventListener( 'mousemove', function( evt ) {
+//console.log("Mouse move");
 		if ( event ) {
 //			var ctx = drawingCanvas[mode].context;
 			var scale = drawingCanvas[mode].scale;
