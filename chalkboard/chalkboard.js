@@ -257,22 +257,28 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	}
 
 	/**
+	 * Export data.
+	 */
+	function exportData() {
+		for (var id = 0; id < 2; id++) {
+			for (var i = storage[id].data.length-1; i >= 0; i--) {
+				if (storage[id].data[i].events.length == 0) {
+					storage[id].data.splice(i, 1);
+				}
+			}
+		}
+		return new Blob( [ JSON.stringify( storage ) ], { type: "application/json"} );
+	}
+
+	/**
 	 * Download data.
 	 */
 	function downloadData() {
 		var a = document.createElement('a');
 		document.body.appendChild(a);	
 		try {
-			// cleanup slide data without events
-			for (var id = 0; id < 2; id++) {
-				for (var i = storage[id].data.length-1; i >= 0; i--) {
-					if (storage[id].data[i].events.length == 0) {
-						storage[id].data.splice(i, 1);
-					}
-				}
-			}
 			a.download = "chalkboard.json";
-			var blob = new Blob( [ JSON.stringify( storage ) ], { type: "application/json"} );
+			var blob = exportData();
 			a.href = window.URL.createObjectURL( blob );
 		} catch( error ) {
 			a.innerHTML += " (" + error + ")";
@@ -1286,6 +1292,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	this.reset = resetSlide;
 	this.resetAll = resetStorage;
 	this.download = downloadData;
+	this.getData = exportData;
 
 	return this;
 })();
