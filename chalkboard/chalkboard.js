@@ -1193,15 +1193,19 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 				notescanvas.style.pointerEvents = "auto";
 			}
 			else {
+				var message = new CustomEvent('send');
 				if ( notescanvas.style.pointerEvents != "none" ) {
 					event = null;
 					notescanvas.style.background = 'rgba(0,0,0,0)';
 					notescanvas.style.pointerEvents = "none";
+					message.content = { sender: 'chalkboard-plugin', type: 'stopEditNotesCanvas' };
 				}
 				else {
 					notescanvas.style.background = background[0]; //'rgba(255,0,0,0.5)';
 					notescanvas.style.pointerEvents = "auto";
+					message.content = { sender: 'chalkboard-plugin', type: 'startEditNotesCanvas' };
 				}
+				document.dispatchEvent( message );
 			}
 		}
 	};
