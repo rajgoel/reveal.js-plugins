@@ -13,9 +13,14 @@
 var RevealFullscreen= window.RevealFullscreen || (function(){
 
 	var config = null;
+	var ready = false;
 
 	Reveal.addEventListener( 'ready', function( event ) {
+		ready = true;
 		config = { width: Reveal.getConfig().width, height: Reveal.getConfig().height, margin: Reveal.getConfig().margin };
+		if ( Reveal.getCurrentSlide().hasAttribute("data-fullscreen") ) {
+			Reveal.configure( { width: window.innerWidth, height: window.innerHeight, margin: 0 } );
+		}
 	} );
 
 	Reveal.addEventListener( 'slidechanged', function( event ) {
@@ -28,7 +33,7 @@ var RevealFullscreen= window.RevealFullscreen || (function(){
 	} );
 
 	window.addEventListener( 'resize', function( event ) {
-		if ( Reveal.getCurrentSlide().hasAttribute("data-fullscreen") ) {
+		if ( ready && Reveal.getCurrentSlide().hasAttribute("data-fullscreen") ) {
 			Reveal.configure( { width: window.innerWidth, height: window.innerHeight, margin: 0 } );
 		}
 	} );
