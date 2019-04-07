@@ -24,6 +24,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 	var defaultNotes = false; // use slide notes as default for the text to speech converter
 	var defaultText = false; // use slide text as default for the text to speech converter
 	var defaultDuration = 5; // value in seconds
+	var defaultAudios = true; // try to obtain audio for slide and fragment numbers
 	var advance = 0; // advance to next slide after given time in milliseconds after audio has played, use negative value to not advance 
 	var autoplay = false; // automatically start slideshow
 	var playerOpacity = .05; // opacity when the mouse is far from to the audioplayer
@@ -151,6 +152,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 			if ( config.defaultNotes != null ) defaultNotes = config.defaultNotes;
 			if ( config.defaultText != null ) defaultText = config.defaultText;
 			if ( config.defaultDuration != null ) defaultDuration = config.defaultDuration;
+			if ( config.defaultAudios != null ) defaultAudios = config.defaultAudios;
 			if ( config.advance != null ) advance = config.advance;
 			if ( config.autoplay != null ) autoplay = config.autoplay;
 			if ( config.playerOpacity != null  ) playerOpacity = config.playerOpacity;
@@ -402,7 +404,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 				audioElement.insertBefore(audioSource, audioElement.firstChild);
 			} );
 		}
-		else {
+		else if ( defaultAudios ) {
 			var audioExists = false;
 			try {
 				// check if audio file exists 
