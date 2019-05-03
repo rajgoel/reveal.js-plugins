@@ -10,7 +10,7 @@ This collections includes the following plugins:
 - [Chalkboard](https://github.com/rajgoel/reveal.js-plugins/tree/master/chalkboard) ([Demo](https://rajgoel.github.io/reveal.js-demos/chalkboard-demo.html)):
  A plugin adding a chalkboard and slide annotation.
 - [Chart](https://github.com/rajgoel/reveal.js-plugins/tree/master/chart) ([Demo](https://rajgoel.github.io/reveal.js-demos/chart-demo.html)):
- A plugin for using Chart.js v2.0. 
+ A plugin for using Chart.js v2.8. 
 - [Custom controls](https://github.com/rajgoel/reveal.js-plugins/tree/master/customcontrols) ([Demo](https://rajgoel.github.io/reveal.js-demos/customcontrols-demo.html)): 
  A plugin for customization of controls.
 - [Embed tweet](https://github.com/rajgoel/reveal.js-plugins/tree/master/embed-tweet) ([Demo](https://rajgoel.github.io/reveal.js-demos/embed-tweet-demo.html)):
