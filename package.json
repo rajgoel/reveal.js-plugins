@@ -1,18 +1,14 @@
-
 {
   "name": "reveal.js-plugins",
   "version": "1.0.0",
   "description": "A plugin collection for your reveal.js presentations",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/rajgoel/reveal.js-plugins.git"
   },
   "keywords": [
     "reveal",
-    "plugins",
+    "plugins"
   ],
   "author": "Asvin Goel",
   "license": "MIT",
