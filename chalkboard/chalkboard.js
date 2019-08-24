@@ -50,20 +50,14 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		'rgba(20, 237, 28, 0.5)'];
 	if ("chalkColors" in config) chalkColors = config.chalkColors;
 	var boardColors = chalkColors;
-	var numBoardColors = boardColors.length;
 	
 	var penColors = ['rgba(0, 0, 255, 1)', 
+		'rgba(200,0,6,1)', 
 		'rgba(0, 157,6,1)',
 		'rgba(255,52,0,1)', 
 		'rgba(37,86,162,1)', 
-		'rgba(157,0,6,1)', 
 		'rgba(80, 80, 80,1)'];
 	if ("penColors" in config) penColors = config.penColors;
-	var canvasColors = penColors;
-	var numCanvasColors = canvasColors.length;
-	
-	var boardColor = 0;
-	var canvasColor = 0;
 
 	var chalkCursors = ['url(' + path + 'img/chalk.png), auto',
    		'url(' + path + 'img/chalko.png), auto',
@@ -72,11 +66,9 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	   	'url(' + path + 'img/chalkg.png), auto' ];
 	if ("chalkCursors" in config) chalkCursors = config.chalkCursors;
 	var boardCursors = chalkCursors;
-	var numBoardCursors = boardCursors.length;
 	
 	var penCursors = ['url(' + path + 'img/boardmarker32.png), auto'];
 	if ("penCursors" in config) penCursors = config.penCursors;
-	var numCanvasCursors = penCursors.length;
 
 	var theme = config.theme || "chalkboard"; 
 	switch ( theme ) {
@@ -86,9 +78,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 				'url(' + path + 'img/boardmarker.png), auto' ];
 			draw = [ drawWithPen , drawWithPen ];
 			boardColors = penColors;
-			numBoardColors = boardColors.length;
 			boardCursors = penCursors;
-			numBoardCursors = penCursors.length;
 			color = [penColors[0], penColors[0]];
 			break;
 		default:
@@ -98,7 +88,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			draw = [ drawWithPen , drawWithChalk ];
 			color = [penColors[0], chalkColors[0]];
 	}
-	
+
 	if ( config.background ) background = config.background;
 	if ( config.pen ) { 
 		pen = config.pen;
@@ -110,6 +100,12 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		penColors[0] = config.color[0];
 		boardColors[0] = config.color[1];
 	}
+
+	var colors = [penColors, boardColors];
+	var numColors = [penColors.length, boardColors.length];
+	var pens = [penCursors, boardCursors];
+	var numPens = [penCursors.length, boardCursors.length];
+	var colorPointers = [0, 0];
 
 	var toggleChalkboardButton = config.toggleChalkboardButton == undefined ? true : config.toggleChalkboardButton;
 	var toggleNotesButton = config.toggleNotesButton == undefined ? true : config.toggleNotesButton;
@@ -580,6 +576,38 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		drawingCanvas[id].context.clearRect(0,0,drawingCanvas[id].width,drawingCanvas[id].height);
 	}
 
+	/**
+	 * Set primary color
+	 */
+	function setColorPrimary() {
+		colorPointers[mode] = 0
+		color[mode] = colors[mode][0];
+		pen[mode] = pens[mode][0]
+		drawingCanvas[mode].canvas.style.cursor = pen[mode];
+	}
+
+	/**
+	 * Forward cycle color
+	 */
+	function cycleColorNext() {
+		colorPointers[mode] = (colorPointers[mode] + 1) % numColors[mode];
+		color[mode] = colors[mode][colorPointers[mode]];
+		let cursorPointer = colorPointers[mode] < numPens[mode] ? colorPointers[mode] : 0;
+	   	pen[mode] = pens[mode][cursorPointer];	
+		drawingCanvas[mode].canvas.style.cursor = pen[mode];
+	}
+
+	/**
+	 * Backward cycle color
+	 */
+	function cycleColorPrev() {
+		colorPointers[mode] = (colorPointers[mode] + (numColors[mode] - 1)) % numColors[mode];
+		color[mode] = colors[mode][colorPointers[mode]];
+		let cursorPointer = colorPointers[mode] < numPens[mode] ? colorPointers[mode] : 0;
+	   	pen[mode] = pens[mode][cursorPointer];	
+		drawingCanvas[mode].canvas.style.cursor = pen[mode];
+	}
+
 /*****************************************************************
 ** Broadcast
 ******************************************************************/
@@ -763,6 +791,15 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 				break;
 			case "clear":
 				clearCanvas( id );
+				break;
+			case "colorprimary":
+				setColorPrimary();
+				break;
+			case "colornext":
+				cycleColorNext();
+				break;
+			case "colorprev":
+				cycleColorPrev();
 				break;
 			case "draw":
 				drawCurve( id, event, timestamp );
@@ -1247,6 +1284,8 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 					notescanvas.style.pointerEvents = "none";
 				}
 				else {
+					setColorPrimary();
+					recordEvent( { type:"colorprimary", begin: Date.now() - slideStart } );
 					notescanvas.style.background = background[0]; //'rgba(255,0,0,0.5)';
 					notescanvas.style.pointerEvents = "auto";
 				}
@@ -1263,7 +1302,11 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		}
 		else {
 			showChalkboard();
-			if ( !readOnly ) recordEvent( { type:"open", begin: Date.now() - slideStart } );
+			setColorPrimary();
+			if ( !readOnly ) { 
+				recordEvent( { type:"open", begin: Date.now() - slideStart } );
+				recordEvent( { type:"colorprimary", begin: Date.now() - slideStart } );
+			}
 		}
 	};
 
@@ -1277,6 +1320,20 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			document.dispatchEvent( message );
 		}
 	};
+
+	function colorNext() {
+		if ( !readOnly ) {
+			recordEvent( { type:"colornext", begin: Date.now() - slideStart } );
+			cycleColorNext();
+		}
+	}
+
+	function colorPrev() {
+		if ( !readOnly ) {
+			recordEvent( { type:"colorprev", begin: Date.now() - slideStart } );
+			cycleColorPrev();
+		}
+	}
 
 	function resetSlide( force ) {
 		var ok = force || confirm("Please confirm to delete chalkboard drawings on this slide!");
@@ -1337,6 +1394,8 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	this.toggleChalkboard = toggleChalkboard;
 	this.startRecording = startRecording;
 	this.clear = clear;
+	this.colorNext = colorNext;
+	this.colorPrev = colorPrev;
 	this.reset = resetSlide;
 	this.resetAll = resetStorage;
 	this.download = downloadData;
