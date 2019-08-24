@@ -37,6 +37,8 @@ Reveal.initialize({
 	    46: function() { RevealChalkboard.clear() },	// clear chalkboard when 'DEL' is pressed
 	     8: function() { RevealChalkboard.reset() },	// reset chalkboard data on current slide when 'BACKSPACE' is pressed
 	    68: function() { RevealChalkboard.download() },	// downlad recorded chalkboard drawing when 'd' is pressed
+	    70: function() { RevealChalkboard.colorNext() },	// cycle colors forward when 'f' is pressed
+	    71: function() { RevealChalkboard.colorPrev() },	// cycle colors backward when 'g' is pressed
 	},
 	// ...
 
@@ -63,9 +65,11 @@ With above configuration the notes canvas is opened and closed when pressing 'c'
 - Touch and hold for half a second, then move to wipe away previous drawings
 
 ### Keyboard
-- Click the 'DEL' key to clear the chalkboard </li>
-- Click the 'd' key to download chalkboard drawings</li>
-- Click the 'BACKSPACE' key to delete all chalkboard drawings on the current slide</li>
+- Press the 'DEL' key to clear the chalkboard 
+- Press the 'd' key to download chalkboard drawings
+- Press the 'BACKSPACE' key to delete all chalkboard drawings on the current slide
+- Press the 'f' key to cycle colors forward
+- Press the 'g' key to cycle colors backward
 
 ## Playback
 
@@ -73,13 +77,17 @@ If the ```autoSlide``` feature is set or if the ```audio-slideshow``` plugin is 
 
 ## PDF-Export
 
-If the slideshow is opened in [print mode](https://github.com/hakimel/reveal.js/#pdf-export) the pre-recorded chalkboard drawings (which must be provided in a file, see ```src``` option) are included in the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings are also included if they had been cleared (using the 'DEL' key). Drawings on the notes canvas are not included in the PDF-file.   
+If the slideshow is opened in [print mode](https://github.com/hakimel/reveal.js/#pdf-export) the pre-recorded chalkboard drawings (which must be provided in a file, see ```src``` option) are included in the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings are also included if they had been cleared (using the 'DEL' key). Drawings on the notes canvas are not included in the PDF-file.
 
 
 ## Configuration
 
 The plugin has several configuration options:
 
+- ```penWidth```: an integer. the drawing width of the pen; larger values draw thicker lines.
+- ```chalkWidth```: an integer, the drawing width of the chalk; larger values draw thicker lines.
+- ```chalkEffect```: a float in the range ```[0.0, 1.0]```, the intesity of the chalk effect on the chalk board. Full effect (default) ```1.0```, no effect ```0.0```.
+- ```eraserDiameter```: an integer, the diameter in pixels affected by the eraser. Larger values erase a greater area. The erased area is circular.
 - ```src```: Optional filename for pre-recorded drawings.
 - ```readOnly```: Configuation option allowing to prevent changes to existing drawings. If set to ```true``` no changes can be made, if set to false ```false``` changes can be made, if unset or set to ```undefined``` no changes to the drawings can be made after returning to a slide or fragment for which drawings had been recorded before. In any case the recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the ```RevealChalkboard.clear()``` function).
 - ```toggleNotesButton```: If set to ```true``` a button for opening and closing the notes canvas is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate. 
@@ -91,7 +99,11 @@ The following configuration options allow to change the appearance of the notes 
 
 - ```color```: The first value gives the pen color, the second value gives the color of the chalk.
 - ```background```: The first value expects a (semi-)transparent color which is used to provide visual feedback that the notes canvas is enabled, the second value expects a filename to a background image for the chalkboard.
-- ```pen```: The first value expects a filename for an image of the pen used for the notes canvas, the second value expects a filename  for an image of the pen used for the chalkboard.
+- ```pen```: The first value expects a filename for an image of the pen used for the notes canvas, the second value expects a filename  for an image of the pen used for the chalkboard. The list can be as long as you wish.
+- ```penColors```: A list of pen colors used on the slide canvas and the whiteboard. The list can be as long as you wish.
+- ```chalkColors```: A list of chalk colors used on the chalkboard. The list can be as long as you wish.
+- ```penCursors```: A list of pen cursors used on the slide canvas and the whiteboard. The list can be as long as you wish, although there is no point in making it longer than ```penColors```.
+- ```chalkCursors```: A list of chalk cursors used on the chalkboard. The list can be as long as you wish, although there is no point in making it longer than ```chalkColors```.
 
 All of the configurations are optional and the default values shown below are used if the options are not provided.
 
@@ -99,6 +111,10 @@ All of the configurations are optional and the default values shown below are us
 Reveal.initialize({
 	// ...
 	chalkboard: { 
+	    penWidth = 3,
+	    chalkWidth = 7,
+	    chalkEffect = 1.0,
+	    erasorDiameter = 20;
 		src: null,
 		readOnly: undefined, 
 		toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
@@ -109,6 +125,23 @@ Reveal.initialize({
 		color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ],
 		background: [ 'rgba(127,127,127,.1)' , 'reveal.js-plugins/chalkboard/img/blackboard.png' ],
 		pen:  [ 'url(reveal.js-plugins/chalkboard/img/boardmarker.png), auto', 'url(reveal.js-plugins/chalkboard/img/chalk.png), auto' ],
+		penColors: ['rgba(0, 0, 255, 1)',
+        'rgba(200,0,6,1)',
+        'rgba(0, 157,6,1)',
+        'rgba(255,52,0,1)',
+        'rgba(37,86,162,1)',
+        'rgba(80, 80, 80,1)'],
+        chalkColors: ['rgba(255,255,255,0.5)',
+        'rgba(220, 133, 41, 0.5)',
+        'rgba(96, 154, 244, 0.5)',
+        'rgba(237, 20, 28, 0.5)',
+        'rgba(20, 237, 28, 0.5)'],
+        penCursors: ['url(reveal.js-plugins/chalkboard/img/boardmarker.png), auto'],
+        chalkCursors: ['url(reveal.js-plugins/chalkboard/img/chalk.png), auto',
+        'url('reveal.js-plugins/chalkboard/img/chalko.png), auto',
+        'url('reveal.js-plugins/chalkboard/img/chalkb.png), auto',
+        'url('reveal.js-plugins/chalkboard/img/chalkr.png), auto',
+        'url('reveal.js-plugins/chalkboard/img//chalkg.png), auto' ]
 	},
 	// ...
 
@@ -117,7 +150,10 @@ Reveal.initialize({
 
 **Note:** Customisation of pens has changed since version 0.5 of the plugin, it is now possible to use standard cursors, e.g. by setting ```pen:  [ 'crosshair', 'pointer' ]```. Please update your parameters if migrating from an older version.
 
+**Note:** Using the ```pen``` and ```colors``` setting will overwrite the first entries in the ```penCursors```, ```chalkCursors```, ```penColors``` and ```chalkColors``` settings.  So, if you have custom configurations for multiple colors and/or cursors you might *not* want to use the ```pen``` and ```color``` configuration options. This behaviour is owed to backwards compatibility.
 ## License
+
+**Note:** 
 
 MIT licensed
 
