@@ -41,6 +41,42 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	var penWidth = ("penWidth" in config) ? config.penWidth : 3; 
 	var chalkWidth = ("chalkWidth" in config) ? config.chalkWidth : 7; 
 	var chalkEffect = ("chalkEffect" in config) ? config.chalkEffect : 1.0;
+	var eraserDiameter = ("eraserDiameter" in config) ? config.eraserDiameter : 20;
+
+	var chalkColors = ['rgba(255,255,255,0.5)', 
+		'rgba(220, 133, 41, 0.5)', 
+		'rgba(96, 154, 244, 0.5)', 
+		'rgba(237, 20, 28, 0.5)',
+		'rgba(20, 237, 28, 0.5)'];
+	if ("chalkColors" in config) chalkColors = config.chalkColors;
+	var boardColors = chalkColors;
+	var numBoardColors = boardColors.length;
+	
+	var penColors = ['rgba(0, 0, 255, 1)', 
+		'rgba(0, 157,6,1)',
+		'rgba(255,52,0,1)', 
+		'rgba(37,86,162,1)', 
+		'rgba(157,0,6,1)', 
+		'rgba(80, 80, 80,1)'];
+	if ("penColors" in config) penColors = config.penColors;
+	var canvasColors = penColors;
+	var numCanvasColors = canvasColors.length;
+	
+	var boardColor = 0;
+	var canvasColor = 0;
+
+	var chalkCursors = ['url(' + path + 'img/chalk.png), auto',
+   		'url(' + path + 'img/chalko.png), auto',
+	   	'url(' + path + 'img/chalkb.png), auto',
+	   	'url(' + path + 'img/chalkr.png), auto',
+	   	'url(' + path + 'img/chalkg.png), auto' ];
+	if ("chalkCursors" in config) chalkCursors = config.chalkCursors;
+	var boardCursors = chalkCursors;
+	var numBoardCursors = boardCursors.length;
+	
+	var penCursors = ['url(' + path + 'img/boardmarker32.png), auto'];
+	if ("penCursors" in config) penCursors = config.penCursors;
+	var numCanvasCursors = penCursors.length;
 
 	var theme = config.theme || "chalkboard"; 
 	switch ( theme ) {
@@ -49,20 +85,32 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			pen = [ 'url(' + path + 'img/boardmarker.png), auto',
 				'url(' + path + 'img/boardmarker.png), auto' ];
 			draw = [ drawWithPen , drawWithPen ];
-			color = [ 'rgba(0,0,255,1)', 'rgba(0,0,255,1)' ];
+			boardColors = penColors;
+			numBoardColors = boardColors.length;
+			boardCursors = penCursors;
+			numBoardCursors = penCursors.length;
+			color = [penColors[0], penColors[0]];
 			break;
 		default:
 			background = [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ];
 			pen = [ 'url(' + path + 'img/boardmarker.png), auto',
 				'url(' + path + 'img/chalk.png), auto' ];
 			draw = [ drawWithPen , drawWithChalk ];
-			color = [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)'  ];
+			color = [penColors[0], chalkColors[0]];
 	}
 	
 	if ( config.background ) background = config.background;
-	if ( config.pen ) pen = config.pen;
+	if ( config.pen ) { 
+		pen = config.pen;
+		penCursors[0] = config.pen[0];
+		boardCursors[0] = config.pen[1];
+	}
 	if ( config.draw ) draw = config.draw;
-	if ( config.color ) color = config.color;
+	if ( config.color ) { 
+		color = config.color;
+		penColors[0] = config.color[0];
+		boardColors[0] = config.color[1];
+	}
 
 	var toggleChalkboardButton = config.toggleChalkboardButton == undefined ? true : config.toggleChalkboardButton;
 	var toggleNotesButton = config.toggleNotesButton == undefined ? true : config.toggleNotesButton;
@@ -87,7 +135,6 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 	}
 
-	var eraserDiameter = 20;
 
 	if ( toggleChalkboardButton ) {
 //console.log("toggleChalkboardButton")
