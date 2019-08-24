@@ -67,7 +67,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	if ("chalkCursors" in config) chalkCursors = config.chalkCursors;
 	var boardCursors = chalkCursors;
 	
-	var penCursors = ['url(' + path + 'img/boardmarker32.png), auto'];
+	var penCursors = ['url(' + path + 'img/boardmarker.png), auto'];
 	if ("penCursors" in config) penCursors = config.penCursors;
 
 	var theme = config.theme || "chalkboard"; 
