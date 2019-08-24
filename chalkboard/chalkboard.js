@@ -38,8 +38,8 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 	var background, pen, draw, color;
 
-	var pen_width = config.penwidth || 3; 
-	var chalk_width = config.chalkwidth || 7; 
+	var penWidth = config.penWidth || 3; 
+	var chalkWidth = config.chalkWidth || 7; 
 
 	var theme = config.theme || "chalkboard"; 
 	switch ( theme ) {
@@ -440,7 +440,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 ******************************************************************/
 
 	function drawWithPen(context,fromX,fromY,toX,toY){
-		context.lineWidth = pen_width;
+		context.lineWidth = penWidth;
 		context.lineCap = 'round';
 		context.strokeStyle = color[0];
 		context.beginPath();
@@ -450,7 +450,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	}
 
 	function drawWithChalk(context,fromX,fromY,toX,toY) {
-		var brushDiameter = chalk_width;
+		var brushDiameter = chalkWidth;
 		context.lineWidth = brushDiameter;
 		context.lineCap = 'round';
 		context.fillStyle = color[1]; // 'rgba(255,255,255,0.5)';	
@@ -470,7 +470,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			var yCurrent = fromY+(i*yUnit);
 			var xRandom = xCurrent+(Math.random()-0.5)*brushDiameter*1.2;			
 			var yRandom = yCurrent+(Math.random()-0.5)*brushDiameter*1.2;
-	    	context.clearRect( xRandom, yRandom, Math.random()*2+2, Math.random()+1);
+			context.clearRect( xRandom, yRandom, Math.random()*2+2, Math.random()+1);
 		}
 	}
 
