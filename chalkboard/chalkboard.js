@@ -38,8 +38,9 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 
 	var background, pen, draw, color;
 
-	var penWidth = config.penWidth || 3; 
-	var chalkWidth = config.chalkWidth || 7; 
+	var penWidth = ("penWidth" in config) ? config.penWidth : 3; 
+	var chalkWidth = ("chalkWidth" in config) ? config.chalkWidth : 7; 
+	var chalkEffect = ("chalkEffect" in config) ? config.chalkEffect : 1.0;
 
 	var theme = config.theme || "chalkboard"; 
 	switch ( theme ) {
@@ -455,7 +456,8 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		context.lineCap = 'round';
 		context.fillStyle = color[1]; // 'rgba(255,255,255,0.5)';	
 		context.strokeStyle = color[1];
-		var opacity = Math.min(0.8, Math.max(0,color[1].replace(/^.*,(.+)\)/,'$1') - 0.1)) + Math.random()*0.2;
+		/*var opacity = Math.min(0.8, Math.max(0,color[1].replace(/^.*,(.+)\)/,'$1') - 0.1)) + Math.random()*0.2;*/
+		var opacity = 1.0;
 		context.strokeStyle = context.strokeStyle.replace(/[\d\.]+\)$/g, opacity + ')');
 		context.beginPath();
   		context.moveTo(fromX, fromY);		
@@ -466,11 +468,13 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		var xUnit = (toX-fromX)/length;
 		var yUnit = (toY-fromY)/length;
 		for(var i=0; i<length; i++ ){
-			var xCurrent = fromX+(i*xUnit);	
-			var yCurrent = fromY+(i*yUnit);
-			var xRandom = xCurrent+(Math.random()-0.5)*brushDiameter*1.2;			
-			var yRandom = yCurrent+(Math.random()-0.5)*brushDiameter*1.2;
-			context.clearRect( xRandom, yRandom, Math.random()*2+2, Math.random()+1);
+			if (chalkEffect > (Math.random() * 0.9)) {
+				var xCurrent = fromX+(i*xUnit);	
+				var yCurrent = fromY+(i*yUnit);
+				var xRandom = xCurrent+(Math.random()-0.5)*brushDiameter*1.2;			
+				var yRandom = yCurrent+(Math.random()-0.5)*brushDiameter*1.2;
+				context.clearRect( xRandom, yRandom, Math.random()*2+2, Math.random()+1);
+			}
 		}
 	}
 
