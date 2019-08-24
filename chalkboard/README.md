@@ -138,10 +138,10 @@ Reveal.initialize({
         'rgba(20, 237, 28, 0.5)'],
         penCursors: ['url(reveal.js-plugins/chalkboard/img/boardmarker.png), auto'],
         chalkCursors: ['url(reveal.js-plugins/chalkboard/img/chalk.png), auto',
-        'url('reveal.js-plugins/chalkboard/img/chalko.png), auto',
-        'url('reveal.js-plugins/chalkboard/img/chalkb.png), auto',
-        'url('reveal.js-plugins/chalkboard/img/chalkr.png), auto',
-        'url('reveal.js-plugins/chalkboard/img//chalkg.png), auto' ]
+        'url(reveal.js-plugins/chalkboard/img/chalko.png), auto',
+        'url(reveal.js-plugins/chalkboard/img/chalkb.png), auto',
+        'url(reveal.js-plugins/chalkboard/img/chalkr.png), auto',
+        'url(reveal.js-plugins/chalkboard/img//chalkg.png), auto' ]
 	},
 	// ...
 
