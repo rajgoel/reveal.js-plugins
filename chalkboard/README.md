@@ -100,6 +100,9 @@ The following configuration options allow to change the appearance of the notes 
 - ```color```: The first value gives the pen color, the second value gives the color of the chalk.
 - ```background```: The first value expects a (semi-)transparent color which is used to provide visual feedback that the notes canvas is enabled, the second value expects a filename to a background image for the chalkboard.
 - ```pen```: The first value expects a filename for an image of the pen used for the notes canvas, the second value expects a filename  for an image of the pen used for the chalkboard. The list can be as long as you wish.
+
+The following options are related to multi-color support. You can provide arbitrarily long lists of colors for the pen and the chalk -- all of them will be available during your presentation.  You can also provide arbitrarily long lists of corresponding cursors.  It does not make any sense to have more cursors than colors, though. Having less is fine: if you cycle to a color that has no corresponding cursor, the default cursor (first in list) will be used. By default, multi-colored cursors are provided for the chalk, but not for the pen. If you configure your chalk colors, the default cursors might be not what you want. In this case we recommend to configure the ```chalkboard.chalkCursors``` to have only one entry: the default's first (```chalk.png```). Or, of course, supply your own fancy cursors.
+
 - ```penColors```: A list of pen colors used on the slide canvas and the whiteboard. The list can be as long as you wish.
 - ```chalkColors```: A list of chalk colors used on the chalkboard. The list can be as long as you wish.
 - ```penCursors```: A list of pen cursors used on the slide canvas and the whiteboard. The list can be as long as you wish, although there is no point in making it longer than ```penColors```.
@@ -111,10 +114,10 @@ All of the configurations are optional and the default values shown below are us
 Reveal.initialize({
 	// ...
 	chalkboard: {
-	    penWidth = 3,
-	    chalkWidth = 7,
-	    chalkEffect = 1.0,
-	    erasorDiameter = 20;
+        penWidth = 3,
+        chalkWidth = 7,
+        chalkEffect = 1.0,
+        erasorDiameter = 20;
         src: null,
         readOnly: undefined, 
         toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
