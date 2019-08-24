@@ -110,38 +110,38 @@ All of the configurations are optional and the default values shown below are us
 ```javascript
 Reveal.initialize({
 	// ...
-	chalkboard: { 
+	chalkboard: {
 	    penWidth = 3,
 	    chalkWidth = 7,
 	    chalkEffect = 1.0,
 	    erasorDiameter = 20;
-		src: null,
-		readOnly: undefined, 
-		toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
-		toggleNotesButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
-		transition: 800,
-		theme: "chalkboard",
-		// configuration options for notes canvas and chalkboard
-		color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ],
-		background: [ 'rgba(127,127,127,.1)' , 'reveal.js-plugins/chalkboard/img/blackboard.png' ],
-		pen:  [ 'url(reveal.js-plugins/chalkboard/img/boardmarker.png), auto', 'url(reveal.js-plugins/chalkboard/img/chalk.png), auto' ],
-		penColors: ['rgba(0, 0, 255, 1)',
-        'rgba(200,0,6,1)',
-        'rgba(0, 157,6,1)',
-        'rgba(255,52,0,1)',
-        'rgba(37,86,162,1)',
-        'rgba(80, 80, 80,1)'],
+        src: null,
+        readOnly: undefined, 
+        toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
+        toggleNotesButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
+        transition: 800,
+        theme: "chalkboard",
+        // configuration options for notes canvas and chalkboard
+        color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ],
+        background: [ 'rgba(127,127,127,.1)' , 'reveal.js-plugins/chalkboard/img/blackboard.png' ],
+        pen:  [ 'url(reveal.js-plugins/chalkboard/img/boardmarker.png), auto', 'url(reveal.js-plugins/chalkboard/img/chalk.png), auto' ],
+        penColors: ['rgba(0, 0, 255, 1)',
+            'rgba(200,0,6,1)',
+            'rgba(0, 157,6,1)',
+            'rgba(255,52,0,1)',
+            'rgba(37,86,162,1)',
+            'rgba(80, 80, 80,1)'],
         chalkColors: ['rgba(255,255,255,0.5)',
-        'rgba(220, 133, 41, 0.5)',
-        'rgba(96, 154, 244, 0.5)',
-        'rgba(237, 20, 28, 0.5)',
-        'rgba(20, 237, 28, 0.5)'],
+            'rgba(220, 133, 41, 0.5)',
+            'rgba(96, 154, 244, 0.5)',
+            'rgba(237, 20, 28, 0.5)',
+            'rgba(20, 237, 28, 0.5)'],
         penCursors: ['url(reveal.js-plugins/chalkboard/img/boardmarker.png), auto'],
         chalkCursors: ['url(reveal.js-plugins/chalkboard/img/chalk.png), auto',
-        'url(reveal.js-plugins/chalkboard/img/chalko.png), auto',
-        'url(reveal.js-plugins/chalkboard/img/chalkb.png), auto',
-        'url(reveal.js-plugins/chalkboard/img/chalkr.png), auto',
-        'url(reveal.js-plugins/chalkboard/img//chalkg.png), auto' ]
+            'url(reveal.js-plugins/chalkboard/img/chalko.png), auto',
+            'url(reveal.js-plugins/chalkboard/img/chalkb.png), auto',
+            'url(reveal.js-plugins/chalkboard/img/chalkr.png), auto',
+            'url(reveal.js-plugins/chalkboard/img//chalkg.png), auto' ]
 	},
 	// ...
 
