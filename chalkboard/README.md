@@ -113,7 +113,7 @@ All of the configurations are optional and the default values shown below are us
 ```javascript
 Reveal.initialize({
 	// ...
-	chalkboard: {
+    chalkboard: {
         penWidth = 3,
         chalkWidth = 7,
         chalkEffect = 1.0,
@@ -145,8 +145,8 @@ Reveal.initialize({
             'url(reveal.js-plugins/chalkboard/img/chalkb.png), auto',
             'url(reveal.js-plugins/chalkboard/img/chalkr.png), auto',
             'url(reveal.js-plugins/chalkboard/img//chalkg.png), auto' ]
-	},
-	// ...
+    },
+    // ...
 
 });
 ```
