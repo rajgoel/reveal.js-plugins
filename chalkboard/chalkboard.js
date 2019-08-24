@@ -105,7 +105,6 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		penCursors[0] = config.pen[0];
 		boardCursors[0] = config.pen[1];
 	}
-	if ( config.draw ) draw = config.draw;
 	if ( config.color ) { 
 		color = config.color;
 		penColors[0] = config.color[0];
