@@ -77,16 +77,27 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 			pen = [ 'url(' + path + 'img/boardmarker.png), auto',
 				'url(' + path + 'img/boardmarker.png), auto' ];
 			draw = [ drawWithPen , drawWithPen ];
-			boardColors = penColors;
-			boardCursors = penCursors;
-			color = [penColors[0], penColors[0]];
+			/**
+			 * We need deep copies of the colors and cursors to
+			 * decouple whiteboard and canvas colors.
+			 */
+			boardColors = [];
+			let n = penColors.length;
+			let i = 0;
+			for (i = 0; i < n; i++) {
+				boardColors.push(penColors[i]);
+			}	
+			boardCursors = [];
+			n = penCursors.length;
+			for (i = 0; i < n; i++) {
+				boardCursors.push(penCursors[i]);
+			}	
 			break;
 		default:
 			background = [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ];
 			pen = [ 'url(' + path + 'img/boardmarker.png), auto',
 				'url(' + path + 'img/chalk.png), auto' ];
 			draw = [ drawWithPen , drawWithChalk ];
-			color = [penColors[0], chalkColors[0]];
 	}
 
 	if ( config.background ) background = config.background;
@@ -95,6 +106,7 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		penCursors[0] = config.pen[0];
 		boardCursors[0] = config.pen[1];
 	}
+	color = [penColors[0], boardColors[0]];
 	if ( config.color ) { 
 		color = config.color;
 		penColors[0] = config.color[0];
@@ -485,7 +497,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	function drawWithPen(context,fromX,fromY,toX,toY){
 		context.lineWidth = penWidth;
 		context.lineCap = 'round';
-		context.strokeStyle = color[0];
+		context.strokeStyle = color[mode];
 		context.beginPath();
   		context.moveTo(fromX, fromY);		
   		context.lineTo(toX, toY);
@@ -496,8 +508,8 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		var brushDiameter = chalkWidth;
 		context.lineWidth = brushDiameter;
 		context.lineCap = 'round';
-		context.fillStyle = color[1]; // 'rgba(255,255,255,0.5)';	
-		context.strokeStyle = color[1];
+		context.fillStyle = color[mode]; // 'rgba(255,255,255,0.5)';	
+		context.strokeStyle = color[mode];
 		/*var opacity = Math.min(0.8, Math.max(0,color[1].replace(/^.*,(.+)\)/,'$1') - 0.1)) + Math.random()*0.2;*/
 		var opacity = 1.0;
 		context.strokeStyle = context.strokeStyle.replace(/[\d\.]+\)$/g, opacity + ')');
