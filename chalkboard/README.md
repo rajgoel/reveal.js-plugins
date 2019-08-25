@@ -101,9 +101,10 @@ erase a greater area. The erased area is circular.
 
 The following configuration options allow to change the appearance of the notes canvas and the chalkboard. All of these options require two values, the first gives the value for the notes canvas, the second for the chalkboard.
 
-- ```color```: The first value gives the pen color, the second value gives the color of the chalk.
+- ```color```: The first value gives the pen color, the second value gives the color of the board drawings. This is kept for backwards compatibility. Setting this property will overwrite the default (first) color list entries.
 - ```background```: The first value expects a (semi-)transparent color which is used to provide visual feedback that the notes canvas is enabled, the second value expects a filename to a background image for the chalkboard.
-- ```pen```: The first value expects a filename for an image of the pen used for the notes canvas, the second value expects a filename  for an image of the pen used for the chalkboard. The list can be as long as you wish.
+- ```pen```: The first value expects a filename for an image of the pen used for the notes canvas, the second value expects a filename for an image of the pen used for the chalkboard. This is kept for backwards compatibility. Setting this property will overwrite the default (first) cursor image list entries.
+- ```rememberColor```: Whether to remember the last selected color for the slide canvas or the board. 
 
 The following options are related to multi-color support. You can provide arbitrarily long lists of colors for the slide canvas and the chalkboard/whiteboard -- all of them will be available during your presentation.  You can also provide arbitrarily long lists of corresponding cursors.  It does not make any sense to have more cursors than colors, though. Having less is fine: if you cycle to a color that has no corresponding cursor, the default cursor (first in list) will be used. By default, multi-colored cursors are provided for the chalk (corresponding to the default chalk colors), but not for the pen. If you configure your chalk colors, the default cursors might be not what you want. In this case we recommend to configure the ```chalkboard.chalkCursors``` to have only one entry: the default's first (```chalk.png```). Or, of course, supply your own fancy cursors.
 
@@ -122,7 +123,7 @@ Reveal.initialize({
         chalkWidth = 7,
         chalkEffect = 1.0,
         erasorDiameter = 20,
-        smallDefaultCursors = False,
+        smallDefaultCursors = false,
         src: null,
         readOnly: undefined, 
         toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
@@ -133,6 +134,7 @@ Reveal.initialize({
         color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ],
         background: [ 'rgba(127,127,127,.1)' , 'reveal.js-plugins/chalkboard/img/blackboard.png' ],
         pen:  [ 'url(reveal.js-plugins/chalkboard/img/boardmarker.png), auto', 'url(reveal.js-plugins/chalkboard/img/chalk.png), auto' ],
+        rememberColor: [true, false],
         slideColors: ['rgba(0, 0, 255, 1)',
             'rgba(200,0,6,1)',
             'rgba(0, 157,6,1)',
