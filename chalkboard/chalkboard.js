@@ -3,12 +3,13 @@
 **
 ** A plugin for reveal.js adding a chalkboard. 
 **
-** Version: 0.6
+** Version: 0.7
 ** 
 ** License: MIT license (see LICENSE.md)
 **
 ** Credits: 
 ** Chalkboard effect by Mohamed Moustafa https://github.com/mmoustafa/Chalkboard
+** Multi color support by Kurt Rinnert https://github.com/rinnert
 ******************************************************************/
 
 var RevealChalkboard = window.RevealChalkboard || (function(){
@@ -43,80 +44,93 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 	var chalkEffect = ("chalkEffect" in config) ? config.chalkEffect : 1.0;
 	var eraserDiameter = ("eraserDiameter" in config) ? config.eraserDiameter : 20;
 
-	var chalkColors = ['rgba(255,255,255,0.5)', 
+	var boardColors = ['rgba(255,255,255,0.5)', 
 		'rgba(220, 133, 41, 0.5)', 
 		'rgba(96, 154, 244, 0.5)', 
 		'rgba(237, 20, 28, 0.5)',
 		'rgba(20, 237, 28, 0.5)'];
-	if ("chalkColors" in config) chalkColors = config.chalkColors;
-	var boardColors = chalkColors;
+	if ("boardColors" in config) boardColors = config.boardColors;
 	
-	var penColors = ['rgba(0, 0, 255, 1)', 
+	var slideColors = ['rgba(0, 0, 255, 1)', 
 		'rgba(200,0,6,1)', 
 		'rgba(0, 157,6,1)',
 		'rgba(255,52,0,1)', 
 		'rgba(37,86,162,1)', 
 		'rgba(80, 80, 80,1)'];
-	if ("penColors" in config) penColors = config.penColors;
+	if ("slideColors" in config) slideColors = config.slideColors;
 
-	var chalkCursors = ['url(' + path + 'img/chalk.png), auto',
+	var boardCursors = ['url(' + path + 'img/chalk.png), auto',
    		'url(' + path + 'img/chalko.png), auto',
 	   	'url(' + path + 'img/chalkb.png), auto',
 	   	'url(' + path + 'img/chalkr.png), auto',
 	   	'url(' + path + 'img/chalkg.png), auto' ];
-	if ("chalkCursors" in config) chalkCursors = config.chalkCursors;
-	var boardCursors = chalkCursors;
+	if (config.smallDefaultCursors) {
+		boardCursors = ['url(' + path + 'img/chalk32.png), auto',
+   			'url(' + path + 'img/chalko32.png), auto',
+	   		'url(' + path + 'img/chalkb32.png), auto',
+	   		'url(' + path + 'img/chalkr32.png), auto',
+	   		'url(' + path + 'img/chalkg32.png), auto' ];
+	}
+	if ("boardCursors" in config) boardCursors = config.boardCursors;
 	
-	var penCursors = ['url(' + path + 'img/boardmarker.png), auto'];
-	if ("penCursors" in config) penCursors = config.penCursors;
+	var slideCursors = ['url(' + path + 'img/boardmarker.png), auto'];
+	if (config.smallDefaultCursors) {
+		slideCursors = ['url(' + path + 'img/boardmarker32.png), auto'];
+	}
+	if ("slideCursors" in config) slideCursors = config.slideCursors;
 
 	var theme = config.theme || "chalkboard"; 
 	switch ( theme ) {
 		case "whiteboard":
 			background = [ 'rgba(127,127,127,.1)' , path + 'img/whiteboard.png' ];
-			pen = [ 'url(' + path + 'img/boardmarker.png), auto',
-				'url(' + path + 'img/boardmarker.png), auto' ];
 			draw = [ drawWithPen , drawWithPen ];
 			/**
 			 * We need deep copies of the colors and cursors to
-			 * decouple whiteboard and canvas colors.
+			 * decouple whiteboard and canvas colors. This preserves
+			 * the old configuration behaviour of the pen and color
+			 * properties.
+			 *
+			 * Only do this if the board colors and cursors where
+			 * NOT explicitly configured.
 			 */
-			boardColors = [];
-			let n = penColors.length;
-			let i = 0;
-			for (i = 0; i < n; i++) {
-				boardColors.push(penColors[i]);
-			}	
-			boardCursors = [];
-			n = penCursors.length;
-			for (i = 0; i < n; i++) {
-				boardCursors.push(penCursors[i]);
-			}	
+			if (!("boardColors" in config)) {
+				boardColors = [];
+				let n = slideColors.length;
+				for (let i = 0; i < n; i++) {
+					boardColors.push(slideColors[i]);
+				}	
+			}
+			if (!("boardCursors" in config)) {
+				boardCursors = [];
+				let n = slideCursors.length;
+				for (let i = 0; i < n; i++) {
+					boardCursors.push(slideCursors[i]);
+				}	
+			}
 			break;
 		default:
 			background = [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ];
-			pen = [ 'url(' + path + 'img/boardmarker.png), auto',
-				'url(' + path + 'img/chalk.png), auto' ];
 			draw = [ drawWithPen , drawWithChalk ];
 	}
 
 	if ( config.background ) background = config.background;
+	pen = [slideCursors[0], boardCursors[0]];
 	if ( config.pen ) { 
 		pen = config.pen;
-		penCursors[0] = config.pen[0];
+		slideCursors[0] = config.pen[0];
 		boardCursors[0] = config.pen[1];
 	}
-	color = [penColors[0], boardColors[0]];
+	color = [slideColors[0], boardColors[0]];
 	if ( config.color ) { 
 		color = config.color;
-		penColors[0] = config.color[0];
+		slideColors[0] = config.color[0];
 		boardColors[0] = config.color[1];
 	}
 
-	var colors = [penColors, boardColors];
-	var numColors = [penColors.length, boardColors.length];
-	var pens = [penCursors, boardCursors];
-	var numPens = [penCursors.length, boardCursors.length];
+	var colors = [slideColors, boardColors];
+	var numColors = [slideColors.length, boardColors.length];
+	var pens = [slideCursors, boardCursors];
+	var numPens = [slideCursors.length, boardCursors.length];
 	var colorPointers = [0, 0];
 
 	var toggleChalkboardButton = config.toggleChalkboardButton == undefined ? true : config.toggleChalkboardButton;
@@ -235,7 +249,11 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		}
 
 		var sponge = document.createElement( 'img' );
-		sponge.src = path + 'img/sponge.png';
+		if (config.smallDefaultCursors) {
+			sponge.src = path + 'img/sponge32.png';
+		} else {
+			sponge.src = path + 'img/sponge.png';
+		}
 		sponge.id = "sponge";
 		sponge.style.visibility = "hidden";
 		sponge.style.position = "absolute";
