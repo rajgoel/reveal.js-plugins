@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/rajgoel/reveal.js-plugins/blob/master/README.md",
   "dependencies": {
-    "npm": "^5.8.0"
+    "npm": "^6.13.4"
   }
 }
 
