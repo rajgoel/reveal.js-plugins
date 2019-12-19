@@ -31,6 +31,15 @@ var RevealChalkboard = window.RevealChalkboard || (function(){
 		return path;
 }
 
+
+/* Feature detection for passive event handling*/
+var passiveSupported = false;
+
+try {
+  window.addEventListener("test", null, Object.defineProperty({}, "passive", { get: function() { passiveSupported = true; } }));
+} catch(err) {}
+
+
 /*****************************************************************
 ** Configuration
 ******************************************************************/
@@ -874,7 +883,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 */
 			touchTimeout = setTimeout( showSponge, 500, mouseX, mouseY );
 		}	
-	}, false);
+	}, passiveSupported ? {passive: false} : false);
 
 	document.addEventListener('touchmove', function(evt) {
 //console.log("Touch move");
