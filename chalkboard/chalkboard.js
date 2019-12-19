@@ -62,18 +62,17 @@ try {
 	if ("boardColors" in config) boardColors = config.boardColors;
 	
 	var slideColors = ['rgba(0, 0, 255, 1)', 
-		'rgba(200,0,6,1)', 
-		'rgba(0, 157,6,1)',
-		'rgba(255,52,0,1)', 
-		'rgba(37,86,162,1)', 
-		'rgba(80, 80, 80,1)'];
+		'rgba(0,0,0,1)', 
+		'rgba(255, 0,0,1)',
+		'rgba(0,255,0,1)', 
+		'rgba(255, 128, 0,1)'];
 	if ("slideColors" in config) slideColors = config.slideColors;
 
-	var boardCursors = ['url(' + path + 'img/chalk.png), auto',
-   		'url(' + path + 'img/chalko.png), auto',
-	   	'url(' + path + 'img/chalkb.png), auto',
-	   	'url(' + path + 'img/chalkr.png), auto',
-	   	'url(' + path + 'img/chalkg.png), auto' ];
+	var boardCursors = ['url(' + path + 'img/chalk-white.png), auto',
+   		'url(' + path + 'img/chalk-orange.png), auto',
+	   	'url(' + path + 'img/chalk-blue.png), auto',
+	   	'url(' + path + 'img/chalk-red.png), auto',
+	   	'url(' + path + 'img/chalk-green.png), auto' ];
 	if (config.smallDefaultCursors) {
 		boardCursors = ['url(' + path + 'img/chalk32.png), auto',
    			'url(' + path + 'img/chalko32.png), auto',
@@ -83,7 +82,11 @@ try {
 	}
 	if ("boardCursors" in config) boardCursors = config.boardCursors;
 	
-	var slideCursors = ['url(' + path + 'img/boardmarker.png), auto'];
+	var slideCursors = ['url(' + path + 'img/boardmarker-blue.png), auto',
+   		'url(' + path + 'img/boardmarker-black.png), auto',
+	   	'url(' + path + 'img/boardmarker-red.png), auto',
+	   	'url(' + path + 'img/boardmarker-green.png), auto',
+	   	'url(' + path + 'img/boardmarker-orange.png), auto' ];
 	if (config.smallDefaultCursors) {
 		slideCursors = ['url(' + path + 'img/boardmarker32.png), auto'];
 	}
