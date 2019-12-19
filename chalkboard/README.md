@@ -39,8 +39,8 @@ Reveal.initialize({
 	    46: function() { RevealChalkboard.clear() },	// clear chalkboard when 'DEL' is pressed
 	     8: function() { RevealChalkboard.reset() },	// reset chalkboard data on current slide when 'BACKSPACE' is pressed
 	    68: function() { RevealChalkboard.download() },	// downlad recorded chalkboard drawing when 'd' is pressed
-	    70: function() { RevealChalkboard.colorNext() },	// cycle colors forward when 'f' is pressed
-	    71: function() { RevealChalkboard.colorPrev() },	// cycle colors backward when 'g' is pressed
+	    88: function() { RevealChalkboard.colorNext() },	// cycle colors forward when 'x' is pressed
+	    89: function() { RevealChalkboard.colorPrev() },	// cycle colors backward when 'y' is pressed
 	},
 	// ...
 
@@ -70,8 +70,8 @@ With above configuration the notes canvas is opened and closed when pressing 'c'
 - Press the 'DEL' key to clear the chalkboard 
 - Press the 'd' key to download chalkboard drawings
 - Press the 'BACKSPACE' key to delete all chalkboard drawings on the current slide
-- Press the 'f' key to cycle colors forward
-- Press the 'g' key to cycle colors backward
+- Press the 'x' key to cycle colors forward
+- Press the 'y' key to cycle colors backward
 
 ## Playback
 
