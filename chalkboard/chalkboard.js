@@ -61,11 +61,11 @@ try {
 		'rgba(20, 237, 28, 0.5)'];
 	if ("boardColors" in config) boardColors = config.boardColors;
 	
-	var slideColors = ['rgba(0, 0, 255, 1)', 
-		'rgba(0,0,0,1)', 
-		'rgba(255, 0,0,1)',
-		'rgba(0,255,0,1)', 
-		'rgba(255, 128, 0,1)'];
+	var slideColors = ['rgba(30,144,255, 1)', 
+		'rgba(30,30,30,1)', 
+		'rgba(220,20,60,1)',
+		'rgba(50,205,50,1)', 
+		'rgba(255,140,0,1)'];
 	if ("slideColors" in config) slideColors = config.slideColors;
 
 	var boardCursors = ['url(' + path + 'img/chalk-white.png), auto',
