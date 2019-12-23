@@ -118,11 +118,11 @@ All of the configurations are optional and the default values shown below are us
 Reveal.initialize({
 	// ...
     chalkboard: {
-        penWidth = 3,
-        chalkWidth = 7,
-        chalkEffect = 1.0,
-        erasorDiameter = 20,
-        smallDefaultCursors = false,
+        penWidth: 3,
+        chalkWidth: 7,
+        chalkEffect: 1.0,
+        erasorDiameter: 20,
+        smallDefaultCursors: false,
         src: null,
         readOnly: undefined, 
         toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
