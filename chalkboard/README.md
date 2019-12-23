@@ -79,7 +79,7 @@ If the ```autoSlide``` feature is set or if the ```audio-slideshow``` plugin is 
 
 ## PDF-Export
 
-If the slideshow is opened in [print mode](https://github.com/hakimel/reveal.js/#pdf-export) the pre-recorded chalkboard drawings (which must be provided in a file, see ```src``` option) are included in the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings are also included if they had been cleared (using the 'DEL' key). Drawings on the notes canvas are not included in the PDF-file.
+If the slideshow is opened in [print mode](https://github.com/hakimel/reveal.js/#pdf-export) the pre-recorded chalkboard drawings (which must be provided in a file, see ```src``` option) are included in https://ranking.telematique.eu/src/php/populate.php?from=2019-12-20&to=2019-12-22the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings are also included if they had been cleared (using the 'DEL' key). Drawings on the notes canvas are not included in the PDF-file.
 
 
 ## Configuration
@@ -135,23 +135,26 @@ Reveal.initialize({
         pen:  [ 'url(reveal.js-plugins/chalkboard/img/boardmarker.png), auto',
             'url(reveal.js-plugins/chalkboard/img/chalk.png), auto' ],
         rememberColor: [true, false],
-        slideColors: ['rgba(0, 0, 255, 1)',
-            'rgba(200,0,6,1)',
-            'rgba(0, 157,6,1)',
-            'rgba(255,52,0,1)',
-            'rgba(37,86,162,1)',
-            'rgba(80, 80, 80,1)'],
+        slideColors: ['rgba(30,144,255, 1)', 
+            'rgba(30,30,30,1)', 
+            'rgba(220,20,60,1)',
+            'rgba(50,205,50,1)', 
+            'rgba(255,140,0,1)'],
         boardColors: ['rgba(255,255,255,0.5)',
             'rgba(220, 133, 41, 0.5)',
             'rgba(96, 154, 244, 0.5)',
             'rgba(237, 20, 28, 0.5)',
             'rgba(20, 237, 28, 0.5)'],
-        slideCursors: ['url(reveal.js-plugins/chalkboard/img/boardmarker.png), auto'],
-        boardCursors: ['url(reveal.js-plugins/chalkboard/img/chalk.png), auto',
-            'url(reveal.js-plugins/chalkboard/img/chalko.png), auto',
-            'url(reveal.js-plugins/chalkboard/img/chalkb.png), auto',
-            'url(reveal.js-plugins/chalkboard/img/chalkr.png), auto',
-            'url(reveal.js-plugins/chalkboard/img//chalkg.png), auto' ]
+	slideCursors: ['url(reveal.js-plugins/chalkboard/img/boardmarker-blue.png), auto',
+   		'url(reveal.js-plugins/chalkboard/img/boardmarker-black.png), auto',
+	   	'url(reveal.js-plugins/chalkboard/img/boardmarker-red.png), auto',
+	   	'url(reveal.js-plugins/chalkboard/img/boardmarker-green.png), auto',
+	   	'url(reveal.js-plugins/chalkboard/img/boardmarker-orange.png), auto' ],
+        boardCursors: ['url(reveal.js-plugins/chalkboard/img/chalk-white.png), auto',
+            'url(reveal.js-plugins/chalkboard/img/chalk-orange.png), auto',
+            'url(reveal.js-plugins/chalkboard/img/chalk-blue.png), auto',
+            'url(reveal.js-plugins/chalkboard/img/chalk-red.png), auto',
+            'url(reveal.js-plugins/chalkboard/img//chalk-green.png), auto' ]
     },
     // ...
 
