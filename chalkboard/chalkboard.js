@@ -492,6 +492,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 							break;
 					}
 				}
+				mode = 0;
 				if ( slideData.events.length ) {
 					addPrintout( parent, nextSlide[i], imgCanvas, patImg );
 				}
