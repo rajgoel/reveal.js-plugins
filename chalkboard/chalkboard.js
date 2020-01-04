@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 0.7
+** Version: 0.8
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -162,7 +162,7 @@ try {
 	function whenReady( callback ) {
 		// wait for drawings to be loaded and markdown to be parsed
 		if ( loaded == null || document.querySelector('section[data-markdown]:not([data-markdown-parsed])') ) {
-			setTimeout( whenReady, 100, callback )
+			setTimeout( whenReady, 500, callback )
 		}
 		else {
 			callback();
@@ -426,10 +426,14 @@ try {
 	function createPrintout( ) {
 //console.log( 'Create printout for ' + storage[1].data.length + " slides");
 		drawingCanvas[0].container.classList.remove( 'visible' ); // do not print notes canvas
+		var nextSlide = [];
+		for (var i = 0; i < storage[1].data.length; i++) {
+			var slide = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v );
+			nextSlide.push( slide.nextSibling );
+		}
 
 		var patImg = new Image();
 		patImg.onload = function () {
-			var nextSlide = [];
 			var width = Reveal.getConfig().width;
 			var height = Reveal.getConfig().height;
 			var scale = 1;
@@ -442,10 +446,6 @@ try {
 			}
 			mode = 1;
 
-			for (var i = 0; i < storage[1].data.length; i++) {
-				var slide = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v );
-				nextSlide.push( slide.nextSibling );
-			}
 			for (var i = 0; i < storage[1].data.length; i++) {
 console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + storage[1].data[i].slide.v );
 				var parent = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v ).parentElement;
