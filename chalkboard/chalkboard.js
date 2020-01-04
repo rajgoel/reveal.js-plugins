@@ -480,6 +480,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 							}
 							break;
 						case "setcolor":
+console.log("mode:", mode, "Color:", slideData.events[j].coloridx );
 								setColor(slideData.events[j].coloridx);
 								break;
 						case "clear":
