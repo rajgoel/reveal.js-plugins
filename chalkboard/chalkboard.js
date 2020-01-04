@@ -1,13 +1,13 @@
 /*****************************************************************
 ** Author: Asvin Goel, goel@telematique.eu
 **
-** A plugin for reveal.js adding a chalkboard. 
+** A plugin for reveal.js adding a chalkboard.
 **
 ** Version: 0.7
-** 
+**
 ** License: MIT license (see LICENSE.md)
 **
-** Credits: 
+** Credits:
 ** Chalkboard effect by Mohamed Moustafa https://github.com/mmoustafa/Chalkboard
 ** Multi color support by Kurt Rinnert https://github.com/rinnert
 ******************************************************************/
@@ -48,23 +48,23 @@ try {
 
 	var background, pen, draw, color;
 
-	var penWidth = config.penWidth || 3; 
-	var chalkWidth = config.chalkWidth || 7; 
+	var penWidth = config.penWidth || 3;
+	var chalkWidth = config.chalkWidth || 7;
 	var chalkEffect = ("chalkEffect" in config) ? config.chalkEffect : 1.0;
 	var eraserDiameter = config.eraserDiameter || 20;
 	var rememberColor = config.rememberColor || [true, false];
 
-	var boardColors = ['rgba(255,255,255,0.5)', 
-		'rgba(220, 133, 41, 0.5)', 
-		'rgba(96, 154, 244, 0.5)', 
+	var boardColors = ['rgba(255,255,255,0.5)',
+		'rgba(220, 133, 41, 0.5)',
+		'rgba(96, 154, 244, 0.5)',
 		'rgba(237, 20, 28, 0.5)',
 		'rgba(20, 237, 28, 0.5)'];
 	if ("boardColors" in config) boardColors = config.boardColors;
-	
-	var slideColors = ['rgba(30,144,255, 1)', 
-		'rgba(30,30,30,1)', 
+
+	var slideColors = ['rgba(30,144,255, 1)',
+		'rgba(30,30,30,1)',
 		'rgba(220,20,60,1)',
-		'rgba(50,205,50,1)', 
+		'rgba(50,205,50,1)',
 		'rgba(255,140,0,1)'];
 	if ("slideColors" in config) slideColors = config.slideColors;
 
@@ -81,7 +81,7 @@ try {
 	   		'url(' + path + 'img/chalkg32.png), auto' ];
 	}
 	if ("boardCursors" in config) boardCursors = config.boardCursors;
-	
+
 	var slideCursors = ['url(' + path + 'img/boardmarker-blue.png), auto',
    		'url(' + path + 'img/boardmarker-black.png), auto',
 	   	'url(' + path + 'img/boardmarker-red.png), auto',
@@ -92,7 +92,7 @@ try {
 	}
 	if ("slideCursors" in config) slideCursors = config.slideCursors;
 
-	var theme = config.theme || "chalkboard"; 
+	var theme = config.theme || "chalkboard";
 	switch ( theme ) {
 		case "whiteboard":
 			background = [ 'rgba(127,127,127,.1)' , path + 'img/whiteboard.png' ];
@@ -111,14 +111,14 @@ try {
 				let n = slideColors.length;
 				for (let i = 0; i < n; i++) {
 					boardColors.push(slideColors[i]);
-				}	
+				}
 			}
 			if (!("boardCursors" in config)) {
 				boardCursors = [];
 				let n = slideCursors.length;
 				for (let i = 0; i < n; i++) {
 					boardCursors.push(slideCursors[i]);
-				}	
+				}
 			}
 			break;
 		default:
@@ -128,13 +128,13 @@ try {
 
 	if ( config.background ) background = config.background;
 	pen = [slideCursors[0], boardCursors[0]];
-	if ( config.pen ) { 
+	if ( config.pen ) {
 		pen = config.pen;
 		slideCursors[0] = config.pen[0];
 		boardCursors[0] = config.pen[1];
 	}
 	color = [slideColors[0], boardColors[0]];
-	if ( config.color ) { 
+	if ( config.color ) {
 		color = config.color;
 		slideColors[0] = config.color[0];
 		boardColors[0] = config.color[1];
@@ -231,7 +231,7 @@ try {
 		container.id = drawingCanvas[id].id;
 		container.classList.add( 'overlay' );
 		container.setAttribute( 'data-prevent-swipe', '' );
-		container.oncontextmenu = function() { return false; } 
+		container.oncontextmenu = function() { return false; }
 		container.style.cursor = pen[ id ];
 
 		drawingCanvas[id].width = window.innerWidth;
@@ -351,7 +351,7 @@ try {
 	 */
 	function downloadData() {
 		var a = document.createElement('a');
-		document.body.appendChild(a);	
+		document.body.appendChild(a);
 		try {
 			// cleanup slide data without events
 			for (var id = 0; id < 2; id++) {
@@ -383,10 +383,10 @@ try {
 				data = storage[id].data[i];
 				return data;
 			}
-			if ( !legacyFileSupport && 
-			     ( storage[id].data[i].slide.h > indices.h || 
-                               ( storage[id].data[i].slide.h === indices.h && storage[id].data[i].slide.v > indices.v ) || 
-			       ( storage[id].data[i].slide.h === indices.h && storage[id].data[i].slide.v === indices.v && storage[id].data[i].slide.f > indices.f ) 
+			if ( !legacyFileSupport &&
+			     ( storage[id].data[i].slide.h > indices.h ||
+                               ( storage[id].data[i].slide.h === indices.h && storage[id].data[i].slide.v > indices.v ) ||
+			       ( storage[id].data[i].slide.h === indices.h && storage[id].data[i].slide.v === indices.v && storage[id].data[i].slide.f > indices.f )
 			     )
 			   ) {
 				storage[id].data.splice( i, 0, { slide: indices, events: [], duration: 0 } );
@@ -427,7 +427,7 @@ try {
 //console.log( 'Create printout for ' + storage[1].data.length + " slides");
 		drawingCanvas[0].container.classList.remove( 'visible' ); // do not print notes canvas
 
-		var patImg = new Image(); 
+		var patImg = new Image();
 		patImg.onload = function () {
 			var nextSlide = [];
 			var width = Reveal.getConfig().width;
@@ -463,22 +463,25 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 					switch ( slideData.events[j].type ) {
 						case "draw":
 							for (var k = 1; k < slideData.events[j].curve.length; k++) {
-								draw[1]( imgCtx, 
-									xOffset + slideData.events[j].curve[k-1].x*scale, 
-									yOffset + slideData.events[j].curve[k-1].y*scale, 
-									xOffset + slideData.events[j].curve[k].x*scale, 
+								draw[1]( imgCtx,
+									xOffset + slideData.events[j].curve[k-1].x*scale,
+									yOffset + slideData.events[j].curve[k-1].y*scale,
+									xOffset + slideData.events[j].curve[k].x*scale,
 									yOffset + slideData.events[j].curve[k].y*scale
 								);
 							}
 							break;
 						case "erase":
 							for (var k = 0; k < slideData.events[j].curve.length; k++) {
-								eraseWithSponge( imgCtx, 
-									xOffset + slideData.events[j].curve[k].x*scale, 
+								eraseWithSponge( imgCtx,
+									xOffset + slideData.events[j].curve[k].x*scale,
 									yOffset + slideData.events[j].curve[k].y*scale
 								);
 							}
 							break;
+						case "setcolor":
+								setColor(slideData.events[j].coloridx);
+								break;
 						case "clear":
 							addPrintout( parent, nextSlide[i], imgCanvas, patImg );
 							imgCtx.clearRect(0,0,imgCanvas.width,imgCanvas.height);
@@ -491,7 +494,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 				if ( slideData.events.length ) {
 					addPrintout( parent, nextSlide[i], imgCanvas, patImg );
 				}
-			} 
+			}
 			Reveal.sync();
 		};
 		patImg.src = background[1];
@@ -500,7 +503,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	function addPrintout( parent, nextSlide, imgCanvas, patImg ) {
 		var slideCanvas = document.createElement('canvas');
 		slideCanvas.width = Reveal.getConfig().width;
-		slideCanvas.height = Reveal.getConfig().height;	
+		slideCanvas.height = Reveal.getConfig().height;
 		var ctx = slideCanvas.getContext("2d");
 		ctx.fillStyle = ctx.createPattern( patImg ,'repeat');
 		ctx.rect(0,0,slideCanvas.width,slideCanvas.height);
@@ -530,7 +533,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		context.lineCap = 'round';
 		context.strokeStyle = color[mode];
 		context.beginPath();
-  		context.moveTo(fromX, fromY);		
+  		context.moveTo(fromX, fromY);
   		context.lineTo(toX, toY);
   		context.stroke();
 	}
@@ -539,13 +542,13 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		var brushDiameter = chalkWidth;
 		context.lineWidth = brushDiameter;
 		context.lineCap = 'round';
-		context.fillStyle = color[mode]; // 'rgba(255,255,255,0.5)';	
+		context.fillStyle = color[mode]; // 'rgba(255,255,255,0.5)';
 		context.strokeStyle = color[mode];
 		/*var opacity = Math.min(0.8, Math.max(0,color[1].replace(/^.*,(.+)\)/,'$1') - 0.1)) + Math.random()*0.2;*/
 		var opacity = 1.0;
 		context.strokeStyle = context.strokeStyle.replace(/[\d\.]+\)$/g, opacity + ')');
 		context.beginPath();
-  		context.moveTo(fromX, fromY);		
+  		context.moveTo(fromX, fromY);
   		context.lineTo(toX, toY);
   		context.stroke();
   		// Chalk Effect
@@ -554,9 +557,9 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		var yUnit = (toY-fromY)/length;
 		for(var i=0; i<length; i++ ){
 			if (chalkEffect > (Math.random() * 0.9)) {
-				var xCurrent = fromX+(i*xUnit);	
+				var xCurrent = fromX+(i*xUnit);
 				var yCurrent = fromY+(i*yUnit);
-				var xRandom = xCurrent+(Math.random()-0.5)*brushDiameter*1.2;			
+				var xRandom = xCurrent+(Math.random()-0.5)*brushDiameter*1.2;
 				var yRandom = yCurrent+(Math.random()-0.5)*brushDiameter*1.2;
 				context.clearRect( xRandom, yRandom, Math.random()*2+2, Math.random()+1);
 			}
@@ -629,7 +632,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 
 		color[mode] = colors[mode][idx];
 		let cursorPointer = pointer < numPens[mode] ? idx : 0;
-	   	pen[mode] = pens[mode][cursorPointer];	
+	   	pen[mode] = pens[mode][cursorPointer];
 		drawingCanvas[mode].canvas.style.cursor = pen[mode];
 	}
 
@@ -726,10 +729,10 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 
 	document.addEventListener('seekplayback', function( event ) {
 //console.log('event seekplayback ' + event.timestamp);
-		stopPlayback();				
+		stopPlayback();
 		if ( !playback || event.timestamp == 0) {
 			// in other cases startplayback fires after seeked
-			startPlayback( event.timestamp );				
+			startPlayback( event.timestamp );
 		}
 //console.log('seeked');
 	});
@@ -737,20 +740,20 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 
 	document.addEventListener('startplayback', function( event ) {
 //console.log('event startplayback ' + event.timestamp);
-		stopPlayback();				
+		stopPlayback();
 		playback = true;
-		startPlayback( event.timestamp );				
+		startPlayback( event.timestamp );
 	});
 
 	document.addEventListener('stopplayback', function( event ) {
 //console.log('event stopplayback ' + (Date.now() - slideStart) );
 		playback = false;
-		stopPlayback();				
+		stopPlayback();
 	});
 
 	document.addEventListener('startrecording', function( event ) {
 //console.log('event startrecording ' + event.timestamp);
-		startRecording();				
+		startRecording();
 	});
 
 	function recordEvent( event ) {
@@ -772,11 +775,11 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	function startPlayback( timestamp, finalMode, resized ) {
 //console.log("playback " + timestamp );
 		if ( resized == undefined ) {
-			updateReadOnlyMode();			
+			updateReadOnlyMode();
 		}
 		slideStart = Date.now() - timestamp;
 		closeChalkboard();
-		mode = 0;		
+		mode = 0;
 		for ( var id = 0; id < 2; id++ ) {
 			clearCanvas( id );
 			var slideData = getSlideData( slideIndices, id );
@@ -785,20 +788,20 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			while ( index < slideData.events.length && slideData.events[index].begin < (Date.now() - slideStart) ) {
 				playEvent( id, slideData.events[index], timestamp );
 				index++;
-			} 
+			}
 
 			while ( playback && index < slideData.events.length ) {
 				timeouts[id].push( setTimeout( playEvent, slideData.events[index].begin - (Date.now() - slideStart), id, slideData.events[index], timestamp ) );
 				index++;
 			}
-		} 
+		}
 //console.log("Mode: " + finalMode + "/" + mode );
 		if ( finalMode != undefined ) {
 			mode = finalMode;
 		}
 		if( mode == 1 ) showChalkboard();
 //console.log("playback (ok)");
-		
+
 	};
 
 	function stopPlayback() {
@@ -820,16 +823,16 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 				if ( timestamp <= event.begin ) {
 					showChalkboard();
 				}
-				else { 
+				else {
 					mode = 1;
 				}
-	
+
 				break;
 			case "close":
 				if ( timestamp < event.begin ) {
 					closeChalkboard();
 				}
-				else { 
+				else {
 					mode = 0;
 				}
 				break;
@@ -861,17 +864,17 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			for (var i = 1; i < event.curve.length; i++) {
 				if (event.begin + i * stepDuration <= (Date.now() - slideStart)) {
 //console.log( "Draw " + timestamp +" / " + event.begin + " + " + i + " * " + stepDuration );
-					draw[id](ctx, xOffset + event.curve[i-1].x*scale, yOffset + event.curve[i-1].y*scale, xOffset + event.curve[i].x*scale, yOffset + event.curve[i].y*scale); 
+					draw[id](ctx, xOffset + event.curve[i-1].x*scale, yOffset + event.curve[i-1].y*scale, xOffset + event.curve[i].x*scale, yOffset + event.curve[i].y*scale);
 				}
 				else if ( playback ) {
 //console.log( "Cue " + timestamp +" / " + (Date.now() - slideStart) +" / " + event.begin + " + " + i + " * " + stepDuration + " = " + Math.max(0,event.begin + i * stepDuration - timestamp) );
-					timeouts.push( setTimeout( 
-						draw[id], Math.max(0,event.begin + i * stepDuration - (Date.now() - slideStart)), ctx, 
-							xOffset + event.curve[i-1].x*scale,	
-							yOffset + event.curve[i-1].y*scale, 
-							xOffset + event.curve[i].x*scale, 
-							yOffset + event.curve[i].y*scale 
-						) 
+					timeouts.push( setTimeout(
+						draw[id], Math.max(0,event.begin + i * stepDuration - (Date.now() - slideStart)), ctx,
+							xOffset + event.curve[i-1].x*scale,
+							yOffset + event.curve[i-1].y*scale,
+							xOffset + event.curve[i].x*scale,
+							yOffset + event.curve[i].y*scale
+						)
 					);
 				}
 			}
@@ -889,14 +892,14 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			var stepDuration = ( event.end - event.begin )/ event.curve.length;
 			for (var i = 0; i < event.curve.length; i++) {
 				if (event.begin + i * stepDuration <= (Date.now() - slideStart)) {
-					eraseWithSponge(ctx, xOffset + event.curve[i].x*scale, yOffset + event.curve[i].y*scale); 
+					eraseWithSponge(ctx, xOffset + event.curve[i].x*scale, yOffset + event.curve[i].y*scale);
 				}
 				else if ( playback ) {
-					timeouts.push( setTimeout( 
-						eraseWithSponge, Math.max(0,event.begin + i * stepDuration - (Date.now() - slideStart)), ctx, 
-							xOffset + event.curve[i].x * scale, 
-							yOffset + event.curve[i].y * scale 
-						) 
+					timeouts.push( setTimeout(
+						eraseWithSponge, Math.max(0,event.begin + i * stepDuration - (Date.now() - slideStart)), ctx,
+							xOffset + event.curve[i].x * scale,
+							yOffset + event.curve[i].y * scale
+						)
 					);
 				}
 			}
@@ -919,7 +922,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			}
 			else {
 				event = { type: "draw", begin: Date.now() - slideStart, end: null, curve: [{x: x, y: y}] };
-			}		
+			}
 	}
 
 
@@ -927,7 +930,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		if ( event ) {
 			event.type = "erase";
 			event.begin = Date.now() - slideStart;
-			// show sponge image 
+			// show sponge image
 			drawingCanvas[mode].sponge.style.left = (x - eraserDiameter) +"px" ;
 			drawingCanvas[mode].sponge.style.top = (y - eraserDiameter) +"px" ;
 			drawingCanvas[mode].sponge.style.visibility = "visible";
@@ -1002,7 +1005,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			event = { type: "draw", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}] };
 */
 			touchTimeout = setTimeout( showSponge, 500, mouseX, mouseY );
-		}	
+		}
 	}, passiveSupported ? {passive: false} : false);
 
 	document.addEventListener('touchmove', function(evt) {
@@ -1022,8 +1025,8 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
         		    	evt.preventDefault();
 				// move sponge
 				if ( event.type == "erase" ) {
-					drawingCanvas[mode].sponge.style.left = (mouseX - eraserDiameter) +"px" ; 
-					drawingCanvas[mode].sponge.style.top = (mouseY - eraserDiameter) +"px" ; 
+					drawingCanvas[mode].sponge.style.left = (mouseX - eraserDiameter) +"px" ;
+					drawingCanvas[mode].sponge.style.top = (mouseY - eraserDiameter) +"px" ;
 				}
 			}
 
@@ -1037,8 +1040,8 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
         		    	evt.preventDefault();
 				event.curve.push({x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale});
 				if ( event.type == "erase" ) {
-					drawingCanvas[mode].sponge.style.left = (mouseX - eraserDiameter) +"px" ; 
-					drawingCanvas[mode].sponge.style.top = (mouseY - eraserDiameter) +"px" ; 
+					drawingCanvas[mode].sponge.style.left = (mouseX - eraserDiameter) +"px" ;
+					drawingCanvas[mode].sponge.style.top = (mouseY - eraserDiameter) +"px" ;
 			                eraseWithSponge(ctx, mouseX, mouseY);
 				}
 				else {
@@ -1056,7 +1059,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		clearTimeout( touchTimeout );
 		touchTimeout = null;
 		// hide sponge image
-		drawingCanvas[mode].sponge.style.visibility = "hidden"; 
+		drawingCanvas[mode].sponge.style.visibility = "hidden";
 		stopDrawing();
 		// broadcast
 		var message = new CustomEvent('send');
@@ -1101,7 +1104,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			}
 			else {
 				event = { type: "draw", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}] };
-			}		
+			}
 */
 		}
 	} );
@@ -1137,7 +1140,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		}
 	} );
 
-	
+
 	document.addEventListener( 'mouseup', function( evt ) {
 		drawingCanvas[mode].canvas.style.cursor = pen[mode];
 		if ( event ) {
@@ -1189,7 +1192,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	function updateReadOnlyMode() {
 //console.log("updateReadOnlyMode");
 		if ( config.readOnly == undefined ) {
-			readOnly = ( getSlideDuration() > 0 );	
+			readOnly = ( getSlideDuration() > 0 );
 			if ( readOnly ) {
 				drawingCanvas[0].container.style.cursor = 'default';
 				drawingCanvas[1].container.style.cursor = 'default';
@@ -1200,7 +1203,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 					notescanvas.style.background = 'rgba(0,0,0,0)';
 					notescanvas.style.pointerEvents = "none";
 				}
-	
+
 			}
 			else {
 				drawingCanvas[0].container.style.cursor = pen[0];
@@ -1224,7 +1227,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 				event.timestamp = 0;
 				document.dispatchEvent( event );
 			}
-			updateReadOnlyMode();			
+			updateReadOnlyMode();
 		}
 		else {
 			whenReady( createPrintout );
@@ -1236,7 +1239,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		if ( !printMode ) {
 			slideStart = Date.now();
 			slideIndices = Reveal.getIndices();
-			closeChalkboard();				
+			closeChalkboard();
 			clearCanvas( 0 );
 			clearCanvas( 1 );
 			if ( !playback ) {
@@ -1247,49 +1250,49 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 				event.timestamp = 0;
 				document.dispatchEvent( event );
 			}
-			
-			updateReadOnlyMode();			
+
+			updateReadOnlyMode();
 		}
 	});
 	Reveal.addEventListener( 'fragmentshown', function( evt ) {
 //		clearTimeout( slidechangeTimeout );
 //console.log('fragmentshown');
 		if ( !printMode ) {
-			slideStart = Date.now();		
-			slideIndices = Reveal.getIndices();		
-			closeChalkboard();				
+			slideStart = Date.now();
+			slideIndices = Reveal.getIndices();
+			closeChalkboard();
 			clearCanvas( 0 );
 			clearCanvas( 1 );
 			if ( Reveal.isAutoSliding() ) {
 				var event = new CustomEvent('startplayback');
 				event.timestamp = 0;
 				document.dispatchEvent( event );
-			}				
-			else if ( !playback ) {
-				// 
-				startPlayback( getSlideDuration(), 0 );
-//				closeChalkboard();				
 			}
-			updateReadOnlyMode();			
+			else if ( !playback ) {
+				//
+				startPlayback( getSlideDuration(), 0 );
+//				closeChalkboard();
+			}
+			updateReadOnlyMode();
 		}
 	});
 	Reveal.addEventListener( 'fragmenthidden', function( evt ) {
 //		clearTimeout( slidechangeTimeout );
 //console.log('fragmenthidden');
 		if ( !printMode ) {
-			slideStart = Date.now();		
-			slideIndices = Reveal.getIndices();		
-			closeChalkboard();				
+			slideStart = Date.now();
+			slideIndices = Reveal.getIndices();
+			closeChalkboard();
 			clearCanvas( 0 );
 			clearCanvas( 1 );
 			if ( Reveal.isAutoSliding() ) {
 				document.dispatchEvent( new CustomEvent('stopplayback') );
-			}				
+			}
 			else if ( !playback ) {
 				startPlayback( getSlideDuration() );
-				closeChalkboard();				
+				closeChalkboard();
 			}
-			updateReadOnlyMode();			
+			updateReadOnlyMode();
 		}
 	});
 
@@ -1304,7 +1307,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		document.dispatchEvent( new CustomEvent('stopplayback') );
 
 		// advance to end of slide
-//		closeChalkboard();				
+//		closeChalkboard();
 		startPlayback( getSlideDuration(), 0 );
 	});
 
@@ -1342,14 +1345,14 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 //console.log("toggleChalkboard " + mode);
 		if ( mode == 1 ) {
 			event = null;
-			if ( !readOnly ) { 
+			if ( !readOnly ) {
 				recordEvent( { type:"close", begin: Date.now() - slideStart } );
 			}
 			closeChalkboard();
 		}
 		else {
 			showChalkboard();
-			if ( !readOnly ) { 
+			if ( !readOnly ) {
 				recordEvent( { type:"open", begin: Date.now() - slideStart } );
 				setColor(0);
 				recordEvent( { type:"setcolor", coloridx: 0, begin: Date.now() - slideStart } );
@@ -1396,7 +1399,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		if ( ok ) {
 //console.log("resetSlide ");
 			stopPlayback();
-			slideStart = Date.now();			
+			slideStart = Date.now();
 			event = null;
 			closeChalkboard();
 
@@ -1404,15 +1407,15 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			clearCanvas( 1 );
 
 			mode = 1;
-			var slideData = getSlideData();	
+			var slideData = getSlideData();
 			slideData.duration = 0;
 			slideData.events = [];
 			mode = 0;
-			var slideData = getSlideData();	
+			var slideData = getSlideData();
 			slideData.duration = 0;
 			slideData.events = [];
 
-			updateReadOnlyMode();			
+			updateReadOnlyMode();
 			// broadcast
 			var message = new CustomEvent('send');
 			message.content = { sender: 'chalkboard-plugin', type: 'resetSlide' };
@@ -1436,7 +1439,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 					{ width: drawingCanvas[1].width, height: drawingCanvas[1].height, data: []}
 				];
 
-			updateReadOnlyMode();			
+			updateReadOnlyMode();
 			// broadcast
 			var message = new CustomEvent('send');
 			message.content = { sender: 'chalkboard-plugin', type: 'init', storage: storage, mode: mode };
