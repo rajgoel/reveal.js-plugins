@@ -440,6 +440,7 @@ try {
 				xOffset = (width - storage[1].width * scale)/2;
 				yOffset = (height - storage[1].height * scale)/2;
 			}
+			mode = 1;
 
 			for (var i = 0; i < storage[1].data.length; i++) {
 				var slide = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v );
@@ -460,7 +461,6 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 				imgCtx.fill();
 
 				for (var j = 0; j < slideData.events.length; j++) {
-console.log("Event:", slideData.events[j].type  );
 					switch ( slideData.events[j].type ) {
 						case "draw":
 							for (var k = 1; k < slideData.events[j].curve.length; k++) {
@@ -481,7 +481,6 @@ console.log("Event:", slideData.events[j].type  );
 							}
 							break;
 						case "setcolor":
-console.log("mode:", mode, "Color:", slideData.events[j].coloridx );
 								setColor(slideData.events[j].coloridx);
 								break;
 						case "clear":
