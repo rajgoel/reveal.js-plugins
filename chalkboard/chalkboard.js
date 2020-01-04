@@ -460,6 +460,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 				imgCtx.fill();
 
 				for (var j = 0; j < slideData.events.length; j++) {
+console.log("Event:", slideData.events[j].type  );
 					switch ( slideData.events[j].type ) {
 						case "draw":
 							for (var k = 1; k < slideData.events[j].curve.length; k++) {
