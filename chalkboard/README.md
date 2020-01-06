@@ -99,7 +99,7 @@ The plugin has several configuration options:
 
 The following configuration options allow to change the appearance of the notes canvas and the chalkboard. All of these options require two values, the first gives the value for the notes canvas, the second for the chalkboard.
 
-- ``````: The first value expects a (semi-)transparent color which is used to provide visual feedback that the notes canvas is enabled, the second value expects a filename to a background image for the chalkboard.
+- ```background```: The first value expects a (semi-)transparent color which is used to provide visual feedback that the notes canvas is enabled, the second value expects a filename to a background image for the chalkboard.
 - ```grid```: By default whiteboard and chalkboard themes include a grid pattern on the background. This pattern can be modified by setting the color, the distance between lines, and the line width, e.g. ```{ color: 'rgb(127,127,255,0.1)', distance: 40, width: 2}```. Alternatively, the grid can be removed by setting the value to ```false```.
 - ```boardmarkers```: A list of boardmarkers with given color and cursor.
 - ```chalks```: A list of chalks with given color and cursor.
@@ -122,6 +122,7 @@ Reveal.initialize({
         toggleNotesButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
         transition: 800,
         theme: "chalkboard",
+				background: [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ],
         grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2},
         boardmarkers : [
                 { color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto'},
