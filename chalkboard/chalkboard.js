@@ -51,10 +51,9 @@ try {
 	var boardmarkerWidth = config.boardmarkerWidth || config.penWidth || 3;
 	var chalkWidth = config.chalkWidth || 7;
 	var chalkEffect = ("chalkEffect" in config) ? config.chalkEffect : 1.0;
-	var eraserDiameter = config.eraserDiameter || 20;
 	var rememberColor = config.rememberColor || [true, false];
-
-  var boardmarkers = [
+	var eraser = config.eraser || { src: path + 'img/sponge.png', radius: 20};
+	var boardmarkers = [
 		{ color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto'},
 		{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto'},
 		{ color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto'},
@@ -209,7 +208,7 @@ try {
 		}
 
 		var sponge = document.createElement( 'img' );
-		sponge.src = path + 'img/sponge.png';
+		sponge.src = eraser.src;
 		sponge.id = "sponge";
 		sponge.style.visibility = "hidden";
 		sponge.style.position = "absolute";
@@ -505,12 +504,12 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	function eraseWithSponge(context,x,y) {
 		context.save();
 		context.beginPath();
-		context.arc(x, y, eraserDiameter, 0, 2 * Math.PI, false);
+		context.arc(x, y, eraser.radius, 0, 2 * Math.PI, false);
 		context.clip();
-		context.clearRect(x - eraserDiameter - 1, y - eraserDiameter - 1, eraserDiameter * 2 + 2, eraserDiameter * 2 + 2);
+		context.clearRect(x - eraser.radius - 1, y - eraser.radius - 1, eraser.radius * 2 + 2, eraser.radius * 2 + 2);
 		context.restore();
 		if ( mode == 1 && grid) {
-			redrawGrid(x,y,eraserDiameter);
+			redrawGrid(x,y,eraser.radius);
 		}
 	}
 
@@ -933,7 +932,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			yLast = y * scale + yOffset;
 			if ( erase == true) {
 				event = { type: "erase", begin: Date.now() - slideStart, end: null, curve: [{x: x, y: y}]};
-				drawingCanvas[mode].canvas.style.cursor = 'url("' + path + 'img/sponge.png") ' + eraserDiameter + ' ' + eraserDiameter + ', auto';
+				drawingCanvas[mode].canvas.style.cursor = 'url("' + eraser.src +  '") ' + eraser.radius + ' ' + eraser.radius + ', auto';
 				eraseWithSponge(ctx, x * scale + xOffset, y * scale + yOffset);
 			}
 			else {
@@ -947,8 +946,8 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			event.type = "erase";
 			event.begin = Date.now() - slideStart;
 			// show sponge image
-			drawingCanvas[mode].sponge.style.left = (x - eraserDiameter) +"px" ;
-			drawingCanvas[mode].sponge.style.top = (y - eraserDiameter) +"px" ;
+			drawingCanvas[mode].sponge.style.left = (x - eraser.radius) +"px" ;
+			drawingCanvas[mode].sponge.style.top = (y - eraser.radius) +"px" ;
 			drawingCanvas[mode].sponge.style.visibility = "visible";
 			eraseWithSponge(drawingCanvas[mode].context,x,y);
 			// broadcast
@@ -1041,8 +1040,8 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
         		    	evt.preventDefault();
 				// move sponge
 				if ( event.type == "erase" ) {
-					drawingCanvas[mode].sponge.style.left = (mouseX - eraserDiameter) +"px" ;
-					drawingCanvas[mode].sponge.style.top = (mouseY - eraserDiameter) +"px" ;
+					drawingCanvas[mode].sponge.style.left = (mouseX - eraser.radius) +"px" ;
+					drawingCanvas[mode].sponge.style.top = (mouseY - eraser.radius) +"px" ;
 				}
 			}
 
@@ -1056,8 +1055,8 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
         		    	evt.preventDefault();
 				event.curve.push({x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale});
 				if ( event.type == "erase" ) {
-					drawingCanvas[mode].sponge.style.left = (mouseX - eraserDiameter) +"px" ;
-					drawingCanvas[mode].sponge.style.top = (mouseY - eraserDiameter) +"px" ;
+					drawingCanvas[mode].sponge.style.left = (mouseX - eraser.radius) +"px" ;
+					drawingCanvas[mode].sponge.style.top = (mouseY - eraser.radius) +"px" ;
 			                eraseWithSponge(ctx, mouseX, mouseY);
 				}
 				else {
@@ -1115,7 +1114,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			yLast = mouseY;
 			if ( evt.button == 2) {
 				event = { type: "erase", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}]};
-				drawingCanvas[mode].canvas.style.cursor = 'url("' + path + 'img/sponge.png") ' + eraserDiameter + ' ' + eraserDiameter + ', auto';
+				drawingCanvas[mode].canvas.style.cursor = 'url("' + path + 'img/sponge.png") ' + eraser.radius + ' ' + eraser.radius + ', auto';
 				eraseWithSponge(ctx,mouseX,mouseY);
 			}
 			else {
