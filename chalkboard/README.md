@@ -89,7 +89,6 @@ The plugin has several configuration options:
 - ```boardmarkerWidth```: an integer, the drawing width of the boardmarker; larger values draw thicker lines.
 - ```chalkWidth```: an integer, the drawing width of the chalk; larger values draw thicker lines.
 - ```chalkEffect```: a float in the range ```[0.0, 1.0]```, the intesity of the chalk effect on the chalk board. Full effect (default) ```1.0```, no effect ```0.0```.
-- ```eraserDiameter```: an integer, the diameter in pixels affected by the eraser. Larger values erase a greater area. The erased area is circular.
 - ```src```: Optional filename for pre-recorded drawings.
 - ```readOnly```: Configuation option allowing to prevent changes to existing drawings. If set to ```true``` no changes can be made, if set to false ```false``` changes can be made, if unset or set to ```undefined``` no changes to the drawings can be made after returning to a slide or fragment for which drawings had been recorded before. In any case the recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the ```RevealChalkboard.clear()``` function).
 - ```toggleNotesButton```: If set to ```true``` a button for opening and closing the notes canvas is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate.
