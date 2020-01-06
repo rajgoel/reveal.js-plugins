@@ -101,7 +101,7 @@ The following configuration options allow to change the appearance of the notes 
 
 - ```background```: The first value expects a (semi-)transparent color which is used to provide visual feedback that the notes canvas is enabled, the second value expects a filename to a background image for the chalkboard.
 - ```grid```: By default whiteboard and chalkboard themes include a grid pattern on the background. This pattern can be modified by setting the color, the distance between lines, and the line width, e.g. ```{ color: 'rgb(127,127,255,0.1)', distance: 40, width: 2}```. Alternatively, the grid can be removed by setting the value to ```false```.
-- ```eraser```: An image path and and radius for the eraser.
+- ```eraser```: An image path and radius for the eraser.
 - ```boardmarkers```: A list of boardmarkers with given color and cursor.
 - ```chalks```: A list of chalks with given color and cursor.
 - ```rememberColor```: Whether to remember the last selected color for the slide canvas or the board.
@@ -123,7 +123,7 @@ Reveal.initialize({
         theme: "chalkboard",
         background: [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ],
         grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2},
-        eraser: { src: path + 'img/sponge.png', radius: 20};
+        eraser: { src: path + 'img/sponge.png', radius: 20},
         boardmarkers : [
                 { color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto'},
                 { color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto'},
