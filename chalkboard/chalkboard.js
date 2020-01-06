@@ -47,113 +47,60 @@ try {
 	var config = Reveal.getConfig().chalkboard || {};
 
 	var background, pen, draw, color;
-
-	var penWidth = config.penWidth || 3;
+  var grid = false;
+	var boardmarkerWidth = config.boardmarkerWidth || config.penWidth || 3;
 	var chalkWidth = config.chalkWidth || 7;
 	var chalkEffect = ("chalkEffect" in config) ? config.chalkEffect : 1.0;
 	var eraserDiameter = config.eraserDiameter || 20;
 	var rememberColor = config.rememberColor || [true, false];
 
-	var boardColors = ['rgba(255,255,255,0.5)',
-		'rgba(220, 133, 41, 0.5)',
-		'rgba(96, 154, 244, 0.5)',
-		'rgba(237, 20, 28, 0.5)',
-		'rgba(20, 237, 28, 0.5)'];
-	if ("boardColors" in config) boardColors = config.boardColors;
+  var boardmarkers = [
+		{ color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto'},
+		{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto'},
+		{ color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto'},
+		{ color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto'},
+		{ color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto'},
+		{ color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto'},
+		{ color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto'}
+	];
+	var chalks = [
+		{ color: 'rgba(255,255,255,0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto'},
+		{ color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto'},
+		{ color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto'},
+		{ color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto'},
+		{ color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto'},
+		{ color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto'},
+		{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto'}
+	];
 
-	var slideColors = ['rgba(30,144,255, 1)',
-		'rgba(30,30,30,1)',
-		'rgba(220,20,60,1)',
-		'rgba(50,205,50,1)',
-		'rgba(255,140,0,1)'];
-	if ("slideColors" in config) slideColors = config.slideColors;
-
-	var boardCursors = ['url(' + path + 'img/chalk-white.png), auto',
-   		'url(' + path + 'img/chalk-orange.png), auto',
-	   	'url(' + path + 'img/chalk-blue.png), auto',
-	   	'url(' + path + 'img/chalk-red.png), auto',
-	   	'url(' + path + 'img/chalk-green.png), auto' ];
-	if (config.smallDefaultCursors) {
-		boardCursors = ['url(' + path + 'img/chalk32.png), auto',
-   			'url(' + path + 'img/chalko32.png), auto',
-	   		'url(' + path + 'img/chalkb32.png), auto',
-	   		'url(' + path + 'img/chalkr32.png), auto',
-	   		'url(' + path + 'img/chalkg32.png), auto' ];
-	}
-	if ("boardCursors" in config) boardCursors = config.boardCursors;
-
-	var slideCursors = ['url(' + path + 'img/boardmarker-blue.png), auto',
-   		'url(' + path + 'img/boardmarker-black.png), auto',
-	   	'url(' + path + 'img/boardmarker-red.png), auto',
-	   	'url(' + path + 'img/boardmarker-green.png), auto',
-	   	'url(' + path + 'img/boardmarker-orange.png), auto' ];
-	if (config.smallDefaultCursors) {
-		slideCursors = ['url(' + path + 'img/boardmarker32.png), auto'];
-	}
-	if ("slideCursors" in config) slideCursors = config.slideCursors;
+	if ("boardmarkers" in config) boardmarkers = config.boardmarkers;
+	if ("chalks" in config) chalks = config.chalks;
 
 	var theme = config.theme || "chalkboard";
 	switch ( theme ) {
 		case "whiteboard":
 			background = [ 'rgba(127,127,127,.1)' , path + 'img/whiteboard.png' ];
-			draw = [ drawWithPen , drawWithPen ];
-			/**
-			 * We need deep copies of the colors and cursors to
-			 * decouple whiteboard and canvas colors. This preserves
-			 * the old configuration behaviour of the pen and color
-			 * properties.
-			 *
-			 * Only do this if the board colors and cursors where
-			 * NOT explicitly configured.
-			 */
-			if (!("boardColors" in config)) {
-				boardColors = [];
-				let n = slideColors.length;
-				for (let i = 0; i < n; i++) {
-					boardColors.push(slideColors[i]);
-				}
-			}
-			if (!("boardCursors" in config)) {
-				boardCursors = [];
-				let n = slideCursors.length;
-				for (let i = 0; i < n; i++) {
-					boardCursors.push(slideCursors[i]);
-				}
-			}
+			draw = [ drawWithBoardmarker , drawWithBoardmarker ];
+			pens = [ boardmarkers, boardmarkers ];
+			grid = { color: 'rgb(127,127,255,0.1)', distance: 40, width: 2};
 			break;
+		case "chalkboard":
 		default:
 			background = [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ];
-			draw = [ drawWithPen , drawWithChalk ];
+			draw = [ drawWithBoardmarker , drawWithChalk ];
+			pens = [ boardmarkers, chalks ];
+			grid = { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2};
 	}
 
 	if ( config.background ) background = config.background;
-	pen = [slideCursors[0], boardCursors[0]];
-	if ( config.pen ) {
-		pen = config.pen;
-		slideCursors[0] = config.pen[0];
-		boardCursors[0] = config.pen[1];
-	}
-	color = [slideColors[0], boardColors[0]];
-	if ( config.color ) {
-		color = config.color;
-		slideColors[0] = config.color[0];
-		boardColors[0] = config.color[1];
-	}
+	if ( config.grid != undefined ) grid = config.grid;
 
-	var colors = [slideColors, boardColors];
-	var numColors = [slideColors.length, boardColors.length];
-	var pens = [slideCursors, boardCursors];
-	var numPens = [slideCursors.length, boardCursors.length];
-	var colorPointers = [0, 0];
-
+	var color = [0, 0];
 	var toggleChalkboardButton = config.toggleChalkboardButton == undefined ? true : config.toggleChalkboardButton;
 	var toggleNotesButton = config.toggleNotesButton == undefined ? true : config.toggleNotesButton;
 	var transition = config.transition  || 800;
 
 	var readOnly = config.readOnly;
-
-	var legacyFileSupport = config.legacyFileSupport;
-	if ( legacyFileSupport ) { console.warn("Legacy file support is deprecated and may be removed in future versions!") }
 
 /*****************************************************************
 ** Setup
@@ -232,7 +179,7 @@ try {
 		container.classList.add( 'overlay' );
 		container.setAttribute( 'data-prevent-swipe', '' );
 		container.oncontextmenu = function() { return false; }
-		container.style.cursor = pen[ id ];
+		container.style.cursor = pens[ id ][ color[id] ].cursor;
 
 		drawingCanvas[id].width = window.innerWidth;
 		drawingCanvas[id].height = window.innerHeight;
@@ -262,11 +209,7 @@ try {
 		}
 
 		var sponge = document.createElement( 'img' );
-		if (config.smallDefaultCursors) {
-			sponge.src = path + 'img/sponge32.png';
-		} else {
-			sponge.src = path + 'img/sponge.png';
-		}
+		sponge.src = path + 'img/sponge.png';
 		sponge.id = "sponge";
 		sponge.style.visibility = "hidden";
 		sponge.style.position = "absolute";
@@ -277,7 +220,7 @@ try {
 		canvas.width = drawingCanvas[id].width;
 		canvas.height = drawingCanvas[id].height;
 		canvas.setAttribute( 'data-chalkboard', id );
-		canvas.style.cursor = pen[ id ];
+		canvas.style.cursor = pens[ id ][ color[id] ].cursor;
 		container.appendChild( canvas );
 		drawingCanvas[id].canvas = canvas;
 
@@ -292,10 +235,11 @@ try {
 /*****************************************************************
 ** Storage
 ******************************************************************/
-	var storage = [
-			{ width: drawingCanvas[0].width - 2 * drawingCanvas[0].xOffset, height: drawingCanvas[0].height - 2 * drawingCanvas[0].yOffset, data: []},
-			{ width: drawingCanvas[1].width, height: drawingCanvas[1].height, data: []}
-		];
+
+		var storage = [
+				{ width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: []},
+				{ width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: []}
+			];
 //console.log( JSON.stringify(storage));
 
 	var loaded = null;
@@ -380,16 +324,6 @@ try {
 		var data;
 		for (var i = 0; i < storage[id].data.length; i++) {
 			if (storage[id].data[i].slide.h === indices.h && storage[id].data[i].slide.v === indices.v && storage[id].data[i].slide.f === indices.f ) {
-				data = storage[id].data[i];
-				return data;
-			}
-			if ( !legacyFileSupport &&
-			     ( storage[id].data[i].slide.h > indices.h ||
-                               ( storage[id].data[i].slide.h === indices.h && storage[id].data[i].slide.v > indices.v ) ||
-			       ( storage[id].data[i].slide.h === indices.h && storage[id].data[i].slide.v === indices.v && storage[id].data[i].slide.f > indices.f )
-			     )
-			   ) {
-				storage[id].data.splice( i, 0, { slide: indices, events: [], duration: 0 } );
 				data = storage[id].data[i];
 				return data;
 			}
@@ -481,7 +415,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 							}
 							break;
 						case "setcolor":
-								setColor(slideData.events[j].coloridx);
+								setColor(slideData.events[j].index);
 								break;
 						case "clear":
 							addPrintout( parent, nextSlide[i], imgCanvas, patImg );
@@ -530,10 +464,10 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 ** Drawings
 ******************************************************************/
 
-	function drawWithPen(context,fromX,fromY,toX,toY){
-		context.lineWidth = penWidth;
+	function drawWithBoardmarker(context,fromX,fromY,toX,toY){
+		context.lineWidth = boardmarkerWidth;
 		context.lineCap = 'round';
-		context.strokeStyle = color[mode];
+		context.strokeStyle = boardmarkers[color[mode]].color;
 		context.beginPath();
   		context.moveTo(fromX, fromY);
   		context.lineTo(toX, toY);
@@ -544,8 +478,8 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		var brushDiameter = chalkWidth;
 		context.lineWidth = brushDiameter;
 		context.lineCap = 'round';
-		context.fillStyle = color[mode]; // 'rgba(255,255,255,0.5)';
-		context.strokeStyle = color[mode];
+		context.fillStyle = chalks[color[mode]].color; // 'rgba(255,255,255,0.5)';
+		context.strokeStyle = chalks[color[mode]].color;
 		/*var opacity = Math.min(0.8, Math.max(0,color[1].replace(/^.*,(.+)\)/,'$1') - 0.1)) + Math.random()*0.2;*/
 		var opacity = 1.0;
 		context.strokeStyle = context.strokeStyle.replace(/[\d\.]+\)$/g, opacity + ')');
@@ -575,12 +509,15 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		context.clip();
 		context.clearRect(x - eraserDiameter - 1, y - eraserDiameter - 1, eraserDiameter * 2 + 2, eraserDiameter * 2 + 2);
 		context.restore();
+		if ( mode == 1 && grid) {
+			redrawGrid(x,y,eraserDiameter);
+		}
 	}
 
 
 
 	/**
-	 * Opens an overlay for the chalkboard.
+	 * Oboardmarkers an overlay for the chalkboard.
 	 */
 	function showChalkboard() {
 //console.log("showChalkboard");
@@ -622,36 +559,113 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	function clearCanvas( id ) {
 		if ( id == 0 ) clearTimeout( slidechangeTimeout );
 		drawingCanvas[id].context.clearRect(0,0,drawingCanvas[id].width,drawingCanvas[id].height);
+		if ( id == 1 && grid ) drawGrid();
+	}
+
+	/**
+	 * Draw grid on background
+	 */
+	function drawGrid() {
+		var context = drawingCanvas[1].context;
+
+		drawingCanvas[1].scale = Math.min( drawingCanvas[1].width/storage[1].width, drawingCanvas[1].height/storage[1].height );
+		drawingCanvas[1].xOffset = (drawingCanvas[1].width - storage[1].width * drawingCanvas[1].scale)/2;
+		drawingCanvas[1].yOffset = (drawingCanvas[1].height - storage[1].height * drawingCanvas[1].scale)/2;
+
+		var scale = drawingCanvas[1].scale;
+		var xOffset = drawingCanvas[1].xOffset;
+		var yOffset = drawingCanvas[1].yOffset;
+
+		var distance = grid.distance*scale;
+
+		var fromX = drawingCanvas[1].width/2 - distance/2 - Math.floor( (drawingCanvas[1].width - distance)/2 / distance ) * distance;
+		for( var x=fromX; x < drawingCanvas[1].width; x+=distance ) {
+			context.beginPath();
+			context.lineWidth = grid.width*scale;
+			context.lineCap = 'round';
+			context.fillStyle = grid.color;
+			context.strokeStyle = grid.color;
+			context.moveTo(x, 0);
+  		context.lineTo(x, drawingCanvas[1].height);
+  		context.stroke();
+		}
+		var fromY = drawingCanvas[1].height/2 - distance/2 - Math.floor( (drawingCanvas[1].height - distance)/2 / distance ) * distance ;
+
+		for( var y=fromY; y < drawingCanvas[1].height; y+=distance ) {
+			context.beginPath();
+			context.lineWidth = grid.width*scale;
+			context.lineCap = 'round';
+			context.fillStyle = grid.color;
+			context.strokeStyle = grid.color;
+			context.moveTo(0, y);
+  		context.lineTo(drawingCanvas[1].width, y);
+  		context.stroke();
+		}
+	}
+
+	function redrawGrid(centerX,centerY,diameter) {
+		var context = drawingCanvas[1].context;
+
+		drawingCanvas[1].scale = Math.min( drawingCanvas[1].width/storage[1].width, drawingCanvas[1].height/storage[1].height );
+		drawingCanvas[1].xOffset = (drawingCanvas[1].width - storage[1].width * drawingCanvas[1].scale)/2;
+		drawingCanvas[1].yOffset = (drawingCanvas[1].height - storage[1].height * drawingCanvas[1].scale)/2;
+
+		var scale = drawingCanvas[1].scale;
+		var xOffset = drawingCanvas[1].xOffset;
+		var yOffset = drawingCanvas[1].yOffset;
+
+		var distance = grid.distance*scale;
+
+		var fromX = drawingCanvas[1].width/2 - distance/2 - Math.floor( (drawingCanvas[1].width - distance)/2 / distance ) * distance;
+
+		for( var x=fromX + distance* Math.ceil( (centerX-diameter-fromX) / distance); x <= fromX + distance* Math.floor( (centerX+diameter-fromX) / distance); x+=distance ) {
+			context.beginPath();
+			context.lineWidth = grid.width*scale;
+			context.lineCap = 'round';
+			context.fillStyle = grid.color;
+			context.strokeStyle = grid.color;
+			context.moveTo(x, centerY - Math.sqrt( diameter*diameter - (centerX-x)*(centerX-x) ));
+  		context.lineTo(x, centerY + Math.sqrt( diameter*diameter - (centerX-x)*(centerX-x) ) );
+  		context.stroke();
+		}
+		var fromY = drawingCanvas[1].height/2 - distance/2 - Math.floor( (drawingCanvas[1].height - distance)/2 / distance ) * distance ;
+		for( var y=fromY + distance* Math.ceil( (centerY-diameter-fromY) / distance); y <= fromY + distance* Math.floor( (centerY+diameter-fromY) / distance); y+=distance ) {
+			context.beginPath();
+			context.lineWidth = grid.width*scale;
+			context.lineCap = 'round';
+			context.fillStyle = grid.color;
+			context.strokeStyle = grid.color;
+			context.moveTo(centerX - Math.sqrt( diameter*diameter - (centerY-y)*(centerY-y) ), y );
+			context.lineTo(centerX + Math.sqrt( diameter*diameter - (centerY-y)*(centerY-y) ), y );
+			context.stroke();
+		}
 	}
 
 	/**
 	 * Set the  color
 	 */
-	function setColor( pointer ) {
+	function setColor( index ) {
 		// protect against out of bounds (this could happen when
 		// replaying events recorded with different color settings).
-		let idx = pointer < numColors[mode] ? pointer : 0;
-
-		color[mode] = colors[mode][idx];
-		let cursorPointer = pointer < numPens[mode] ? idx : 0;
-	   	pen[mode] = pens[mode][cursorPointer];
-		drawingCanvas[mode].canvas.style.cursor = pen[mode];
+		if ( index >= boardmarkers[mode].length ) index = 0;
+		color[mode] = index;
+		drawingCanvas[mode].canvas.style.cursor = pens[mode][color[mode]].cursor;
 	}
 
 	/**
 	 * Forward cycle color
 	 */
 	function cycleColorNext() {
-		colorPointers[mode] = (colorPointers[mode] + 1) % numColors[mode];
-		return colorPointers[mode];
+		color[mode] = (color[mode] + 1) % pens[mode].length;
+		return color[mode];
 	}
 
 	/**
 	 * Backward cycle color
 	 */
 	function cycleColorPrev() {
-		colorPointers[mode] = (colorPointers[mode] + (numColors[mode] - 1)) % numColors[mode];
-		return colorPointers[mode];
+		color[mode] = (color[mode] + (pens[mode].length - 1)) % pens[mode].length;
+		return color[mode];
 	}
 
 /*****************************************************************
@@ -687,7 +701,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 					clear();
 					break;
 				case "setcolor":
-					setColor(event.coloridx);
+					setColor(event.index);
 					break;
 				case 'resetSlide':
 					resetSlide(true);
@@ -842,7 +856,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 				clearCanvas( id );
 				break;
 			case "setcolor":
-				setColor(event.coloridx);
+				setColor(event.index);
 				break;
 			case "draw":
 				drawCurve( id, event, timestamp );
@@ -1144,7 +1158,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 
 
 	document.addEventListener( 'mouseup', function( evt ) {
-		drawingCanvas[mode].canvas.style.cursor = pen[mode];
+		drawingCanvas[mode].canvas.style.cursor = pens[mode][color[mode]].cursor;
 		if ( event ) {
 			stopDrawing();
 			// broadcast
@@ -1208,10 +1222,10 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 
 			}
 			else {
-				drawingCanvas[0].container.style.cursor = pen[0];
-				drawingCanvas[1].container.style.cursor = pen[1];
-				drawingCanvas[0].canvas.style.cursor = pen[0];
-				drawingCanvas[1].canvas.style.cursor = pen[1];
+				drawingCanvas[0].container.style.cursor = pens[0][color[0]].cursor;
+				drawingCanvas[1].container.style.cursor = pens[1][color[1]].cursor;
+				drawingCanvas[0].canvas.style.cursor = pens[0][color[0]].cursor;
+				drawingCanvas[1].canvas.style.cursor = pens[1][color[1]].cursor;
 			}
 		}
 	}
@@ -1328,13 +1342,13 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 				}
 				else {
 					setColor(0);
-					recordEvent( { type:"setcolor", coloridx: 0, begin: Date.now() - slideStart } );
-					if (rememberColor[mode]) {
-						let idx = colorPointers[mode];
+					recordEvent( { type:"setcolor", index: 0, begin: Date.now() - slideStart } );
+					if (color[mode]) {
+						let idx = color[mode];
 						setColor(idx);
-						recordEvent( { type:"setcolor", coloridx: idx, begin: Date.now() - slideStart } );
+						recordEvent( { type:"setcolor", index: idx, begin: Date.now() - slideStart } );
 					} else {
-						colorPointers[mode] = 0;
+						color[mode] = 0;
 					}
 					notescanvas.style.background = background[0]; //'rgba(255,0,0,0.5)';
 					notescanvas.style.pointerEvents = "auto";
@@ -1357,13 +1371,13 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			if ( !readOnly ) {
 				recordEvent( { type:"open", begin: Date.now() - slideStart } );
 				setColor(0);
-				recordEvent( { type:"setcolor", coloridx: 0, begin: Date.now() - slideStart } );
+				recordEvent( { type:"setcolor", index: 0, begin: Date.now() - slideStart } );
 				if (rememberColor[mode]) {
-					let idx = colorPointers[mode];
+					let idx = color[mode];
 					setColor(idx);
-					recordEvent( { type:"setcolor", coloridx: idx, begin: Date.now() - slideStart } );
+					recordEvent( { type:"setcolor", index: idx, begin: Date.now() - slideStart } );
 				} else {
-					colorPointers[mode] = 0;
+					color[mode] = 0;
 				}
 			}
 		}
@@ -1384,7 +1398,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		if ( !readOnly ) {
 			let idx = cycleColorNext();
 			setColor(idx);
-			recordEvent( { type: "setcolor", coloridx: idx, begin: Date.now() - slideStart } );
+			recordEvent( { type: "setcolor", index: idx, begin: Date.now() - slideStart } );
 		}
 	}
 
@@ -1392,7 +1406,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		if ( !readOnly ) {
 			let idx = cycleColorPrev();
 			setColor(idx);
-			recordEvent( { type: "setcolor", coloridx: idx, begin: Date.now() - slideStart } );
+			recordEvent( { type: "setcolor", index: idx, begin: Date.now() - slideStart } );
 		}
 	}
 
@@ -1449,7 +1463,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		}
 	};
 
-	this.drawWithPen = drawWithPen;
+	this.drawWithBoardmarker = drawWithBoardmarker;
 	this.drawWithChalk = drawWithChalk;
 	this.toggleNotesCanvas = toggleNotesCanvas;
 	this.toggleChalkboard = toggleChalkboard;

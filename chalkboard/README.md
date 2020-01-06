@@ -5,9 +5,9 @@ With this plugin you can add a chalkboard to reveal.js. The plugin provides two 
 - you can make notes directly on the slides, e.g. to comment on certain aspects,
 - you can open a chalkboard or whiteboard on which you can make notes.
 
-The main use case in mind when implementing the plugin is classroom usage in which you may want to explain some course content and quickly need to make some notes. 
+The main use case in mind when implementing the plugin is classroom usage in which you may want to explain some course content and quickly need to make some notes.
 
-The plugin records all drawings made so that they can be play backed using the ```autoSlide``` feature or the ```audio-slideshow``` plugin. 
+The plugin records all drawings made so that they can be play backed using the ```autoSlide``` feature or the ```audio-slideshow``` plugin.
 
 [Check out the live demo](https://rajgoel.github.io/reveal.js-demos/chalkboard-demo.html)
 
@@ -19,19 +19,19 @@ Multi color support added by Kurt Rinnert [GitHub](https://github.com/rinnert).
 
 Copy the file ```chalkboard.js``` and the  ```img``` directory into the plugin folder of your reveal.js presentation, i.e. ```plugin/chalkboard```.
 
-Add the plugins to the dependencies in your presentation as shown below. 
+Add the plugins to the dependencies in your presentation as shown below.
 
 ```javascript
 Reveal.initialize({
 	// ...
-	chalkboard: { 
+	chalkboard: {
 		// optionally load pre-recorded chalkboard drawing from file
 		src: "chalkboard.json",
 	},
 	dependencies: [
-		// ... 
+		// ...
 		{ src: 'plugin/chalkboard/chalkboard.js' },
-		// ... 
+		// ...
 	],
 	keyboard: {
 	    67: function() { RevealChalkboard.toggleNotesCanvas() },	// toggle notes canvas when 'c' is pressed
@@ -46,7 +46,7 @@ Reveal.initialize({
 
 });
 ```
-In order to include buttons for opening and closing the notes canvas or the chalkboard you should make sure that ```font-awesome``` is available. The easiest way is to include 
+In order to include buttons for opening and closing the notes canvas or the chalkboard you should make sure that ```font-awesome``` is available. The easiest way is to include
 ```
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 ```
@@ -54,7 +54,7 @@ to the ```head``` section of you HTML-file.
 
 ## Usage
 
-### Enable & disable 
+### Enable & disable
 
 With above configuration the notes canvas is opened and closed when pressing 'c' and the chalkboard is opened and closed when pressing 'b'.
 
@@ -67,7 +67,7 @@ With above configuration the notes canvas is opened and closed when pressing 'c'
 - Touch and hold for half a second, then move to wipe away previous drawings
 
 ### Keyboard
-- Press the 'DEL' key to clear the chalkboard 
+- Press the 'DEL' key to clear the chalkboard
 - Press the 'd' key to download chalkboard drawings
 - Press the 'BACKSPACE' key to delete all chalkboard drawings on the current slide
 - Press the 'x' key to cycle colors forward
@@ -86,31 +86,24 @@ If the slideshow is opened in [print mode](https://github.com/hakimel/reveal.js/
 
 The plugin has several configuration options:
 
-- ```penWidth```: an integer. the drawing width of the pen; larger values draw thicker lines.
+- ```boardmarkerWidth```: an integer, the drawing width of the boardmarker; larger values draw thicker lines.
 - ```chalkWidth```: an integer, the drawing width of the chalk; larger values draw thicker lines.
 - ```chalkEffect```: a float in the range ```[0.0, 1.0]```, the intesity of the chalk effect on the chalk board. Full effect (default) ```1.0```, no effect ```0.0```.
 - ```eraserDiameter```: an integer, the diameter in pixels affected by the eraser. Larger values erase a greater area. The erased area is circular.
-- ```smallDefaultCursors```: Use smaller default cursors for chalks, pen and eraser.
 - ```src```: Optional filename for pre-recorded drawings.
 - ```readOnly```: Configuation option allowing to prevent changes to existing drawings. If set to ```true``` no changes can be made, if set to false ```false``` changes can be made, if unset or set to ```undefined``` no changes to the drawings can be made after returning to a slide or fragment for which drawings had been recorded before. In any case the recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the ```RevealChalkboard.clear()``` function).
-- ```toggleNotesButton```: If set to ```true``` a button for opening and closing the notes canvas is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate. 
-- ```toggleChalkboardButton```: If set to ```true``` a button for opening and closing the chalkboard is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate. 
+- ```toggleNotesButton```: If set to ```true``` a button for opening and closing the notes canvas is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate.
+- ```toggleChalkboardButton```: If set to ```true``` a button for opening and closing the chalkboard is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate.
 - ```transition```: Gives the duration (in milliseconds) of the transition for a slide change, so that the notes canvas is drawn after the transition is completed.
 - ```theme```: Can be set to either ```"chalkboard"``` or ```"whiteboard"```.
 
 The following configuration options allow to change the appearance of the notes canvas and the chalkboard. All of these options require two values, the first gives the value for the notes canvas, the second for the chalkboard.
 
-- ```color```: The first value gives the pen color, the second value gives the color of the board drawings. This is kept for backwards compatibility. Setting this property will overwrite the default (first) color list entries.
-- ```background```: The first value expects a (semi-)transparent color which is used to provide visual feedback that the notes canvas is enabled, the second value expects a filename to a background image for the chalkboard.
-- ```pen```: The first value expects a filename for an image of the pen used for the notes canvas, the second value expects a filename for an image of the pen used for the chalkboard. This is kept for backwards compatibility. Setting this property will overwrite the default (first) cursor image list entries.
-- ```rememberColor```: Whether to remember the last selected color for the slide canvas or the board. 
-
-The following options are related to multi-color support. You can provide arbitrarily long lists of colors for the slide canvas and the chalkboard/whiteboard -- all of them will be available during your presentation.  You can also provide arbitrarily long lists of corresponding cursors.  It does not make any sense to have more cursors than colors, though. Having less is fine: if you cycle to a color that has no corresponding cursor, the default cursor (first in list) will be used. By default, multi-colored cursors are provided for the chalk (corresponding to the default board colors), but not for the pen. If you configure your board colors, the default cursors might be not what you want. In this case we recommend to configure the ```chalkboard.boardCursors``` to have only one entry: the default's first (```chalk.png```). Or, of course, supply your own fancy cursors.
-
-- ```slideColors```: A list of colors used on the slide canvas. The list can be as long as you wish.
-- ```boardColors```: A list of colors used on the chalkboard or whiteboard. The list can be as long as you wish. If not configured explicitly, the ```slideColors``` will be used in whiteboard mode.
-- ```slideCursors```: A list of pen cursors used on the slide canvas. The list can be as long as you wish, although there is no point in making it longer than ```slideColors```.
-- ```boardCursors```: A list of pen cursors used on the chalkboard or whiteboard. The list can be as long as you wish, although there is no point in making it longer than ```boardColors```. If not configured explicitly, the ```slideCursors``` will be used in whiteboard mode.
+- ``````: The first value expects a (semi-)transparent color which is used to provide visual feedback that the notes canvas is enabled, the second value expects a filename to a background image for the chalkboard.
+- ```grid```: By default whiteboard and chalkboard themes include a grid pattern on the background. This pattern can be modified by setting the color, the distance between lines, and the line width, e.g. ```{ color: 'rgb(127,127,255,0.1)', distance: 40, width: 2}```. Alternatively, the grid can be removed by setting the value to ```false```.
+- ```boardmarkers```: A list of boardmarkers with given color and cursor.
+- ```chalks```: A list of chalks with given color and cursor.
+- ```rememberColor```: Whether to remember the last selected color for the slide canvas or the board.
 
 All of the configurations are optional and the default values shown below are used if the options are not provided.
 
@@ -118,55 +111,49 @@ All of the configurations are optional and the default values shown below are us
 Reveal.initialize({
 	// ...
     chalkboard: {
-        penWidth: 3,
+        boardmarkerWidth: 3,
         chalkWidth: 7,
         chalkEffect: 1.0,
         erasorDiameter: 20,
         smallDefaultCursors: false,
         src: null,
-        readOnly: undefined, 
+        readOnly: undefined,
         toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
         toggleNotesButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
         transition: 800,
         theme: "chalkboard",
-        // configuration options for notes canvas and chalkboard
-        color: [ 'rgba(0,0,255,1)', 'rgba(255,255,255,0.5)' ],
-        background: [ 'rgba(127,127,127,.1)' , 'reveal.js-plugins/chalkboard/img/blackboard.png' ],
-        pen:  [ 'url(reveal.js-plugins/chalkboard/img/boardmarker.png), auto',
-            'url(reveal.js-plugins/chalkboard/img/chalk.png), auto' ],
-        rememberColor: [true, false],
-        slideColors: ['rgba(30,144,255, 1)', 
-            'rgba(30,30,30,1)', 
-            'rgba(220,20,60,1)',
-            'rgba(50,205,50,1)', 
-            'rgba(255,140,0,1)'],
-        boardColors: ['rgba(255,255,255,0.5)',
-            'rgba(220, 133, 41, 0.5)',
-            'rgba(96, 154, 244, 0.5)',
-            'rgba(237, 20, 28, 0.5)',
-            'rgba(20, 237, 28, 0.5)'],
-	slideCursors: ['url(reveal.js-plugins/chalkboard/img/boardmarker-blue.png), auto',
-            'url(reveal.js-plugins/chalkboard/img/boardmarker-black.png), auto',
-            'url(reveal.js-plugins/chalkboard/img/boardmarker-red.png), auto',
-            'url(reveal.js-plugins/chalkboard/img/boardmarker-green.png), auto',
-            'url(reveal.js-plugins/chalkboard/img/boardmarker-orange.png), auto' ],
-        boardCursors: ['url(reveal.js-plugins/chalkboard/img/chalk-white.png), auto',
-            'url(reveal.js-plugins/chalkboard/img/chalk-orange.png), auto',
-            'url(reveal.js-plugins/chalkboard/img/chalk-blue.png), auto',
-            'url(reveal.js-plugins/chalkboard/img/chalk-red.png), auto',
-            'url(reveal.js-plugins/chalkboard/img//chalk-green.png), auto' ]
+        grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2},
+        boardmarkers : [
+                { color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto'},
+                { color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto'},
+                { color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto'},
+                { color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto'},
+                { color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto'},
+                { color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto'},
+                { color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto'}
+        ],
+        chalks: [
+                { color: 'rgba(255,255,255,0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto'},
+                { color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto'},
+                { color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto'},
+                { color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto'},
+                { color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto'},
+                { color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto'},
+                { color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto'}
+        ]
     },
     // ...
 
 });
 ```
 
+**Note:** Customisation of pens has changed since version 0.8 of the plugin. This behaviour may break backwards compatibility for older pen configurations.
+
 **Note:** Customisation of pens has changed since version 0.5 of the plugin, it is now possible to use standard cursors, e.g. by setting ```pen:  [ 'crosshair', 'pointer' ]```. Please update your parameters if migrating from an older version.
 
-**Note:** Using the ```pen``` and ```colors``` setting will overwrite the first entries in the ```slideCursors```, ```boardCursors```, ```slideColors``` and ```boardColors``` settings.  So, if you have custom configurations for multiple colors and/or cursors you might *not* want to use the ```pen``` and ```color``` configuration options. This behaviour is owed to backwards compatibility.
 ## License
 
-**Note:** 
+**Note:**
 
 MIT licensed
 
