@@ -122,7 +122,7 @@ Reveal.initialize({
         toggleNotesButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
         transition: 800,
         theme: "chalkboard",
-				background: [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ],
+        background: [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ],
         grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2},
         boardmarkers : [
                 { color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto'},
