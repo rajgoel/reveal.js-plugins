@@ -44,15 +44,13 @@ try {
 /*****************************************************************
 ** Configuration
 ******************************************************************/
-	var config = Reveal.getConfig().chalkboard || {};
-
 	var background, pen, draw, color;
-  var grid = false;
-	var boardmarkerWidth = config.boardmarkerWidth || config.penWidth || 3;
-	var chalkWidth = config.chalkWidth || 7;
-	var chalkEffect = ("chalkEffect" in config) ? config.chalkEffect : 1.0;
-	var rememberColor = config.rememberColor || [true, false];
-	var eraser = config.eraser || { src: path + 'img/sponge.png', radius: 20};
+	var grid = false;
+	var boardmarkerWidth = 3;
+	var chalkWidth = 7;
+	var chalkEffect = 1.0;
+	var rememberColor = [true, false];
+	var eraser = { src: path + 'img/sponge.png', radius: 20};
 	var boardmarkers = [
 		{ color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto'},
 		{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto'},
@@ -72,35 +70,58 @@ try {
 		{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto'}
 	];
 
-	if ("boardmarkers" in config) boardmarkers = config.boardmarkers;
-	if ("chalks" in config) chalks = config.chalks;
-
-	var theme = config.theme || "chalkboard";
-	switch ( theme ) {
-		case "whiteboard":
-			background = [ 'rgba(127,127,127,.1)' , path + 'img/whiteboard.png' ];
-			draw = [ drawWithBoardmarker , drawWithBoardmarker ];
-			pens = [ boardmarkers, boardmarkers ];
-			grid = { color: 'rgb(127,127,255,0.1)', distance: 40, width: 2};
-			break;
-		case "chalkboard":
-		default:
-			background = [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ];
-			draw = [ drawWithBoardmarker , drawWithChalk ];
-			pens = [ boardmarkers, chalks ];
-			grid = { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2};
-	}
-
-	if ( config.background ) background = config.background;
-	if ( config.grid != undefined ) grid = config.grid;
-
+	var theme = "chalkboard";
 	var color = [0, 0];
-	var toggleChalkboardButton = config.toggleChalkboardButton == undefined ? true : config.toggleChalkboardButton;
-	var toggleNotesButton = config.toggleNotesButton == undefined ? true : config.toggleNotesButton;
-	var transition = config.transition  || 800;
+	var toggleChalkboardButton = true;
+	var toggleNotesButton = true;
+	var transition = 800;
 
-	var readOnly = config.readOnly;
+	var readOnly = undefined;
 
+	var config = configure( Reveal.getConfig().chalkboard || {} );
+
+	function configure( config ) {
+		if ( config.boardmarkerWidth || config.penWidth ) boardmarkerWidth = config.boardmarkerWidth || config.penWidth;
+		if ( config.chalkWidth ) chalkWidth = config.chalkWidth;
+		if ( "chalkEffect" in config ) chalkEffect = ("chalkEffect" in config);
+		if ( config.rememberColor ) rememberColor = config.rememberColor;
+		if ( config.eraser ) eraser = config.eraser;
+		if ("boardmarkers" in config) boardmarkers = config.boardmarkers;
+		if ("chalks" in config) chalks = config.chalks;
+
+		if ( config.theme ) theme = config.theme;
+		switch ( theme ) {
+			case "whiteboard":
+				background = [ 'rgba(127,127,127,.1)' , path + 'img/whiteboard.png' ];
+				draw = [ drawWithBoardmarker , drawWithBoardmarker ];
+				pens = [ boardmarkers, boardmarkers ];
+				grid = { color: 'rgb(127,127,255,0.1)', distance: 40, width: 2};
+				break;
+			case "chalkboard":
+			default:
+				background = [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ];
+				draw = [ drawWithBoardmarker , drawWithChalk ];
+				pens = [ boardmarkers, chalks ];
+				grid = { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2};
+		}
+
+		if ( config.background ) background = config.background;
+		if ( config.grid != undefined ) grid = config.grid;
+
+		if (config.toggleChalkboardButton != undefined) toggleChalkboardButton = config.toggleChalkboardButton;
+		if (config.toggleNotesButton != undefined)  toggleNotesButton = config.toggleNotesButton;
+		if (config.transition) transition = config.transition;
+
+		if (config.readOnly) readOnly = config.readOnly;
+
+		if ( drawingCanvas && ( config.theme || config.background || config.grid ) ) {
+			var canvas = document.getElementById( drawingCanvas[1].id );
+			canvas.style.background = 'url("' + background[1] + '") repeat';
+			clearCanvas( 1 );
+			drawGrid();
+		}
+		return config;
+	}
 /*****************************************************************
 ** Setup
 ******************************************************************/
@@ -235,10 +256,10 @@ try {
 ** Storage
 ******************************************************************/
 
-		var storage = [
-				{ width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: []},
-				{ width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: []}
-			];
+	var storage = [
+		{ width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: []},
+		{ width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: []}
+	];
 //console.log( JSON.stringify(storage));
 
 	var loaded = null;
@@ -1473,6 +1494,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	this.reset = resetSlide;
 	this.resetAll = resetStorage;
 	this.download = downloadData;
+	this.configure = configure;
 
 	return this;
 })();
