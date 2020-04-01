@@ -66,6 +66,14 @@ var RevealBroadcast = window.RevealBroadcast || (function(){
 	var height = config.height || 480;
 	var mediaPlayer = null;
 	var defaults = {
+		iceServers: [{
+		    'urls': [
+		        'stun:stun.l.google.com:19302',
+		        'stun:stun1.l.google.com:19302',
+		        'stun:stun2.l.google.com:19302',
+		        'stun:stun.l.google.com:19302?transport=udp',
+		    ]
+		}],
 		enableScalableBroadcast: true,
 		maxRelayLimitPerUser: 2,	
 		useDefaultDevices: true, // do not force selection of specific devices
@@ -79,7 +87,7 @@ var RevealBroadcast = window.RevealBroadcast || (function(){
         		oneway: true
         	},
 		socketMessageEvent: 'reveal.js-broadcast-demo',
-		enableLogs: false
+		enableLogs: true
 	};
 
 	var connection = new RTCMultiConnection( window.location.pathname ); // use URL as channel-id
@@ -194,11 +202,11 @@ var RevealBroadcast = window.RevealBroadcast || (function(){
 				alert('Broadcast already exists!');
 			}
 
-			function post( e ) {
+			function post( evt ) {
 				socket.emit(connection.socketCustomEvent, {
 					sender: connection.userid,
 					state: Reveal.getState(),
-					content: e.content || null
+					content: evt.content || null
 				});
 			};
 		
@@ -340,13 +348,8 @@ console.log("Received: " + JSON.stringify( message ) );
 			return;
 		}
 
-		if(event.mediaElement) {
-			event.mediaElement.pause();
-			delete event.mediaElement;
-		}
-
 		connection.isUpperUserLeft = false;
-		mediaPlayer.src = URL.createObjectURL(event.stream);
+		mediaPlayer.srcObject = event.stream;
 		mediaPlayer.play();
 
 		mediaPlayer.userid = event.userid;
