@@ -6,24 +6,25 @@ A plugin for Reveal.js allowing to broadcast audio and video for slide shows.
 
 ## Installation
 
-Copy the files of the plugin next to your reveal.js presentation and add the dependencies as below. 
+Copy the files of the plugin next to your reveal.js presentation and add the dependencies as below.
 
 ```javascript
 Reveal.initialize({
   // ...
   dependencies: [
-    // ... 
-    { src: '../reveal.js-plugins/broadcast/RTCMultiConnection.min.js'},
-    { src: '../reveal.js-plugins/broadcast/socket.io.js'},
+    // ...
+    { src: '../reveal.js-plugins/broadcast/RTCMultiConnection/RTCMultiConnection.min.js'},
+    { src: '../reveal.js-plugins/broadcast/RTCMultiConnection/adapter.js'},
+    { src: '../reveal.js-plugins/broadcast/RTCMultiConnection/socket.io.js'},
     { src: '../reveal.js-plugins/broadcast/bCrypt.js'},
     { src: '../reveal.js-plugins/broadcast/broadcast.js'},
-    // ... 
+    // ...
   ]
 });
 ```
 ## Configuration
 
-You can configure the ```broadcast.js``` plugin by providing a ```broadcast``` option in the reveal.js initialization options. 
+You can configure the ```broadcast.js``` plugin by providing a ```broadcast``` option in the reveal.js initialization options.
 
 
 ```javascript
@@ -31,16 +32,16 @@ Reveal.initialize({
   // ...
   broadcast: {
     // Set master password to "123456"
-    secret: '$2a$05$hhgakVn1DWBfgfSwMihABeYToIBEiQGJ.ONa.HWEiNGNI6mxFCy8S', 
+    secret: '$2a$05$hhgakVn1DWBfgfSwMihABeYToIBEiQGJ.ONa.HWEiNGNI6mxFCy8S',
     // Configure RTCMultiConnection
     connection: {
-      socketURL: 'https://revealjs-broadcast.herokuapp.com/'
+      socketURL: 'https://revealjs-broadcast.herokuapp.com:443/'
     },
   },
   // ...
 });
 ```
-The parameter ```secret``` is a hash for the password which has to be provided when starting a broadcast. You can generate this secret with [```generatehash.html```](https://rajgoel.github.io/reveal.js-plugins/broadcast/generatehash.html). The parameter ```connection``` provides the configuration for RTCMultiConnection as described in the [API Reference](https://github.com/muaz-khan/RTCMultiConnection/blob/master/docs/api.md). The only required option is the parameter ```socketURL```. For testing purposes you may use the server ```https://revealjs-broadcast.herokuapp.com/```, but availability and stability are not guaranteed. For anything mission critical I recommend you run your own server. For example, you can deploy https://github.com/muaz-khan/RTCMultiConnection on [Heroku](https://www.heroku.com/) using this [Installation Guide](https://github.com/muaz-khan/RTCMultiConnection/blob/master/docs/installation-guide.md). The only change required to ```server.js``` is to set ```isUseHTTPs = true;```
+The parameter ```secret``` is a hash for the password which has to be provided when starting a broadcast. You can generate this secret with [```generatehash.html```](https://rajgoel.github.io/reveal.js-plugins/broadcast/generatehash.html). The parameter ```connection``` provides the configuration for RTCMultiConnection as described in the [API Reference](https://github.com/muaz-khan/RTCMultiConnection/blob/master/docs/api.md). The only required option is the parameter ```socketURL```. For testing purposes you may use the server ```https://revealjs-broadcast.herokuapp.com/```, but availability and stability are not guaranteed. For anything mission critical I recommend you run your own server. For example, you can deploy https://github.com/muaz-khan/RTCMultiConnection on [Heroku](https://www.heroku.com/) using this [Installation Guide](https://github.com/muaz-khan/RTCMultiConnection/blob/master/docs/installation-guide.md). Heroku allows you to directly use the GitHub repository without any changes.
 
 ## Start broadcast
 
@@ -94,19 +95,26 @@ Whenever a new client joins the broadcast the broadcast plugins sends a ```newcl
 document.addEventListener( 'newclient', function() {
   // (re-)send initialisation info as new client has joined
   var message = new CustomEvent('send');
-  message.content = { 
-    sender: 'someplugin', 
-     type: 'init', 
-     \\ ... 
+  message.content = {
+    sender: 'someplugin',
+     type: 'init',
+     \\ ...
   };
   document.dispatchEvent( message );
 });
 ```
 In the [demo](https://rajgoel.github.io/reveal.js-demos/broadcast-demo.html) all drawings created with the ```chalkboard.js``` plugin are broadcasted to the clients. Checkout the source code of ```chalkboard.js``` plugin for an example of the implementation.
 
+## Limitations
+
+Browser support may vary and usage on mobile OS may fail. It is recommended to use Chrome, Chromium, or Firefox on desktop.
+
+## Credits
+
+The plugin uses a [patched](https://github.com/muaz-khan/RTCMultiConnection/pull/816) version of RTCMultiConnection by Muaz Khan (https://github.com/muaz-khan/RTCMultiConnection).
+
 ## License
 
 MIT licensed
 
-Copyright (C) 2017 Asvin Goel
-
+Copyright (C) 2020 Asvin Goel

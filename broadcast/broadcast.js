@@ -3,7 +3,7 @@
 **
 ** A plugin for broadcasting reveal.js presentations
 **
-** Version: 0.1
+** Version: 0.2
 ** 
 ** License: MIT license (see LICENSE.md)
 **
