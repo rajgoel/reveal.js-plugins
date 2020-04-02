@@ -705,9 +705,9 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 					startDrawing(message.content.x, message.content.y, message.content.erase);
 					break;
 				case 'startErasing':
-					if ( event ) {
-						event.type = "erase";
-						event.begin = Date.now() - slideStart;
+					if ( message.content ) {
+						message.content.type = "erase";
+						message.content.begin = Date.now() - slideStart;
 						eraseWithSponge(drawingCanvas[mode].context, message.content.x, message.content.y);
 					}
 					break;
@@ -721,7 +721,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 					clear();
 					break;
 				case 'setcolor':
-					setColor(event.index);
+					setColor(message.content.index);
 					break;
 				case 'resetSlide':
 					resetSlide(true);
