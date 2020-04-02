@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 0.8
+** Version: 0.9
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -720,7 +720,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 				case 'clear':
 					clear();
 					break;
-				case "setcolor":
+				case 'setcolor':
 					setColor(event.index);
 					break;
 				case 'resetSlide':
@@ -1419,6 +1419,10 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			let idx = cycleColorNext();
 			setColor(idx);
 			recordEvent( { type: "setcolor", index: idx, begin: Date.now() - slideStart } );
+			// broadcast
+			var message = new CustomEvent('send');
+			message.content = { sender: 'chalkboard-plugin', type: 'setcolor', index: idx };
+			document.dispatchEvent( message );
 		}
 	}
 
@@ -1427,6 +1431,10 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			let idx = cycleColorPrev();
 			setColor(idx);
 			recordEvent( { type: "setcolor", index: idx, begin: Date.now() - slideStart } );
+			// broadcast
+			var message = new CustomEvent('send');
+			message.content = { sender: 'chalkboard-plugin', type: 'setcolor', index: idx };
+			document.dispatchEvent( message );
 		}
 	}
 
