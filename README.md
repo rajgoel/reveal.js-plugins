@@ -1,3 +1,13 @@
+```diff
+- Important notes:
+- Currently, this repository is based on Reveal.js 3.9.0.
+- Reveal.js 4.0.0 has been released with some breaking changes. 
+- The plugins provided here haven't (yet) been tested for the latest Reveal.js version. 
+- It is the goal to update this repository to the latest version as soon as possible (until Fall). 
+- Maintaining this project is a one-man show and updating may require some time. 
+- Feedback on (broken) compatibility with the latest Reveal.js version is highly appreciated.
+```
+
 # reveal.js-plugins
 
 This is a collection of plugins for [Reveal.js](https://github.com/hakimel/reveal.js) - a framework for easily creating beautiful presentations using HTML. Example presentations and demos for these plugins can be found and added [here](https://github.com/rajgoel/reveal.js-plugins/wiki/Example-presentations).
