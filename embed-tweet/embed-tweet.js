@@ -35,7 +35,9 @@ var RevealEmbedTweet = window.RevealEmbedTweet || (function(){
 		load();
 	} );
 
+	this.refresh = load;
 
+	return this;
 })();
 
 
