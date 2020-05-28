@@ -1,16 +1,28 @@
 /*****************************************************************
 ** Author: Asvin Goel, goel@telematique.eu
+** Fixed for Reveal4: kotborealis@awooo.ru
 **
 ** csv2chart.js is a plugin for reveal.js allowing to integrate
 ** Chart.js in reveal.js
 **
-** Version: 0.2
-** 
+** Version: 0.3
+**
 ** License: MIT license (see LICENSE.md)
 **
 ******************************************************************/
 
-var RevealChart = window.RevealChart || (function(){
+/**
+ * Reveal Plugin
+ * https://revealjs.com/creating-plugins/
+ */
+window.RevealChart = window.RevealChart || {
+    id: 'RevealChart',
+    init: function(deck) {
+        initialize(deck);
+    }
+};
+
+const initialize = function(Reveal){
 	function parseJSON(str) {
 	    var json;
 	    try {
@@ -22,7 +34,7 @@ var RevealChart = window.RevealChart || (function(){
 	}
 
 	/*
-	* Recursively merge properties of two objects 
+	* Recursively merge properties of two objects
 	*/
 	function mergeRecursive(obj1, obj2) {
 
@@ -31,19 +43,19 @@ var RevealChart = window.RevealChart || (function(){
 	      // Property in destination object set; update its value.
 	      if ( obj1[p].constructor==Object && obj2[p].constructor==Object ) {
 	        obj1[p] = mergeRecursive(obj1[p], obj2[p]);
-	
+
 	      } else {
 	        obj1[p] = obj2[p];
-	
+
 	      }
-	
+
 	    } catch(e) {
 	      // Property in destination object not set; create it and set its value.
 	      obj1[p] = obj2[p];
-	
+
 	    }
 	  }
-	
+
 	  return obj1;
 	}
 
@@ -66,14 +78,14 @@ var RevealChart = window.RevealChart || (function(){
 				}
 			}
 		}
-		
+
 		var lines = CSV.split('\n').filter(function(v){return v!==''});
 		// if labels are not defined, get them from first line
 		if ( chartData.labels === null && lines.length > 0 ) {
 			chartData.labels = lines[0].split(',');
 			chartData.labels.shift();
 			lines.shift();
-		} 
+		}
 		// get data values
 		for (var j = 0; j < lines.length; j++ ){
 			if (chartData.datasets.length <= j) chartData.datasets[j] = {};
@@ -91,13 +103,13 @@ var RevealChart = window.RevealChart || (function(){
 			for (var j = 0; j < chartData.datasets.length; j++ ){
 				for (var attrname in config) {
 					if ( !chartData.datasets[j][attrname]  ) {
-						chartData.datasets[j][attrname] = config[attrname][j%config[attrname].length];  
+						chartData.datasets[j][attrname] = config[attrname][j%config[attrname].length];
 					}
 				}
 			}
-		}		
+		}
 
-		canvas.chart = new Chart(ctx, { type: canvas.getAttribute("data-chart"), data: chartData, options: chartOptions }); 
+		canvas.chart = new Chart(ctx, { type: canvas.getAttribute("data-chart"), data: chartData, options: chartOptions });
 
 	}
 
@@ -109,7 +121,7 @@ var RevealChart = window.RevealChart || (function(){
 			if ( canvases[i].hasAttribute("data-chart") ){
 				var CSV = canvases[i].innerHTML.trim();
 				var comments = CSV.match(/<!--[\s\S]*?-->/g);
-				CSV = CSV.replace(/<!--[\s\S]*?-->/g,'').replace(/^\s*\n/gm, "") 
+				CSV = CSV.replace(/<!--[\s\S]*?-->/g,'').replace(/^\s*\n/gm, "")
 				if ( ! canvases[i].hasAttribute("data-chart-src") ) {
 					createChart(canvases[i], CSV, comments);
 				}
@@ -134,7 +146,7 @@ var RevealChart = window.RevealChart || (function(){
 					}
 				}
 
-			} 
+			}
 		}
 	}
 
@@ -151,18 +163,18 @@ var RevealChart = window.RevealChart || (function(){
 	var config = chartConfig["defaults"];
 	if ( config ) {
 		mergeRecursive(Chart.defaults, config);
-	}		
+	}
 
 	Reveal.addEventListener('ready', function(){
 		initializeCharts();
 		Reveal.addEventListener('slidechanged', function(){
 			var canvases = Reveal.getCurrentSlide().querySelectorAll("canvas[data-chart]");
 			for (var i = 0; i < canvases.length; i++ ){
-				if ( canvases[i].chart && canvases[i].chart.config.options.animation ) { 
+				if ( canvases[i].chart && canvases[i].chart.config.options.animation ) {
 					recreateChart( canvases[i] );
 				}
 			}
-		
+
 		});
 	});
-})();
+};
