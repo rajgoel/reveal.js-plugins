@@ -1491,6 +1491,17 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		}
 	};
 
+	function colorSet( idx ) {
+		if ( !readOnly ) {
+			setColor(idx);
+			recordEvent( { type: "setcolor", index: idx, begin: Date.now() - slideStart } );
+			// broadcast
+			var message = new CustomEvent('send');
+			message.content = { sender: 'chalkboard-plugin', type: 'setcolor', index: idx };
+			document.dispatchEvent( message );
+		}
+	}
+
 	this.drawWithBoardmarker = drawWithBoardmarker;
 	this.drawWithChalk = drawWithChalk;
 	this.toggleNotesCanvas = toggleNotesCanvas;
@@ -1503,6 +1514,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	this.resetAll = resetStorage;
 	this.download = downloadData;
 	this.configure = configure;
+	this.colorSet = colorSet;
 
 	return this;
 })();
