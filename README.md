@@ -2,7 +2,7 @@
 - Important notes:
 - Currently, this repository is based on Reveal.js 3.9.0.
 - Reveal.js 4.0.0 has been released with some breaking changes. 
-- The plugins provided here haven't (yet) been tested for the latest Reveal.js version. 
+- Not all plugins provided here have (yet) been tested for the latest Reveal.js version. 
 - It is the goal to update this repository to the latest version as soon as possible (until Fall). 
 - Maintaining this project is a one-man show and updating may require some time. 
 - Feedback on (broken) compatibility with the latest Reveal.js version is highly appreciated.
