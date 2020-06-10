@@ -71,7 +71,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 
 	Reveal.addEventListener( 'paused', function( event ) {
 		if ( timer ) { clearTimeout( timer ); timer = null; }
-		currentAudio.pause();
+		if ( currentAudio ) { currentAudio.pause(); }
 	} );
 
 	Reveal.addEventListener( 'resumed', function( event ) {
@@ -80,7 +80,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 
 	Reveal.addEventListener( 'overviewshown', function( event ) {
 		if ( timer ) { clearTimeout( timer ); timer = null; }
-		currentAudio.pause();
+		if ( currentAudio ) { currentAudio.pause(); }
 		document.querySelector(".audio-controls").style.visibility = "hidden";
 	} );
 
