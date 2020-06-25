@@ -126,11 +126,15 @@ var RevealMathSVG = window.RevealMathSVG || (function(){
 		var y =  +svgdest.getAttribute( 'y' );
 		if ( svgdest.hasAttribute( 'dy' ) ) x = x + svgdest.getAttribute( 'dy' );
 
+		var transform_value = "";
+		if ( svgdest.hasAttribute( 'transform' ) ) transform_value += svgdest.getAttribute( 'transform' );
+
 		var x0 = x;
 		var y0 = y;
 		var x1 = -svgmathinfo.width * 0.5;
 		var y1 = svgmathinfo.height * 0.25;
-		gnodes.setAttribute( 'transform', 'translate('+x0+' '+y0+') scale('+scale+') translate('+x1+' '+y1+') matrix(1 0 0 -1 0 0)' );
+		transform_value += 'translate('+x0+' '+y0+') scale('+scale+') translate('+x1+' '+y1+') matrix(1 0 0 -1 0 0)'
+		gnodes.setAttribute( 'transform',  transform_value);
 		if ( svgdest.hasAttribute( 'fill' ) ) gnodes.setAttribute( 'fill', svgdest.getAttribute( 'fill' ) );
 		if ( svgdest.hasAttribute( 'stroke' ) ) gnodes.setAttribute( 'stroke', svgdest.getAttribute( 'stroke' ) );
 
