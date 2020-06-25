@@ -1,13 +1,13 @@
 /*****************************************************************
 ** Author: Asvin Goel, goel@telematique.eu
 **
-** An extension of the math.js plugin for reveal.js enabling 
+** An extension of the math.js plugin for reveal.js enabling
 ** rendering of math equations inside SVG graphics.
 **
 ** Credits:
-** - Hakim El Hattab for math.js 
+** - Hakim El Hattab for math.js
 **   MIT licensed
-** - Jason M. Sachs for svg_mathjax.js  
+** - Jason M. Sachs for svg_mathjax.js
 **   Source: https://bitbucket.org/jason_s/svg_mathjax
 **   License: http://www.apache.org/licenses/LICENSE-2.0
 ******************************************************************/
@@ -73,8 +73,8 @@ var RevealMathSVG = window.RevealMathSVG || (function(){
 	}
 
 	// apply a function to elements of an array x
-	function forEach( x, f ) { 
-		var n = x.length; for ( var i = 0; i < n; ++i ) { f( x[i] ); } 
+	function forEach( x, f ) {
+		var n = x.length; for ( var i = 0; i < n; ++i ) { f( x[i] ); }
 	}
 
 	function cleanup( mathbucket ) {
@@ -82,15 +82,44 @@ var RevealMathSVG = window.RevealMathSVG || (function(){
 		mathbucket.parentNode.removeChild( mathbucket );
 	}
 
+	function getFirstNumber(str) {
+		var regex = /[+-]?\d+(?:\.\d+)?/g;
+		var match = regex.exec(str);
+		var number;
+		try {
+			number = match[0];
+		} catch (TypeError) {
+			number = null;
+		}
+		return number;
+	}
+
+	function getFontSize(tag) {
+		var fontsize = getFirstNumber(tag.getAttribute( 'font-size' ));
+
+		if (fontsize === null) {
+			styles = tag.getAttribute('style').split(";");
+			for (style_value of styles) {
+				var key_value = style_value.split(":");
+				if (key_value[0] === "font-size") {
+					fontsize = getFirstNumber(key_value[1]);
+					break;
+				}
+			}
+		}
+
+		return fontsize;
+	}
+
 	function replaceText( svgdest, mathjaxdiv, textcontainer ) {
 		var svgmath = mathjaxdiv.getElementsByClassName( 'MathJax_SVG' )[0].getElementsByTagName( 'svg' )[0];
 		var svgmathinfo = {
-		  width: svgmath.viewBox.baseVal.width, 
+		  width: svgmath.viewBox.baseVal.width,
 		  height: svgmath.viewBox.baseVal.height
 		};
 		// get graphics nodes
 		var gnodes = svgmath.getElementsByTagName( 'g' )[0].cloneNode( true );
-		var fontsize = svgdest.getAttribute( 'font-size' );
+		var fontsize = getFontSize(svgdest);
 		var scale = 0.0016 * fontsize;
 		var x =  +svgdest.getAttribute( 'x' );
 		if ( svgdest.hasAttribute( 'dx' ) ) x = x + svgdest.getAttribute( 'dx' );
