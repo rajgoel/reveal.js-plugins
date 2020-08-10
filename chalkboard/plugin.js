@@ -3,16 +3,24 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 0.9.1
+** Version: 1.0.0
 **
 ** License: MIT license (see LICENSE.md)
 **
 ** Credits:
 ** Chalkboard effect by Mohamed Moustafa https://github.com/mmoustafa/Chalkboard
 ** Multi color support by Kurt Rinnert https://github.com/rinnert
+** Compatibility with reveal.js v4 by Hakim El Hattab https://github.com/hakimel
 ******************************************************************/
 
-var RevealChalkboard = window.RevealChalkboard || (function(){
+window.RevealChalkboard = window.RevealChalkboard || {
+    id: 'RevealChalkboard',
+    init: function(deck) {
+        initialize(deck);
+    }
+};
+
+const initialize = function(Reveal){
 	var path = scriptPath();
 	function scriptPath() {
 		// obtain plugin path from the script element
@@ -1511,4 +1519,4 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	this.configure = configure;
 
 	return this;
-})();
+};
