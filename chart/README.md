@@ -12,7 +12,7 @@ Add the plugins to the dependencies in your presentation, as below.
 
 ```html
 <script src="plugin/chart/Chart.min.js"></script>
-<script src="plugin/chart/csv2chart.js"></script>
+<script src="plugin/chart/plugin.js"></script>
 
 <script>
     Reveal.initialize({
