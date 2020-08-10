@@ -3,13 +3,19 @@
 **
 ** A plugin replacing the default controls by custom controls.
 **
-** Version: 0.1
+** Version: 1.0.0
 ** 
 ** License: MIT license (see LICENSE.md)
 **
 ******************************************************************/
+window.RevealCustomControls = window.RevealCustomControls || {
+    id: 'RevealCustomControls',
+    init: function(deck) {
+        initialize(deck);
+    }
+};
 
-var RevealCustomControls = window.RevealCustomControls || (function(){
+const initialize = function(Reveal){
 	var config = Reveal.getConfig().customcontrols || 
 		{ 
 			slideNumberCSS : 'position: fixed; display: block; right: 90px; top: auto; left: auto; width: 50px; bottom: 30px; z-index: 31; font-family: Helvetica, sans-serif; font-size:  12px; line-height: 1; padding: 5px; text-align: center; border-radius: 10px; background-color: rgba(128,128,128,.5)',
@@ -46,5 +52,5 @@ var RevealCustomControls = window.RevealCustomControls || (function(){
 
 	return this;
 
-})();
+};
 
