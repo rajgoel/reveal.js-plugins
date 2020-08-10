@@ -17,7 +17,8 @@ window.RevealChalkboard = window.RevealChalkboard || {
     id: 'RevealChalkboard',
     init: function(deck) {
         initialize(deck);
-    }
+    },
+    configure: function(config) { configure(config); }
 };
 
 const initialize = function(Reveal){
@@ -28,25 +29,24 @@ const initialize = function(Reveal){
 		if (document.currentScript) {
 			src = document.currentScript.src;
 		} else {
-			var sel = document.querySelector('script[src$="/chalkboard.js"]')
+			var sel = document.querySelector('script[src$="/chalkboard/plugin.js"]')
 			if (sel) {
 				src = sel.src;
 			}
 		}
 
-		var path = typeof src === undefined ? src
-			: src.slice(0, src.lastIndexOf("/") + 1);
+		var path = (src === undefined) ? "" : src.slice(0, src.lastIndexOf("/") + 1);
 //console.log("Path: " + path);
 		return path;
-}
+	}
 
 
-/* Feature detection for passive event handling*/
-var passiveSupported = false;
+	/* Feature detection for passive event handling*/
+	var passiveSupported = false;
 
-try {
-  window.addEventListener("test", null, Object.defineProperty({}, "passive", { get: function() { passiveSupported = true; } }));
-} catch(err) {}
+	try {
+	  window.addEventListener("test", null, Object.defineProperty({}, "passive", { get: function() { passiveSupported = true; } }));
+	} catch(err) {}
 
 
 /*****************************************************************
@@ -87,7 +87,7 @@ try {
 	var readOnly = undefined;
 
 	var config = configure( Reveal.getConfig().chalkboard || {} );
-
+alert(JSON.stringify(config));
 	function configure( config ) {
 		if ( config.boardmarkerWidth || config.penWidth ) boardmarkerWidth = config.boardmarkerWidth || config.penWidth;
 		if ( config.chalkWidth ) chalkWidth = config.chalkWidth;
@@ -160,7 +160,7 @@ try {
 		button.style.top = toggleChalkboardButton.top ||  "auto";
 		button.style.right = toggleChalkboardButton.right ||  "auto";
 
-		button.innerHTML = '<a href="#" onclick="RevealChalkboard.toggleChalkboard(); return false;"><i class="fa fa-pen-square"></i></a>'
+		button.innerHTML = '<a href="#" onclick="toggleChalkboard(); return false;"><i class="fa fa-pen-square"></i></a>'
 		document.querySelector(".reveal").appendChild( button );
 	}
 	if ( toggleNotesButton ) {
@@ -177,7 +177,7 @@ try {
 		button.style.top = toggleNotesButton.top ||  "auto";
 		button.style.right = toggleNotesButton.right ||  "auto";
 
-		button.innerHTML = '<a href="#" onclick="RevealChalkboard.toggleNotesCanvas(); return false;"><i class="fa fa-pen"></i></a>'
+		button.innerHTML = '<a href="#" onclick="toggleNotesCanvas(); return false;"><i class="fa fa-pen"></i></a>'
 		document.querySelector(".reveal").appendChild( button );
 	}
 //alert("Buttons");
@@ -218,7 +218,7 @@ try {
 
 		if ( id == "0" ) {
 			container.style.background = 'rgba(0,0,0,0)';
-			container.style.zIndex = "24";
+			container.style.zIndex = 24;
 			container.style.opacity = 1;
 			container.style.visibility = 'visible';
 			container.style.pointerEvents = "none";
@@ -234,7 +234,7 @@ try {
 		}
 		else {
 			container.style.background = 'url("' + background[id] + '") repeat';
-			container.style.zIndex = "26";
+			container.style.zIndex = 26;
 			container.style.opacity = 0;
 			container.style.visibility = 'hidden';
 		}
@@ -1505,6 +1505,15 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		}
 	};
 
+	Reveal.addKeyBinding( { keyCode: 67, key: 'C', description: 'Toggle notes canvas' }, function() { toggleNotesCanvas(); } );
+	Reveal.addKeyBinding( { keyCode: 66, key: 'B', description: 'Toggle chalkboard' }, function() { toggleChalkboard(); } );
+	Reveal.addKeyBinding( { keyCode: 46, key: 'DEL', description: 'Reset drawings on slide' }, function() { resetSlide(); } );
+	Reveal.addKeyBinding( { keyCode: 8, key: 'BACKSPACE', description: 'Reset all drawings' }, function() { resetStorage(); } );
+	Reveal.addKeyBinding( { keyCode: 88, key: 'X', description: 'Next color' }, function() { colorNext(); } );
+	Reveal.addKeyBinding( { keyCode: 89, key: 'Y', description: 'Previous color' }, function() { colorPrev(); } );
+	Reveal.addKeyBinding( { keyCode: 90, key: 'Z', description: 'Download drawings' }, function() { downloadData(); } );
+
+/*
 	this.drawWithBoardmarker = drawWithBoardmarker;
 	this.drawWithChalk = drawWithChalk;
 	this.toggleNotesCanvas = toggleNotesCanvas;
@@ -1516,7 +1525,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	this.reset = resetSlide;
 	this.resetAll = resetStorage;
 	this.download = downloadData;
+*/
 	this.configure = configure;
-
 	return this;
 };
