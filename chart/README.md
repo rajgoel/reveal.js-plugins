@@ -10,17 +10,22 @@ Copy the files ```Chart.min.js``` and ```csv2chart.js``` into the plugin folder 
 
 Add the plugins to the dependencies in your presentation, as below. 
 
-```javascript
-Reveal.initialize({
-	// ...
-	dependencies: [
-		// ... 
-		{ src: 'plugin/chart/Chart.min.js' },				
-		{ src: 'plugin/chart/csv2chart.js' },
-		// ... 
-	]
-});
+```html
+<script src="plugin/chart/Chart.min.js"></script>
+<script src="plugin/chart/csv2chart.js"></script>
+
+<script>
+    Reveal.initialize({
+        // ...
+        dependencies: [
+            // ... 
+            RevealChart
+            // ... 
+        ]
+    });
+</script>
 ```
+
 ## Configuration
 
 The plugin has several parameters that you can set for your presentation by providing an ```chart``` option in the reveal.js initialization options. 
