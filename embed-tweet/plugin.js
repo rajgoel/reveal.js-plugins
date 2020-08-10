@@ -1,4 +1,11 @@
-var RevealEmbedTweet = window.RevealEmbedTweet || (function(){
+window.RevealEmbedTweet = window.RevealEmbedTweet || {
+    id: 'RevealEmbedTweet',
+    init: function(deck) {
+        initialize(deck);
+    }
+};
+
+const initialize = function(Reveal){
 	var ready = false;
 	window.twttr = (function(d, s, id) {
 		var js, fjs = d.getElementsByTagName(s)[0],
@@ -38,7 +45,7 @@ var RevealEmbedTweet = window.RevealEmbedTweet || (function(){
 	this.refresh = load;
 
 	return this;
-})();
+};
 
 
 
