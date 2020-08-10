@@ -2,8 +2,7 @@
 ** Author: Asvin Goel, goel@telematique.eu
 ** Fixed for Reveal4: kotborealis@awooo.ru
 **
-** csv2chart.js is a plugin for reveal.js allowing to integrate
-** Chart.js in reveal.js
+** A plugin for reveal.js allowing to integrate Chart.js
 **
 ** Version: 0.3
 **

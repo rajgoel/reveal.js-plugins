@@ -6,7 +6,7 @@ A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to easil
 
 ## Installation
 
-Copy the files ```Chart.min.js``` and ```csv2chart.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/chart```.
+Copy the files ```Chart.min.js``` and ```plugin.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/chart```.
 
 Add the plugins to the dependencies in your presentation, as below. 
 
@@ -17,7 +17,7 @@ Add the plugins to the dependencies in your presentation, as below.
 <script>
     Reveal.initialize({
         // ...
-        dependencies: [
+        plugins: [
             // ... 
             RevealChart
             // ... 
@@ -29,7 +29,7 @@ Add the plugins to the dependencies in your presentation, as below.
 ## Configuration
 
 The plugin has several parameters that you can set for your presentation by providing an ```chart``` option in the reveal.js initialization options. 
-Note that all configuration parameters are optional and the defaults of [Chart.js 2.7](http://nnnick.github.io/Chart.js/docs-v2/) will be used for parameters that are not specified.
+Note that all configuration parameters are optional and the defaults of [Chart.js](http://nnnick.github.io/Chart.js/docs-v2/) will be used for parameters that are not specified.
 
 
 ```javascript
@@ -172,4 +172,4 @@ or within a chart, e.g. by
 
 MIT licensed
 
-Copyright (C) 2017 Asvin Goel
+Copyright (C) 2020 Asvin Goel
