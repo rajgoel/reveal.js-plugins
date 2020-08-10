@@ -1,3 +1,14 @@
+/*****************************************************************
+** Author: Asvin Goel, goel@telematique.eu
+**
+** A plugin for embedding tweets.
+**
+** Version: 1.0.0
+** 
+** License: MIT license (see LICENSE.md)
+**
+******************************************************************/
+
 window.RevealEmbedTweet = window.RevealEmbedTweet || {
     id: 'RevealEmbedTweet',
     init: function(deck) {
