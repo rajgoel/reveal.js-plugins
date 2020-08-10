@@ -1,17 +1,22 @@
 /*****************************************************************
 ** Author: Asvin Goel, goel@telematique.eu
 **
-** A plugin for reveal.js allowing slides to use the full window
-** size. 
+** A plugin allowing slides to use the full window size. 
 **
-** Version: 0.1
+** Version: 1.0.0
 ** 
 ** License: MIT license (see LICENSE.md)
 **
 ******************************************************************/
 
-var RevealFullscreen= window.RevealFullscreen || (function(){
+window.RevealFullscreen = window.RevealFullscreen || {
+    id: 'RevealFullscreen',
+    init: function(deck) {
+        initialize(deck);
+    }
+};
 
+const initialize = function(Reveal){
 	var config = null;
 	var ready = false;
 
@@ -38,4 +43,4 @@ var RevealFullscreen= window.RevealFullscreen || (function(){
 		}
 	} );
 
-})();
+};
