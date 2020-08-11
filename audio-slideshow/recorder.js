@@ -4,7 +4,7 @@
 ** The slide show recorder is a plugin for reveal.js allowing to
 ** record audio for a slide deck. 
 **
-** Version: 0.4
+** Version: 1.0
 ** 
 ** License: MIT license (see LICENSE.md)
 **

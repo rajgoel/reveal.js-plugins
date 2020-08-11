@@ -1,21 +1,27 @@
 /*****************************************************************
 ** Author: Asvin Goel, goel@telematique.eu
 **
-** Audio slideshow is a plugin for reveal.js allowing to
-** automatically play audio files for a slide deck. After an audio 
-** file has completed playing the next slide or fragment is  
-** automatically shown and the respective audio file is played. 
-** If no audio file is available, a blank audio file with default
-** duration is played instead.
+** A plugin for reveal.js allowing to  automatically play audio 
+** files for a slide deck. After an audio file has completed 
+** playing the next slide or fragment is automatically shown and 
+** the respective audio file is played. If no audio file is
+** available, a blank audio file with default  duration is played 
+** instead.
 **
-** Version: 0.6.1
+** Version: 1.0.0
 ** 
 ** License: MIT license (see LICENSE.md)
 **
 ******************************************************************/
 
-var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
+window.RevealAudioSlideshow = window.RevealAudioSlideshow || {
+    id: 'RevealAudioSlideshow',
+    init: function(deck) {
+        initialize(deck);
+    }
+};
 
+const initialize = function(Reveal){
 	// default parameters
 	var prefix = "audio/";
 	var suffix = ".ogg";
@@ -436,9 +442,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 		}
 	}
 
-
-
-})();
+};
 
 /*****************************************************************
 ** Create SilentAudio 
