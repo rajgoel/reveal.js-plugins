@@ -123,32 +123,6 @@ const initialize = function(Reveal){
 
 
 	function setup() {
-		// deprecated parameters
-		if ( Reveal.getConfig().audioPrefix ) {
-			prefix = Reveal.getConfig().audioPrefix;
-			console.warn('Setting parameter "audioPrefix" is deprecated!');
-		}
-		if ( Reveal.getConfig().audioSuffix ) {
-			suffix = Reveal.getConfig().audioSuffix;
-			console.warn('Setting parameter "audioSuffix" is deprecated!');
-		}
-		if ( Reveal.getConfig().audioTextToSpeechURL ) {
-			textToSpeechURL = Reveal.getConfig().audioTextToSpeechURL;
-			console.warn('Setting parameter "audioTextToSpeechURL" is deprecated!');
-		}
-		if ( Reveal.getConfig().audioDefaultDuration ) {
-			defaultDuration = Reveal.getConfig().audioDefaultDuration;
-			console.warn('Setting parameter "audioDefaultDuration" is deprecated!');
-		}
-		if ( Reveal.getConfig().audioAutoplay ) {
-			autoplay = Reveal.getConfig().audioAutoplay;
-			console.warn('Setting parameter "audioAutoplay" is deprecated!');
-		}
-		if ( Reveal.getConfig().audioPlayerOpacity ) {
-			playerOpacity = Reveal.getConfig().audioPlayerOpacity;
-			console.warn('Setting parameter "audioPlayerOpacity" is deprecated!');
-		}
-
 		// set parameters
 		var config = Reveal.getConfig().audio;
 		if ( config ) {
@@ -169,7 +143,7 @@ const initialize = function(Reveal){
 			opacity = 1;		
 		}
 		if ( Reveal.getConfig().audioStartAtFragment ) startAtFragment = Reveal.getConfig().audioStartAtFragment;
-
+setupAudioElement
 		// set style so that audio controls are shown on hover 
 		var css='.audio-controls>audio { opacity:' + playerOpacity + ';} .audio-controls:hover>audio { opacity:1;}';
 		style=document.createElement( 'style' );
@@ -188,6 +162,9 @@ const initialize = function(Reveal){
 		divElement.setAttribute( 'style', playerStyle );
 		document.querySelector( ".reveal" ).appendChild( divElement );
 
+		// preload all video elements that meta data becomes available as early as possible
+		preloadVideoELements();
+
 		// create audio players for all slides
 		var horizontalSlides = document.querySelectorAll( '.reveal .slides>section' );
 		for( var h = 0, len1 = horizontalSlides.length; h < len1; h++ ) {
@@ -202,6 +179,15 @@ const initialize = function(Reveal){
 			}
 		}
 	}
+
+	function preloadVideoELements() {
+		var videoElements = document.querySelectorAll( 'video[data-audio-controls]' );
+		for( var i = 0; i < videoElements.length; i++ ) {
+//console.warn(videoElements[i]);
+			videoElements[i].load();
+		}
+	}
+
 	function getText( textContainer ) {
 		var elements = textContainer.querySelectorAll( '[data-audio-text]' ) ;
 		for( var i = 0, len = elements.length; i < len; i++ ) {
@@ -262,6 +248,7 @@ const initialize = function(Reveal){
 		}
 	}
 
+	// try to sync video with audio controls
 	function linkVideoToAudioControls( audioElement, videoElement ) {
 		audioElement.addEventListener( 'playing', function( event ) {
 			videoElement.currentTime = audioElement.currentTime;
@@ -325,9 +312,9 @@ const initialize = function(Reveal){
 				linkVideoToAudioControls( audioElement, videoElement );
 			}
 			else {
-				videoElement.onloadedmetadata = function() {
+				videoElement.addEventListener('loadedmetadata', (event) => {
 					linkVideoToAudioControls( audioElement, videoElement );	
-				};
+				});
 			}
 		}
 		audioElement.addEventListener( 'ended', function( event ) {
@@ -441,7 +428,6 @@ const initialize = function(Reveal){
 			container.appendChild( audioElement );
 		}
 	}
-
 };
 
 /*****************************************************************
