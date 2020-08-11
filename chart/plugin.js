@@ -4,7 +4,7 @@
 **
 ** A plugin for reveal.js allowing to integrate Chart.js
 **
-** Version: 1.0
+** Version: 1.0.0
 **
 ** License: MIT license (see LICENSE.md)
 **

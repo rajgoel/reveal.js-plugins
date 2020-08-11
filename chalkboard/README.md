@@ -17,35 +17,20 @@ Multi color support added by Kurt Rinnert [GitHub](https://github.com/rinnert).
 
 ## Installation
 
-Copy the file ```chalkboard.js``` and the  ```img``` directory into the plugin folder of your reveal.js presentation, i.e. ```plugin/chalkboard```.
+Copy the file ```plugin.js``` and the  ```img``` directory into the plugin folder of your reveal.js presentation, i.e. ```plugin/chalkboard``` and load the plugin as shown below.
 
-Add the plugins to the dependencies in your presentation as shown below.
+```html
+<script src="plugin/chalkboard/plugin.js"></script>
 
-```javascript
-Reveal.initialize({
-	// ...
-	chalkboard: {
-		// optionally load pre-recorded chalkboard drawing from file
-		src: "chalkboard.json",
-	},
-	dependencies: [
-		// ...
-		{ src: 'plugin/chalkboard/chalkboard.js' },
-		// ...
-	],
-	keyboard: {
-	    67: function() { RevealChalkboard.toggleNotesCanvas() },	// toggle notes canvas when 'c' is pressed
-	    66: function() { RevealChalkboard.toggleChalkboard() },	// toggle chalkboard when 'b' is pressed
-	    46: function() { RevealChalkboard.clear() },	// clear chalkboard when 'DEL' is pressed
-	     8: function() { RevealChalkboard.reset() },	// reset chalkboard data on current slide when 'BACKSPACE' is pressed
-	    68: function() { RevealChalkboard.download() },	// downlad recorded chalkboard drawing when 'd' is pressed
-	    88: function() { RevealChalkboard.colorNext() },	// cycle colors forward when 'x' is pressed
-	    89: function() { RevealChalkboard.colorPrev() },	// cycle colors backward when 'y' is pressed
-	},
-	// ...
-
-});
+<script>
+    Reveal.initialize({
+        // ...
+        plugins: [ RevealChalkboard ],
+        // ...
+    });
+</script>
 ```
+
 In order to include buttons for opening and closing the notes canvas or the chalkboard you should make sure that ```font-awesome``` is available. The easiest way is to include
 ```
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
@@ -147,14 +132,9 @@ Reveal.initialize({
 });
 ```
 
-**Note:** Customisation of pens and eraser has changed since version 0.8 of the plugin. This behaviour may break backwards compatibility for older pen configurations.
-
-**Note:** Customisation of pens has changed since version 0.5 of the plugin, it is now possible to use standard cursors, e.g. by setting ```pen:  [ 'crosshair', 'pointer' ]```. Please update your parameters if migrating from an older version.
 
 ## License
 
-**Note:**
-
 MIT licensed
 
-Copyright (C) 2016 Asvin Goel
+Copyright (C) 2020 Asvin Goel

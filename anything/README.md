@@ -8,9 +8,7 @@ Inside the HTML object you can provide a comment containing a JSON string that w
 
 ## Installation
 
-Copy the files ```anything.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/anything```.
-
-Add the plugins to the dependencies in your presentation, as below.
+Copy the file ```plugin.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/anything``` and load the plugin as shown below.
 
 ```html
 <script src="plugin/anything/plugin.js"></script>
