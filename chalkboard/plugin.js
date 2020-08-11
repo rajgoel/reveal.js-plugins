@@ -3,42 +3,49 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 0.9.1
+** Version: 1.0.0
 **
 ** License: MIT license (see LICENSE.md)
 **
 ** Credits:
 ** Chalkboard effect by Mohamed Moustafa https://github.com/mmoustafa/Chalkboard
 ** Multi color support by Kurt Rinnert https://github.com/rinnert
+** Compatibility with reveal.js v4 by Hakim El Hattab https://github.com/hakimel
 ******************************************************************/
 
-var RevealChalkboard = window.RevealChalkboard || (function(){
-	var path = scriptPath();
-	function scriptPath() {
-		// obtain plugin path from the script element
-		var src;
-		if (document.currentScript) {
-			src = document.currentScript.src;
-		} else {
-			var sel = document.querySelector('script[src$="/chalkboard.js"]')
-			if (sel) {
-				src = sel.src;
-			}
+window.RevealChalkboard = window.RevealChalkboard || {
+    id: 'RevealChalkboard',
+    init: function(deck) {
+        initChalkboard(deck);
+    },
+    configure: function(config) { configure(config); }
+};
+
+function scriptPath() {
+	// obtain plugin path from the script element
+	var src;
+	if (document.currentScript) {
+		src = document.currentScript.src;
+	} else {
+		var sel = document.querySelector('script[src$="/chalkboard/plugin.js"]')
+		if (sel) {
+			src = sel.src;
 		}
-
-		var path = typeof src === undefined ? src
-			: src.slice(0, src.lastIndexOf("/") + 1);
+	}
+	var path = (src === undefined) ? "" : src.slice(0, src.lastIndexOf("/") + 1);
 //console.log("Path: " + path);
-		return path;
+	return path;
 }
+var path = scriptPath();
 
+const initChalkboard = function(Reveal){
+//console.warn(path);
+	/* Feature detection for passive event handling*/
+	var passiveSupported = false;
 
-/* Feature detection for passive event handling*/
-var passiveSupported = false;
-
-try {
-  window.addEventListener("test", null, Object.defineProperty({}, "passive", { get: function() { passiveSupported = true; } }));
-} catch(err) {}
+	try {
+	  window.addEventListener("test", null, Object.defineProperty({}, "passive", { get: function() { passiveSupported = true; } }));
+	} catch(err) {}
 
 
 /*****************************************************************
@@ -79,7 +86,6 @@ try {
 	var readOnly = undefined;
 
 	var config = configure( Reveal.getConfig().chalkboard || {} );
-
 	function configure( config ) {
 		if ( config.boardmarkerWidth || config.penWidth ) boardmarkerWidth = config.boardmarkerWidth || config.penWidth;
 		if ( config.chalkWidth ) chalkWidth = config.chalkWidth;
@@ -128,11 +134,19 @@ try {
 
 	function whenReady( callback ) {
 		// wait for drawings to be loaded and markdown to be parsed
-		if ( loaded == null || document.querySelector('section[data-markdown]:not([data-markdown-parsed])') ) {
-			setTimeout( whenReady, 500, callback )
+		if ( loaded !== null ) {
+			for (var i = 0; i < storage[1].data.length; i++) {
+				var slide = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v );
+				if ( !slide ) {
+console.log("Wait for presentation to be ready"); 
+					setTimeout( whenReady, 500, callback )
+				}
+			}
+			callback();
 		}
 		else {
-			callback();
+console.log("Wait for drrawings to be loaded"); 
+			setTimeout( whenReady, 500, callback )
 		}
 	}
 
@@ -152,7 +166,7 @@ try {
 		button.style.top = toggleChalkboardButton.top ||  "auto";
 		button.style.right = toggleChalkboardButton.right ||  "auto";
 
-		button.innerHTML = '<a href="#" onclick="RevealChalkboard.toggleChalkboard(); return false;"><i class="fa fa-pen-square"></i></a>'
+		button.innerHTML = '<a href="#" onclick="toggleChalkboard(); return false;"><i class="fa fa-pen-square"></i></a>'
 		document.querySelector(".reveal").appendChild( button );
 	}
 	if ( toggleNotesButton ) {
@@ -169,7 +183,7 @@ try {
 		button.style.top = toggleNotesButton.top ||  "auto";
 		button.style.right = toggleNotesButton.right ||  "auto";
 
-		button.innerHTML = '<a href="#" onclick="RevealChalkboard.toggleNotesCanvas(); return false;"><i class="fa fa-pen"></i></a>'
+		button.innerHTML = '<a href="#" onclick="toggleNotesCanvas(); return false;"><i class="fa fa-pen"></i></a>'
 		document.querySelector(".reveal").appendChild( button );
 	}
 //alert("Buttons");
@@ -210,7 +224,7 @@ try {
 
 		if ( id == "0" ) {
 			container.style.background = 'rgba(0,0,0,0)';
-			container.style.zIndex = "24";
+			container.style.zIndex = 24;
 			container.style.opacity = 1;
 			container.style.visibility = 'visible';
 			container.style.pointerEvents = "none";
@@ -226,7 +240,7 @@ try {
 		}
 		else {
 			container.style.background = 'url("' + background[id] + '") repeat';
-			container.style.zIndex = "26";
+			container.style.zIndex = 26;
 			container.style.opacity = 0;
 			container.style.visibility = 'hidden';
 		}
@@ -381,12 +395,16 @@ try {
 //console.log("createPrintout" + printMode)
 
 	function createPrintout( ) {
-//console.log( 'Create printout for ' + storage[1].data.length + " slides");
+console.log( 'Create printout for ' + storage[1].data.length + " slides");
 		drawingCanvas[0].container.style.opacity = 0; // do not print notes canvas
 		drawingCanvas[0].container.style.visibility = 'hidden';
 		var nextSlide = [];
 		for (var i = 0; i < storage[1].data.length; i++) {
 			var slide = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v );
+			if ( !slide ) {
+alert("Something went wrong creating printouts for drawings.");
+				return;
+			}
 			nextSlide.push( slide.nextSibling );
 		}
 
@@ -1497,6 +1515,15 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		}
 	};
 
+	Reveal.addKeyBinding( { keyCode: 67, key: 'C', description: 'Toggle notes canvas' }, function() { toggleNotesCanvas(); } );
+	Reveal.addKeyBinding( { keyCode: 66, key: 'B', description: 'Toggle chalkboard' }, function() { toggleChalkboard(); } );
+	Reveal.addKeyBinding( { keyCode: 46, key: 'DEL', description: 'Reset drawings on slide' }, function() { resetSlide(); } );
+	Reveal.addKeyBinding( { keyCode: 8, key: 'BACKSPACE', description: 'Reset all drawings' }, function() { resetStorage(); } );
+	Reveal.addKeyBinding( { keyCode: 88, key: 'X', description: 'Next color' }, function() { colorNext(); } );
+	Reveal.addKeyBinding( { keyCode: 89, key: 'Y', description: 'Previous color' }, function() { colorPrev(); } );
+	Reveal.addKeyBinding( { keyCode: 90, key: 'Z', description: 'Download drawings' }, function() { downloadData(); } );
+
+/*
 	this.drawWithBoardmarker = drawWithBoardmarker;
 	this.drawWithChalk = drawWithChalk;
 	this.toggleNotesCanvas = toggleNotesCanvas;
@@ -1508,7 +1535,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	this.reset = resetSlide;
 	this.resetAll = resetStorage;
 	this.download = downloadData;
+*/
 	this.configure = configure;
-
 	return this;
-})();
+};

@@ -1,6 +1,24 @@
-var RevealAnything = window.RevealAnything || (function(){
+/*****************************************************************
+** Author: Asvin Goel, goel@telematique.eu
+**
+** A plugin for reveal.js allowing to easily integrate any content
+**
+** Version: 1.0.0
+**
+** License: MIT license (see LICENSE.md)
+**
+******************************************************************/
+
+window.RevealAnything = window.RevealAnything || {
+    id: 'RevealAnything',
+    init: function(deck) {
+        initAnything(deck);
+    }
+};
+
+const initAnything = function(Reveal){
 	function parseJSON(str) {
-	    str = str.replace(/(\r\n|\n|\r|\t)/gm,""); // remove lien breaks and tabs
+	    str = str.replace(/(\r\n|\n|\r|\t)/gm,""); // remove line breaks and tabs
 	    var json;
 	    try {
         	json = JSON.parse(str, function (key, value) {
@@ -75,11 +93,9 @@ var RevealAnything = window.RevealAnything || (function(){
 // console.log(elements[j].outerHTML)
 			} 
 		}
-
-
 	} );
 
 
-})();
+};
 
 

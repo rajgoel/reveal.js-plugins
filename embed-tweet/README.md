@@ -6,19 +6,18 @@ A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to easil
 
 ## Installation
 
-Copy the files ```embed-tweet.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/embed-tweet```.
+Copy the files ```plugin.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/embed-tweet``` and load the plugin as shown below.
 
-Add the plugins to the dependencies in your presentation, as below. 
+```html
+<script src="plugin/embed-tweet/plugin.js"></script>
 
-```javascript
-Reveal.initialize({
-	// ...
-	dependencies: [
-		// ... 
-		{ src: 'plugin/embed-tweet/embed-tweet.js' },
-		// ... 
-	]
-});
+<script>
+    Reveal.initialize({
+        // ...
+        plugins: [ RevealEmbedTweet ],
+        // ...
+    });
+</script>
 ```
 
 ## Usage
@@ -33,4 +32,4 @@ To embed a tweet, simply determine its URL and include the following code in you
 
 MIT licensed
 
-Copyright (C) 2017 Asvin Goel
+Copyright (C) 2020 Asvin Goel

@@ -1,21 +1,27 @@
 /*****************************************************************
 ** Author: Asvin Goel, goel@telematique.eu
 **
-** Audio slideshow is a plugin for reveal.js allowing to
-** automatically play audio files for a slide deck. After an audio 
-** file has completed playing the next slide or fragment is  
-** automatically shown and the respective audio file is played. 
-** If no audio file is available, a blank audio file with default
-** duration is played instead.
+** A plugin for reveal.js allowing to  automatically play audio 
+** files for a slide deck. After an audio file has completed 
+** playing the next slide or fragment is automatically shown and 
+** the respective audio file is played. If no audio file is
+** available, a blank audio file with default  duration is played 
+** instead.
 **
-** Version: 0.6.1
+** Version: 1.0.0
 ** 
 ** License: MIT license (see LICENSE.md)
 **
 ******************************************************************/
 
-var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
+window.RevealAudioSlideshow = window.RevealAudioSlideshow || {
+    id: 'RevealAudioSlideshow',
+    init: function(deck) {
+        initAudioSlideshow(deck);
+    }
+};
 
+const initAudioSlideshow = function(Reveal){
 	// default parameters
 	var prefix = "audio/";
 	var suffix = ".ogg";
@@ -71,7 +77,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 
 	Reveal.addEventListener( 'paused', function( event ) {
 		if ( timer ) { clearTimeout( timer ); timer = null; }
-		currentAudio.pause();
+		if ( currentAudio ) { currentAudio.pause(); }
 	} );
 
 	Reveal.addEventListener( 'resumed', function( event ) {
@@ -80,13 +86,20 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 
 	Reveal.addEventListener( 'overviewshown', function( event ) {
 		if ( timer ) { clearTimeout( timer ); timer = null; }
-		currentAudio.pause();
+		if ( currentAudio ) { currentAudio.pause(); }
 		document.querySelector(".audio-controls").style.visibility = "hidden";
 	} );
 
 	Reveal.addEventListener( 'overviewhidden', function( event ) {
 		if ( timer ) { clearTimeout( timer ); timer = null; }
 		document.querySelector(".audio-controls").style.visibility = "visible";
+	} );
+
+	Reveal.addKeyBinding( { keyCode: 171, key: '+', description: 'Toggle audio' }, function() {
+		if ( currentAudio ) {
+			if ( timer ) { clearTimeout( timer ); timer = null; }
+			currentAudio.paused ? currentAudio.play() : currentAudio.pause();
+		}
 	} );
 
 	function selectAudio( previousAudio ) {
@@ -117,32 +130,6 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 
 
 	function setup() {
-		// deprecated parameters
-		if ( Reveal.getConfig().audioPrefix ) {
-			prefix = Reveal.getConfig().audioPrefix;
-			console.warn('Setting parameter "audioPrefix" is deprecated!');
-		}
-		if ( Reveal.getConfig().audioSuffix ) {
-			suffix = Reveal.getConfig().audioSuffix;
-			console.warn('Setting parameter "audioSuffix" is deprecated!');
-		}
-		if ( Reveal.getConfig().audioTextToSpeechURL ) {
-			textToSpeechURL = Reveal.getConfig().audioTextToSpeechURL;
-			console.warn('Setting parameter "audioTextToSpeechURL" is deprecated!');
-		}
-		if ( Reveal.getConfig().audioDefaultDuration ) {
-			defaultDuration = Reveal.getConfig().audioDefaultDuration;
-			console.warn('Setting parameter "audioDefaultDuration" is deprecated!');
-		}
-		if ( Reveal.getConfig().audioAutoplay ) {
-			autoplay = Reveal.getConfig().audioAutoplay;
-			console.warn('Setting parameter "audioAutoplay" is deprecated!');
-		}
-		if ( Reveal.getConfig().audioPlayerOpacity ) {
-			playerOpacity = Reveal.getConfig().audioPlayerOpacity;
-			console.warn('Setting parameter "audioPlayerOpacity" is deprecated!');
-		}
-
 		// set parameters
 		var config = Reveal.getConfig().audio;
 		if ( config ) {
@@ -163,7 +150,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 			opacity = 1;		
 		}
 		if ( Reveal.getConfig().audioStartAtFragment ) startAtFragment = Reveal.getConfig().audioStartAtFragment;
-
+setupAudioElement
 		// set style so that audio controls are shown on hover 
 		var css='.audio-controls>audio { opacity:' + playerOpacity + ';} .audio-controls:hover>audio { opacity:1;}';
 		style=document.createElement( 'style' );
@@ -182,6 +169,9 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 		divElement.setAttribute( 'style', playerStyle );
 		document.querySelector( ".reveal" ).appendChild( divElement );
 
+		// preload all video elements that meta data becomes available as early as possible
+		preloadVideoELements();
+
 		// create audio players for all slides
 		var horizontalSlides = document.querySelectorAll( '.reveal .slides>section' );
 		for( var h = 0, len1 = horizontalSlides.length; h < len1; h++ ) {
@@ -196,6 +186,15 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 			}
 		}
 	}
+
+	function preloadVideoELements() {
+		var videoElements = document.querySelectorAll( 'video[data-audio-controls]' );
+		for( var i = 0; i < videoElements.length; i++ ) {
+//console.warn(videoElements[i]);
+			videoElements[i].load();
+		}
+	}
+
 	function getText( textContainer ) {
 		var elements = textContainer.querySelectorAll( '[data-audio-text]' ) ;
 		for( var i = 0, len = elements.length; i < len; i++ ) {
@@ -256,6 +255,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 		}
 	}
 
+	// try to sync video with audio controls
 	function linkVideoToAudioControls( audioElement, videoElement ) {
 		audioElement.addEventListener( 'playing', function( event ) {
 			videoElement.currentTime = audioElement.currentTime;
@@ -319,9 +319,9 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 				linkVideoToAudioControls( audioElement, videoElement );
 			}
 			else {
-				videoElement.onloadedmetadata = function() {
+				videoElement.addEventListener('loadedmetadata', (event) => {
 					linkVideoToAudioControls( audioElement, videoElement );	
-				};
+				});
 			}
 		}
 		audioElement.addEventListener( 'ended', function( event ) {
@@ -435,10 +435,7 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 			container.appendChild( audioElement );
 		}
 	}
-
-
-
-})();
+};
 
 /*****************************************************************
 ** Create SilentAudio 

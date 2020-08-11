@@ -9,25 +9,21 @@ With this plugin you can add custom controls to reveal.js which allow arbitrary 
 
 ## Installation
 
-Copy the file ```customcontrols.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/customcontrols```.
+Copy the file ```plugin.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/customcontrols``` and load the plugin as shown below.
 
-Add the plugin to the dependencies in your presentation and turn off the default controls as shown below:
+```html
+<script src="plugin/customcontrols/plugin.js"></script>
 
-```javascript
-Reveal.initialize({
-	controls: false,
-	// ...
-	dependencies: [
-		// ... 
-		{ src: 'plugin/customcontrols/customcontrols.js' },
-		// ... 
-	],
-	// ...
-
-});
+<script>
+    Reveal.initialize({
+        // ...
+        plugins: [ RevealCustomControls ],
+        // ...
+    });
+</script>
 ```
 
-Note, without configuration you need to add 
+Note, without configuration you need to add
 
 ```javascript
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
@@ -45,18 +41,18 @@ The plugin can be configured by adding custom controls and changing the layout o
 ```javascript
 Reveal.initialize({
 	// ...
-	customcontrols: { 
+	customcontrols: {
 		slideNumberCSS : 'position: fixed; display: block; right: 90px; top: auto; left: auto; width: 50px; bottom: 30px; z-index: 31; font-family: Helvetica, sans-serif; font-size:  12px; line-height: 1; padding: 5px; text-align: center; border-radius: 10px; background-color: rgba(128,128,128,.5)',
-		controls: [ 
-			{ icon: '<i class="fa fa-caret-left"></i>', 
-			  css: 'position: fixed; right: 60px; bottom: 30px; z-index: 30; font-size: 24px;', 
-			  action: 'Reveal.prev(); return false;' 
-			}, 
-			{ icon: '<i class="fa fa-caret-right"></i>', 
-			  css: 'position: fixed; right: 30px; bottom: 30px; z-index: 30; font-size: 24px;', 
-			  action: 'Reveal.next(); return false;' 
+		controls: [
+			{ icon: '<i class="fa fa-caret-left"></i>',
+			  css: 'position: fixed; right: 60px; bottom: 30px; z-index: 30; font-size: 24px;',
+			  action: 'Reveal.prev(); return false;'
+			},
+			{ icon: '<i class="fa fa-caret-right"></i>',
+			  css: 'position: fixed; right: 30px; bottom: 30px; z-index: 30; font-size: 24px;',
+			  action: 'Reveal.next(); return false;'
 			}
-		] 
+		]
 	},
 	// ...
 
@@ -69,4 +65,4 @@ The configuration should be self explaining and any number of controls can be ad
 
 MIT licensed
 
-Copyright (C) 2017 Asvin Goel
+Copyright (C) 2020 Asvin Goel

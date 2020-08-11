@@ -1,6 +1,6 @@
 {
   "name": "reveal.js-plugins",
-  "version": "0.1.0",
+  "version": "4.0.2",
   "homepage": "https://github.com/rajgoel/reveal.js-plugins",
   "authors": [
     "Asvin Goel"
@@ -12,7 +12,7 @@
     "audio",
     "chart"
   ],
-  "license": "MIT, Copyright (C) 2016 Asvin Goel",
+  "license": "MIT, Copyright (C) 2020 Asvin Goel",
   "ignore": [
     "**/.*",
     "menu",

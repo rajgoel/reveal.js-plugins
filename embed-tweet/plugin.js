@@ -1,4 +1,22 @@
-var RevealEmbedTweet = window.RevealEmbedTweet || (function(){
+/*****************************************************************
+** Author: Asvin Goel, goel@telematique.eu
+**
+** A plugin for embedding tweets.
+**
+** Version: 1.0.0
+** 
+** License: MIT license (see LICENSE.md)
+**
+******************************************************************/
+
+window.RevealEmbedTweet = window.RevealEmbedTweet || {
+    id: 'RevealEmbedTweet',
+    init: function(deck) {
+        initEmbedTweet(deck);
+    }
+};
+
+const initEmbedTweet = function(Reveal){
 	var ready = false;
 	window.twttr = (function(d, s, id) {
 		var js, fjs = d.getElementsByTagName(s)[0],
@@ -38,7 +56,7 @@ var RevealEmbedTweet = window.RevealEmbedTweet || (function(){
 	this.refresh = load;
 
 	return this;
-})();
+};
 
 
 

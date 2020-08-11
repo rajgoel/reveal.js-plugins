@@ -1,58 +1,59 @@
 # Anything
 
-A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to add anything inside an HTML object using a JSON string and a javascript function. 
-The plugin allows you to define a class for which the content of all HTML object of this class will be modified by a given javascript function. 
+A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to add anything inside an HTML object using a JSON string and a javascript function.
+The plugin allows you to define a class for which the content of all HTML object of this class will be modified by a given javascript function.
 Inside the HTML object you can provide a comment containing a JSON string that will be used by function to customise the content.   
 
 [Check out the live demo](https://rajgoel.github.io/reveal.js-demos/anything-demo.html)
 
 ## Installation
 
-Copy the files ```anything.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/anything```.
+Copy the file ```plugin.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/anything``` and load the plugin as shown below.
 
-Add the plugins to the dependencies in your presentation, as below. 
+```html
+<script src="plugin/anything/plugin.js"></script>
 
-```javascript
-Reveal.initialize({
-	// ...
-	dependencies: [
-		// ... 
-		{ src: 'plugin/anything/anything.js' },
-		// ... 
-	]
-});
+<script>
+    Reveal.initialize({
+        // ...
+        plugins: [ RevealAnything ],
+        // ...
+    });
+</script>
 ```
+
 ## Configuration & basic usage
 
-The plugin can be configured by providing an ```anything``` option containing an array of ```className```, ```defaults```, and ```f``` within the reveal.js initialization options. 
+The plugin can be configured by providing an ```anything``` option containing an array of ```className```, ```defaults```, and ```f``` within the reveal.js initialization options.
 
 
 ```javascript
 Reveal.initialize({
 	// ...
-	anything: [ 
+	anything: [
 	 {
-	  className: "random", 
-	  defaults: {min: 0, max: 9}, 
-	  initialize: (function(container, options){ 
-	    container.innerHTML = Math.trunc( options.min + Math.random()*(options.max-options.min + 1) ); 
-	    }) 
+	  className: "random",
+	  defaults: {min: 0, max: 9},
+	  initialize: (function(container, options){
+	    container.innerHTML = Math.trunc( options.min + Math.random()*(options.max-options.min + 1) );
+	    })
 	 },
 	 // ...
 	],
+}
 ```
 
-With the above configuration the plugin searches for all HTML object with class ```random```. 
+With the above configuration the plugin searches for all HTML object with class ```random```.
 For each of the HTML objects it checks whether there is a JSON string within a comment inside the HTML object.
 Then, it calls the function ```function(container, options)``` where ```container``` is the HTML object and ```options``` is the JSON string.
 It is possible to specify the ```defaults``` parameter to be used if no JSON string is provided or not all values required by the function are given in the JSON string.
 
-The code 
+The code
 ```html
 <p>
-	Today's winning 3 digit number is : 
-	<span class="random"></span>, 
-	<span class="random"></span>, 
+	Today's winning 3 digit number is :
+	<span class="random"></span>,
+	<span class="random"></span>,
 	<span class="random"></span>.
 </p>
 ```
@@ -60,16 +61,16 @@ produces the output
 
 ```html
 <p>
-	Today's winning 3 digit number is : 
-	<span class="random">3</span>, 
-	<span class="random">8</span>, 
+	Today's winning 3 digit number is :
+	<span class="random">3</span>,
+	<span class="random">8</span>,
 	<span class="random">0</span>.
 </p>
 ```
-The code 
+The code
 ```html
 <p>
-	Today's roll of a die is: 
+	Today's roll of a die is:
 	<span class="random"><!-- { "min": 1, "max": 6 } --></span>.
 </p>
 ```
@@ -77,7 +78,7 @@ produces the output
 
 ```html
 <p>
-	Today's roll of a die is: 
+	Today's roll of a die is:
 	<span class="random">4</span>.
 </p>
 ```
@@ -88,29 +89,31 @@ produces the output
 
 The plugin can be used to easily integrate external javascript libraries.
 
-### Charts.js 
+### Charts.js
 
-With the plugin charts created by [Chart.js v2.0](http://www.chartjs.org/) can easily be  included in the slides.
+With the plugin charts created by [Chart.js](http://www.chartjs.org/) can easily be  included in the slides by including
 
+```html
+<script src="plugin/anything/plugin.js"></script>
+<script src="Chart.min.js"></script>
+```
+and
 ```javascript
 Reveal.initialize({
 	// ...
-	anything: [ 
+	anything: [
 	 {
 		className: "chart",  
 		initialize: (function(container, options){ container.chart = new Chart(container.getContext("2d"), options);  })
 	 },
+	plugins: [ RevealAnything ],
 	 // ...
 	],
-	dependencies: [
-		// ... 
-		{ src: 'Chart.min.js' },				
-		{ src: 'plugin/anything/anything.js' },
-		// ... 
-	]
+	// ...
 });
 ```
-A chart can be included in a slide by adding a ```canvas``` element and a JSON string specifying the chart options. 
+
+A chart can be included in a slide by adding a ```canvas``` element and a JSON string specifying the chart options.
 
 ```html
 <canvas class="chart stretch">
@@ -129,7 +132,7 @@ A chart can be included in a slide by adding a ```canvas``` element and a JSON s
     "label":"My second dataset","backgroundColor":"rgba(220,120,120,.8)"
    }
   ]
- }, 
+ },
  "options": { "responsive": "true" }
 }
 -->
@@ -137,14 +140,24 @@ A chart can be included in a slide by adding a ```canvas``` element and a JSON s
 ```
 Note, that the [Chart  plugin](https://github.com/rajgoel/reveal.js-plugins/tree/master/chart) provides an easier way to use Chart.js.
 
-### Function-plot.js 
+### Function-plot.js
 
-With the plugin plots of functions created by [Function-plot.js](https://github.com/maurizzzio/function-plot) can easily be  included in the slides.
+With the plugin plots of functions created by [Function-plot.js](https://github.com/maurizzzio/function-plot) can be included in the slides by including
+
+```html
+<script src="plugin/anything/plugin.js"></script>
+<script src="d3/d3.v3.min.js"></script>				
+<script src="d3.patch.js"></script>			
+<script src="d3/queue.v1.min.js"></script>		
+<script src="function-plot/dist/function-plot.js"></script>
+
+```
+and
 
 ```javascript
 Reveal.initialize({
 	// ...
-	anything: [ 
+	anything: [
 	 {
 		className: "plot",
 		defaults: {width:500, height: 500, grid:true},
@@ -152,17 +165,11 @@ Reveal.initialize({
 	 },
 	 // ...
 	],
-	dependencies: [
-		// ... 
-		{ src: 'reveal.js-plugins/function-plot/site/js/vendor/jquery-1.11.2.min.js' },				
-		{ src: 'reveal.js-plugins/function-plot/site/js/vendor/d3.js' },				
-		{ src: 'reveal.js-plugins/function-plot/site/js/function-plot.js' },				
-		{ src: 'plugin/anything/anything.js' },
-		// ... 
-	]
+	plugins: [ RevealAnything ],
+	// ...
 });
 ```
-A plot can be included in a slide by adding a ```div``` element and a JSON string specifying the options. 
+A plot can be included in a slide by adding a ```div``` element and a JSON string specifying the options.
 
 ```html
 <div class="plot" id="myplot1" style="background-color:#fff; width:800px; height:400px; margin: 0 auto;">
@@ -195,36 +202,38 @@ With the above ```defaults```, the input can be eased, e.g.
 
 The plugin allows to define functions within the JSON options.
 
-### Example 
+### Example
 
-In the following example, the function ```options.initialize(container)``` is called for each element of the class ```anything```. The function  is defined within the JSON string. 
+In the following example, the function ```options.initialize(container)``` is called for each element of the class ```anything```. The function  is defined within the JSON string.
 
+The example uses
+```html
+<script src="plugin/anything/plugin.js"></script>
+<script src="d3/d3.v3.min.js"></script>				
+<script src="d3/topojson.v1.min.js"></script>		
+```
+and
 ```javascript
 Reveal.initialize({
 	// ...
-	anything: [ 
+	anything: [
 	 {
 		className: "anything",
 		initialize: (function(container, options){ if (options && options.initialize) { options.initialize(container)} })
 	 },
 	 // ...
 	],
-	dependencies: [
-		// ... 
-		{ src: 'reveal.js-plugins/anything/d3/d3.v3.min.js' },				
-		{ src: 'reveal.js-plugins/anything/d3/topojson.v1.min.js' },				
-		{ src: 'plugin/anything/anything.js' },
-		// ... 
-	]
+	plugins: [ RevealAnything ],
+	// ...
 });
 ```
-The [d3.js](d3js.org) library can now be used to draw a [globe](http://bl.ocks.org/mbostock/ba63c55dd2dbc3ab0127) within a canvas element. 
+The [d3.js](d3js.org) library can now be used to draw a [globe](http://bl.ocks.org/mbostock/ba63c55dd2dbc3ab0127) within a canvas element.
 
 ```html
 <canvas width=500 height=500 class="anything">
 <!--
 {
-  "initialize": "function(container) { 
+  "initialize": "function(container) {
 	var width = container.width,
 	    height = container.height;
 	var radius = height / 2 - 5,
@@ -268,4 +277,4 @@ The [d3.js](d3js.org) library can now be used to draw a [globe](http://bl.ocks.o
 
 MIT licensed
 
-Copyright (C) 2016 Asvin Goel
+Copyright (C) 2020 Asvin Goel
