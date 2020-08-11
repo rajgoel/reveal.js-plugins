@@ -1,17 +1,24 @@
 /*****************************************************************
 ** Author: Asvin Goel, goel@telematique.eu
 **
-** The slide show recorder is a plugin for reveal.js allowing to
-** record audio for a slide deck. 
+** A plugin for reveal.js allowing to record audio for a slide
+** deck.
 **
-** Version: 1.0
-** 
+** Version: 1.0.0
+**
 ** License: MIT license (see LICENSE.md)
 **
 ** Credits:
-** - Muaz Khan for RecordRTC.js 
+** - Muaz Khan for RecordRTC.js
 ** - Stuart Knightley for JSzip.js
 ******************************************************************/
+
+window.RevealAudioRecorder = window.RevealAudioRecorder || {
+    id: 'RevealAudioRecorder',
+    init: function(deck) {
+        init(deck);
+    }
+};
 
 var Recorder = {
     audio: null,
@@ -37,7 +44,7 @@ var Recorder = {
 	this.canvas.height = 25;
 	document.querySelector( '.reveal' ).appendChild( this.canvas );
 
-    }, 
+    },
 
     toggleRecording: function toggleRecording( override ) {
 	var wasRecording = this.isRecording;
@@ -76,7 +83,7 @@ var Recorder = {
 		alert("Audio player is not found. Please check that audio-slideshow plugin is loaded!");
 	}
 
-	if ( !this.audioStream || !this.recordRTC ) { 
+	if ( !this.audioStream || !this.recordRTC ) {
 		navigator.getUserMedia( { audio: true, video: false }, function( stream ) {
 			if ( window.IsChrome ) stream = new window.MediaStream( stream.getAudioTracks() );
 			Recorder.audioStream = stream;
@@ -132,15 +139,15 @@ var Recorder = {
 
 			Recorder.filename = Recorder.filename + '.' + blob.type.split( '/' ).pop();
 			var reader = new window.FileReader();
-			reader.readAsBinaryString(blob); 
+			reader.readAsBinaryString(blob);
 			reader.onloadend = function() {
-				blobBinaryString = reader.result; 
+				blobBinaryString = reader.result;
 				Recorder.zip.file( Recorder.filename, blobBinaryString, { binary: true } );
 				Recorder.filename = null;
 			}
 		} );
-		this.indices = null;	
-		
+		this.indices = null;
+
 	}
 
 	// Remove red circle over auto slide control
@@ -170,14 +177,14 @@ var Recorder = {
 
 			Recorder.filename = Recorder.filename + '.' + blob.type.split( '/' ).pop();
 			var reader = new window.FileReader();
-			reader.readAsBinaryString(blob); 
+			reader.readAsBinaryString(blob);
 			reader.onloadend = function() {
-				blobBinaryString = reader.result; 
+				blobBinaryString = reader.result;
 				Recorder.zip.file( Recorder.filename, blobBinaryString, { binary: true } );
 				Recorder.filename = null;
 				if ( !Recorder.isPaused ) Recorder.start();
 			}
-		} );		
+		} );
 	}
 
 	if ( this.isPaused ) {
@@ -191,12 +198,12 @@ var Recorder = {
 		context.strokeStyle = '#ff0';
 		context.stroke();
 	}
-	
+
     },
 
     downloadZip : function downloadZip() {
 	var a = document.createElement('a');
-	document.body.appendChild(a);	
+	document.body.appendChild(a);
 	try {
 	  a.download = "audio.zip";
 	  var blob = this.zip.generate( {type:"blob"} );
@@ -213,7 +220,7 @@ var Recorder = {
 		if ( audioSources.length ) {
 			// take first audio from array
 			var audioSource = audioSources.shift();
-			var progress = Math.round(100 * ( progressBar.getAttribute( 'data-max' ) - audioSources.length ) / progressBar.getAttribute( 'data-max' ) );  
+			var progress = Math.round(100 * ( progressBar.getAttribute( 'data-max' ) - audioSources.length ) / progressBar.getAttribute( 'data-max' ) );
 			progressBar.setAttribute( 'style', "width: " + progress + "%" );
 			var filename = audioSource.getAttribute('data-tts');
 	 		var xhr = new XMLHttpRequest();
@@ -225,9 +232,9 @@ var Recorder = {
 					filename += '.' + xhr.response.type.split( '/' ).pop().split( 'x-' ).pop();
 	      				// convert blob to binary string
 					var reader = new window.FileReader();
-					reader.readAsBinaryString(xhr.response); 
+					reader.readAsBinaryString(xhr.response);
 					reader.onloadend = function() {
-						blobBinaryString = reader.result; 
+						blobBinaryString = reader.result;
 						// add blob to zip
 						Recorder.zip.file( filename, blobBinaryString, { binary: true } );
 						// fetch next audio file
@@ -243,8 +250,8 @@ var Recorder = {
 			try {
 				xhr.send(null); // fetch TTS
 				console.log("Fetch TTS for slide " + audioSource.getAttribute('data-tts'));
-			} catch ( error ) { 
-				alert ( "Unable to fetch TTS-files! " + error ); 
+			} catch ( error ) {
+				alert ( "Unable to fetch TTS-files! " + error );
 				// remove progress bar
 				document.querySelector( ".reveal" ).removeChild( progressContainer );
 			}
@@ -253,7 +260,7 @@ var Recorder = {
 			// generate zip for download
 			var blob = Recorder.zip.generate( {type:"blob"} );
 			var a = document.createElement('a');
-			document.body.appendChild(a);	
+			document.body.appendChild(a);
 			try {
 				a.download = "audio.zip";
 				a.href = window.URL.createObjectURL( blob );
@@ -286,11 +293,14 @@ var Recorder = {
 	}
     }
 
+
 };
 
 
-(function(){
-
+const init = function(Reveal){
+  Reveal.addKeyBinding( { keyCode: 82, key: 'R', description: 'Toggle recording' }, function() { Recorder.toggleRecording(); } );
+  Reveal.addKeyBinding( { keyCode: 90, key: 'Z', description: 'Download recordings' }, function() { Recorder.downloadZip(); } );
+  Reveal.addKeyBinding( { keyCode: 84, key: 'T', description: 'Fetch Text-to-speech audio files' }, function() { Recorder.fetchTTS(); } );
 
 	Reveal.addEventListener( 'fragmentshown', function( event ) {
 		if ( Recorder.isRecording ) {
@@ -300,7 +310,7 @@ var Recorder = {
 			}
 			else if ( Recorder.isPaused ) {
 				// resume recording
-				Recorder.isPaused = false;				
+				Recorder.isPaused = false;
 				Recorder.start();
 			}
 			else {
@@ -317,7 +327,7 @@ var Recorder = {
 			}
 			else if ( Recorder.isPaused ) {
 				// resume recording
-				Recorder.isPaused = false;				
+				Recorder.isPaused = false;
 				Recorder.start();
 			}
 			else {
@@ -345,7 +355,7 @@ var Recorder = {
 			}
 			else if ( Recorder.isPaused ) {
 				// resume recording
-				Recorder.isPaused = false;				
+				Recorder.isPaused = false;
 				Recorder.start();
 			}
 			else {
@@ -353,14 +363,16 @@ var Recorder = {
 			}
 		}
 	} );
-			
+
 	function recordedAudioExists( indices ) {
 		var id = "audioplayer-" + indices.h + "." + indices.v;
 		if ( indices.f != undefined && indices.f >= 0 ) id = id + "." + indices.f;
-		return ( document.getElementById( id ).src.substring(0,4) == "blob"); 
+		return ( document.getElementById( id ).src.substring(0,4) == "blob");
 	}
 
-})();
+
+
+};
 
 
 /*****************************************************************
