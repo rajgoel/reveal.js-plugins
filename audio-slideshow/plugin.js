@@ -77,7 +77,7 @@ const initAudioSlideshow = function(Reveal){
 
 	Reveal.addEventListener( 'paused', function( event ) {
 		if ( timer ) { clearTimeout( timer ); timer = null; }
-		currentAudio.pause();
+		if ( currentAudio ) { currentAudio.pause(); }
 	} );
 
 	Reveal.addEventListener( 'resumed', function( event ) {
@@ -86,13 +86,20 @@ const initAudioSlideshow = function(Reveal){
 
 	Reveal.addEventListener( 'overviewshown', function( event ) {
 		if ( timer ) { clearTimeout( timer ); timer = null; }
-		currentAudio.pause();
+		if ( currentAudio ) { currentAudio.pause(); }
 		document.querySelector(".audio-controls").style.visibility = "hidden";
 	} );
 
 	Reveal.addEventListener( 'overviewhidden', function( event ) {
 		if ( timer ) { clearTimeout( timer ); timer = null; }
 		document.querySelector(".audio-controls").style.visibility = "visible";
+	} );
+
+	Reveal.addKeyBinding( { keyCode: 171, key: '+', description: 'Toggle audio' }, function() {
+		if ( currentAudio ) {
+			if ( timer ) { clearTimeout( timer ); timer = null; }
+			currentAudio.paused ? currentAudio.play() : currentAudio.pause();
+		}
 	} );
 
 	function selectAudio( previousAudio ) {
