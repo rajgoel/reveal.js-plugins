@@ -89,6 +89,14 @@ var RevealAudioSlideshow = window.RevealAudioSlideshow || (function(){
 		document.querySelector(".audio-controls").style.visibility = "visible";
 	} );
 
+	Reveal.addKeyBinding( { keyCode: 171, key: '+', description: 'Toggle audio' }, function() {
+		if ( currentAudio ) {
+			if ( timer ) { clearTimeout( timer ); timer = null; }
+			currentAudio.paused ? currentAudio.play() : currentAudio.pause();
+		}
+	} );
+    
+
 	function selectAudio( previousAudio ) {
 		if ( currentAudio ) {
 			currentAudio.pause();
