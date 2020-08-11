@@ -21,26 +21,25 @@ window.RevealChalkboard = window.RevealChalkboard || {
     configure: function(config) { configure(config); }
 };
 
-const initChalkboard = function(Reveal){
-	var path = scriptPath();
-	function scriptPath() {
-		// obtain plugin path from the script element
-		var src;
-		if (document.currentScript) {
-			src = document.currentScript.src;
-		} else {
-			var sel = document.querySelector('script[src$="/chalkboard/plugin.js"]')
-			if (sel) {
-				src = sel.src;
-			}
+function scriptPath() {
+	// obtain plugin path from the script element
+	var src;
+	if (document.currentScript) {
+		src = document.currentScript.src;
+	} else {
+		var sel = document.querySelector('script[src$="/chalkboard/plugin.js"]')
+		if (sel) {
+			src = sel.src;
 		}
-
-		var path = (src === undefined) ? "" : src.slice(0, src.lastIndexOf("/") + 1);
-//console.log("Path: " + path);
-		return path;
 	}
+	var path = (src === undefined) ? "" : src.slice(0, src.lastIndexOf("/") + 1);
+//console.log("Path: " + path);
+	return path;
+}
+var path = scriptPath();
 
-
+const initChalkboard = function(Reveal){
+//console.warn(path);
 	/* Feature detection for passive event handling*/
 	var passiveSupported = false;
 
@@ -135,11 +134,19 @@ const initChalkboard = function(Reveal){
 
 	function whenReady( callback ) {
 		// wait for drawings to be loaded and markdown to be parsed
-		if ( loaded == null || document.querySelector('section[data-markdown]:not([data-markdown-parsed])') ) {
-			setTimeout( whenReady, 500, callback )
+		if ( loaded !== null ) {
+			for (var i = 0; i < storage[1].data.length; i++) {
+				var slide = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v );
+				if ( !slide ) {
+console.log("Wait for presentation to be ready"); 
+					setTimeout( whenReady, 500, callback )
+				}
+			}
+			callback();
 		}
 		else {
-			callback();
+console.log("Wait for drrawings to be loaded"); 
+			setTimeout( whenReady, 500, callback )
 		}
 	}
 
@@ -388,12 +395,16 @@ const initChalkboard = function(Reveal){
 //console.log("createPrintout" + printMode)
 
 	function createPrintout( ) {
-//console.log( 'Create printout for ' + storage[1].data.length + " slides");
+console.log( 'Create printout for ' + storage[1].data.length + " slides");
 		drawingCanvas[0].container.style.opacity = 0; // do not print notes canvas
 		drawingCanvas[0].container.style.visibility = 'hidden';
 		var nextSlide = [];
 		for (var i = 0; i < storage[1].data.length; i++) {
 			var slide = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v );
+			if ( !slide ) {
+alert("Something went wrong creating printouts for drawings.");
+				return;
+			}
 			nextSlide.push( slide.nextSibling );
 		}
 
