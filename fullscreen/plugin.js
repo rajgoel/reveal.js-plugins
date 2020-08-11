@@ -12,11 +12,11 @@
 window.RevealFullscreen = window.RevealFullscreen || {
     id: 'RevealFullscreen',
     init: function(deck) {
-        initialize(deck);
+        initFullscreen(deck);
     }
 };
 
-const initialize = function(Reveal){
+const initFullscreen = function(Reveal){
 	var config = null;
 	var ready = false;
 

@@ -11,11 +11,11 @@
 window.RevealCustomControls = window.RevealCustomControls || {
     id: 'RevealCustomControls',
     init: function(deck) {
-        initialize(deck);
+        initCustomControls(deck);
     }
 };
 
-const initialize = function(Reveal){
+const initCustomControls = function(Reveal){
 	var config = Reveal.getConfig().customcontrols || 
 		{ 
 			slideNumberCSS : 'position: fixed; display: block; right: 90px; top: auto; left: auto; width: 50px; bottom: 30px; z-index: 31; font-family: Helvetica, sans-serif; font-size:  12px; line-height: 1; padding: 5px; text-align: center; border-radius: 10px; background-color: rgba(128,128,128,.5)',

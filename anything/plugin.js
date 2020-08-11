@@ -12,11 +12,11 @@
 window.RevealAnything = window.RevealAnything || {
     id: 'RevealAnything',
     init: function(deck) {
-        initialize(deck);
+        initAnything(deck);
     }
 };
 
-const initialize = function(Reveal){
+const initAnything = function(Reveal){
 	function parseJSON(str) {
 	    str = str.replace(/(\r\n|\n|\r|\t)/gm,""); // remove line breaks and tabs
 	    var json;

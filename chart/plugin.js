@@ -17,11 +17,11 @@
 window.RevealChart = window.RevealChart || {
     id: 'RevealChart',
     init: function(deck) {
-        initialize(deck);
+        initChart(deck);
     }
 };
 
-const initialize = function(Reveal){
+const initChart = function(Reveal){
 	function parseJSON(str) {
 	    var json;
 	    try {

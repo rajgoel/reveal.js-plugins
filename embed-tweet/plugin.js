@@ -12,11 +12,11 @@
 window.RevealEmbedTweet = window.RevealEmbedTweet || {
     id: 'RevealEmbedTweet',
     init: function(deck) {
-        initialize(deck);
+        initEmbedTweet(deck);
     }
 };
 
-const initialize = function(Reveal){
+const initEmbedTweet = function(Reveal){
 	var ready = false;
 	window.twttr = (function(d, s, id) {
 		var js, fjs = d.getElementsByTagName(s)[0],

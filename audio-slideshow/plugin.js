@@ -17,11 +17,11 @@
 window.RevealAudioSlideshow = window.RevealAudioSlideshow || {
     id: 'RevealAudioSlideshow',
     init: function(deck) {
-        initialize(deck);
+        initAudioSlideshow(deck);
     }
 };
 
-const initialize = function(Reveal){
+const initAudioSlideshow = function(Reveal){
 	// default parameters
 	var prefix = "audio/";
 	var suffix = ".ogg";

@@ -16,12 +16,12 @@
 window.RevealChalkboard = window.RevealChalkboard || {
     id: 'RevealChalkboard',
     init: function(deck) {
-        initialize(deck);
+        initChalkboard(deck);
     },
     configure: function(config) { configure(config); }
 };
 
-const initialize = function(Reveal){
+const initChalkboard = function(Reveal){
 	var path = scriptPath();
 	function scriptPath() {
 		// obtain plugin path from the script element
