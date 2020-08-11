@@ -16,7 +16,7 @@
 window.RevealAudioRecorder = window.RevealAudioRecorder || {
     id: 'RevealAudioRecorder',
     init: function(deck) {
-        init(deck);
+        initAudioRecorder(deck);
     }
 };
 
@@ -297,7 +297,7 @@ var Recorder = {
 };
 
 
-const init = function(Reveal){
+const initAudioRecorder = function(Reveal){
   Reveal.addKeyBinding( { keyCode: 82, key: 'R', description: 'Toggle recording' }, function() { Recorder.toggleRecording(); } );
   Reveal.addKeyBinding( { keyCode: 90, key: 'Z', description: 'Download recordings' }, function() { Recorder.downloadZip(); } );
   Reveal.addKeyBinding( { keyCode: 84, key: 'T', description: 'Fetch Text-to-speech audio files' }, function() { Recorder.fetchTTS(); } );
