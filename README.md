@@ -1,5 +1,5 @@
 ```diff
-- Important notes: Currently, this repository is under development.
+- Important notes: This repository is is for reveal.s v4.0.2. For older versions of reveal.js, please use branch 'v3'.
 ```
 
 # reveal.js-plugins
