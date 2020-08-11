@@ -1,15 +1,15 @@
 /*****************************************************************
 ** Author: Asvin Goel, goel@telematique.eu
 **
-** A plugin for reveal.js allowing to  automatically play audio 
-** files for a slide deck. After an audio file has completed 
-** playing the next slide or fragment is automatically shown and 
+** A plugin for reveal.js allowing to  automatically play audio
+** files for a slide deck. After an audio file has completed
+** playing the next slide or fragment is automatically shown and
 ** the respective audio file is played. If no audio file is
-** available, a blank audio file with default  duration is played 
+** available, a blank audio file with default  duration is played
 ** instead.
 **
 ** Version: 1.0.0
-** 
+**
 ** License: MIT license (see LICENSE.md)
 **
 ******************************************************************/
@@ -31,11 +31,11 @@ const initAudioSlideshow = function(Reveal){
 	var defaultText = false; // use slide text as default for the text to speech converter
 	var defaultDuration = 5; // value in seconds
 	var defaultAudios = true; // try to obtain audio for slide and fragment numbers
-	var advance = 0; // advance to next slide after given time in milliseconds after audio has played, use negative value to not advance 
+	var advance = 0; // advance to next slide after given time in milliseconds after audio has played, use negative value to not advance
 	var autoplay = false; // automatically start slideshow
 	var playerOpacity = .05; // opacity when the mouse is far from to the audioplayer
 	var startAtFragment = false; // when moving to a slide, start at the current fragment or at the start of the slide
-	var playerStyle = "position: fixed; bottom: 4px; left: 25%; width: 50%; height:75px; z-index: 33;"; // style used for container of audio controls 
+	var playerStyle = "position: fixed; bottom: 4px; left: 25%; width: 50%; height:75px; z-index: 33;"; // style used for container of audio controls
 	// ------------------
 
 	var silence;
@@ -69,9 +69,9 @@ const initAudioSlideshow = function(Reveal){
 		var indices = Reveal.getIndices();
 		if ( !startAtFragment && typeof indices.f !== 'undefined' && indices.f >= 0) {
 			// hide fragments when slide is shown
-			Reveal.slide(indices.h, indices.v, -1);		
+			Reveal.slide(indices.h, indices.v, -1);
 		}
-		
+
 		selectAudio();
 	} );
 
@@ -147,19 +147,19 @@ const initAudioSlideshow = function(Reveal){
 		}
 
 		if ( 'ontouchstart' in window || navigator.msMaxTouchPoints ) {
-			opacity = 1;		
+			opacity = 1;
 		}
 		if ( Reveal.getConfig().audioStartAtFragment ) startAtFragment = Reveal.getConfig().audioStartAtFragment;
 setupAudioElement
-		// set style so that audio controls are shown on hover 
+		// set style so that audio controls are shown on hover
 		var css='.audio-controls>audio { opacity:' + playerOpacity + ';} .audio-controls:hover>audio { opacity:1;}';
 		style=document.createElement( 'style' );
 		if ( style.styleSheet ) {
 		    style.styleSheet.cssText=css;
 		}
-		else { 
+		else {
 		    style.appendChild( document.createTextNode( css ) );
-		}		
+		}
 		document.getElementsByTagName( 'head' )[0].appendChild( style );
 
 		silence = new SilentAudio( defaultDuration ); // create the wave file
@@ -259,28 +259,28 @@ setupAudioElement
 	function linkVideoToAudioControls( audioElement, videoElement ) {
 		audioElement.addEventListener( 'playing', function( event ) {
 			videoElement.currentTime = audioElement.currentTime;
-		} );			
+		} );
 		audioElement.addEventListener( 'play', function( event ) {
 			videoElement.currentTime = audioElement.currentTime;
 			if ( videoElement.paused ) videoElement.play();
-		} );			
+		} );
 		audioElement.addEventListener( 'pause', function( event ) {
 			videoElement.currentTime = audioElement.currentTime;
 			if ( !videoElement.paused ) videoElement.pause();
-		} );			
+		} );
 		audioElement.addEventListener( 'volumechange', function( event ) {
 			videoElement.volume = audioElement.volume;
 			videoElement.muted = audioElement.muted;
-		} );		
+		} );
 		audioElement.addEventListener( 'seeked', function( event ) {
 			videoElement.currentTime = audioElement.currentTime;
-		} );	
+		} );
 
 		// add silent audio to video to be used as fallback
 		var audioSource = audioElement.querySelector('source[data-audio-silent]');
 		if ( audioSource ) audioElement.removeChild( audioSource );
 		audioSource = document.createElement( 'source' );
-		var videoSilence = new SilentAudio( Math.round(videoElement.duration + .5) ); // create the wave file	
+		var videoSilence = new SilentAudio( Math.round(videoElement.duration + .5) ); // create the wave file
 		audioSource.src= videoSilence.dataURI;
 		audioSource.setAttribute("data-audio-silent", videoElement.duration);
 		audioElement.appendChild(audioSource, audioElement.firstChild);
@@ -298,11 +298,11 @@ setupAudioElement
 	 		if ( !audioElement.querySelector('source[data-audio-silent]') ) {
 				// create silent source if not yet existent
 				var audioSource = document.createElement( 'source' );
-				audioSource.src = silence.dataURI; 
+				audioSource.src = silence.dataURI;
 				audioSource.setAttribute("data-audio-silent", defaultDuration);
 				audioElement.appendChild(audioSource, audioElement.firstChild);
 			}
-		}	
+		}
 	}
 
 	function setupAudioElement( container, indices, audioFile, text, videoElement ) {
@@ -320,7 +320,7 @@ setupAudioElement
 			}
 			else {
 				videoElement.addEventListener('loadedmetadata', (event) => {
-					linkVideoToAudioControls( audioElement, videoElement );	
+					linkVideoToAudioControls( audioElement, videoElement );
 				});
 			}
 		}
@@ -335,24 +335,24 @@ setupAudioElement
 					var fragment = slide.querySelector( '.fragment[data-fragment-index="' + indices.f + '"][data-audio-advance]' ) ;
 					if ( fragment ) {
 						advanceNow = fragment.getAttribute( 'data-audio-advance' );
-					}				
-				} 
+					}
+				}
 				else if ( slide.hasAttribute( 'data-audio-advance' ) ) {
 					advanceNow = slide.getAttribute( 'data-audio-advance' );
 				}
-				// advance immediately or set a timer - or do nothing 
+				// advance immediately or set a timer - or do nothing
 				if ( advance == "true" || advanceNow == 0 ) {
-					var previousAudio = currentAudio;		
+					var previousAudio = currentAudio;
 					Reveal.next();
 					selectAudio( previousAudio );
 				}
 				else if ( advanceNow > 0 ) {
 					timer = setTimeout( function() {
-						var previousAudio = currentAudio;		
+						var previousAudio = currentAudio;
 						Reveal.next();
 						selectAudio( previousAudio );
 						timer = null;
-					}, advanceNow );   
+					}, advanceNow );
 				}
 			}
 		} );
@@ -363,8 +363,8 @@ setupAudioElement
 
 			if ( timer ) { clearTimeout( timer ); timer = null; }
 			// preload next audio element so that it is available after slide change
-			var indices = Reveal.getIndices();	
-			var nextId = "audioplayer-" + indices.h + '.' + indices.v;		
+			var indices = Reveal.getIndices();
+			var nextId = "audioplayer-" + indices.h + '.' + indices.v;
 			if ( indices.f != undefined && indices.f >= 0 ) {
 				nextId = nextId + '.' + (indices.f + 1);
 			}
@@ -374,15 +374,15 @@ setupAudioElement
 			var nextAudio = document.getElementById( nextId );
 			if ( !nextAudio ) {
 				nextId = "audioplayer-" + indices.h + '.' + (indices.v+1);
-				nextAudio = document.getElementById( nextId );			
+				nextAudio = document.getElementById( nextId );
 				if ( !nextAudio ) {
 					nextId = "audioplayer-" + (indices.h+1) + '.0';
 					nextAudio = document.getElementById( nextId );
-				}			
+				}
 			}
 			if ( nextAudio ) {
 //console.debug( "Preload: " + nextAudio.id );
-				nextAudio.load();		
+				nextAudio.load();
 			}
 		} );
 		audioElement.addEventListener( 'pause', function( event ) {
@@ -398,7 +398,7 @@ setupAudioElement
 
 		if ( audioFile != null ) {
 			// Support comma separated lists of audio sources
-			audioFile.split( ',' ).forEach( function( source ) {						
+			audioFile.split( ',' ).forEach( function( source ) {
 				var audioSource = document.createElement( 'source' );
 				audioSource.src = source;
 				audioElement.insertBefore(audioSource, audioElement.firstChild);
@@ -407,7 +407,7 @@ setupAudioElement
 		else if ( defaultAudios ) {
 			var audioExists = false;
 			try {
-				// check if audio file exists 
+				// check if audio file exists
 				var xhr = new XMLHttpRequest();
 				xhr.open('HEAD', prefix + indices + suffix, true);
 	 			xhr.onload = function() {
@@ -423,14 +423,14 @@ setupAudioElement
 				}
 				xhr.send(null);
 			} catch( error ) {
-//console.log("Error checking audio" + audioExists);			
+//console.log("Error checking audio" + audioExists);
 				// fallback if checking of audio file fails (e.g. when running the slideshow locally)
 				var audioSource = document.createElement( 'source' );
 				audioSource.src = prefix + indices + suffix;
 				audioElement.insertBefore(audioSource, audioElement.firstChild);
 				setupFallbackAudio( audioElement, text, videoElement );
 			}
-		}	
+		}
 		if ( audioFile != null || defaultDuration > 0 ) {
 			container.appendChild( audioElement );
 		}
@@ -438,11 +438,11 @@ setupAudioElement
 };
 
 /*****************************************************************
-** Create SilentAudio 
+** Create SilentAudio
 ** based on: RIFFWAVE.js v0.03
-** http://www.codebase.es/riffwave/riffwave.js 
+** http://www.codebase.es/riffwave/riffwave.js
 **
-** Usage: 
+** Usage:
 ** silence = new SilentAudio( 10 ); // create 10 seconds wave file
 **
 ******************************************************************/
