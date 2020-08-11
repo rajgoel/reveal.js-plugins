@@ -87,7 +87,6 @@ const initialize = function(Reveal){
 	var readOnly = undefined;
 
 	var config = configure( Reveal.getConfig().chalkboard || {} );
-alert(JSON.stringify(config));
 	function configure( config ) {
 		if ( config.boardmarkerWidth || config.penWidth ) boardmarkerWidth = config.boardmarkerWidth || config.penWidth;
 		if ( config.chalkWidth ) chalkWidth = config.chalkWidth;
