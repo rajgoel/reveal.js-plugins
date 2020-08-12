@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 1.0.1
+** Version: 1.0.2
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -397,6 +397,7 @@ console.log("Wait for drrawings to be loaded");
 //console.log("createPrintout" + printMode)
 
 	function createPrintout( ) {
+		if ( storage[1].data.length == 0 ) return; 
 console.log( 'Create printout for ' + storage[1].data.length + " slides");
 		drawingCanvas[0].container.style.opacity = 0; // do not print notes canvas
 		drawingCanvas[0].container.style.visibility = 'hidden';
