@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 1.0.0
+** Version: 1.0.1
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -18,7 +18,9 @@ window.RevealChalkboard = window.RevealChalkboard || {
     init: function(deck) {
         initChalkboard(deck);
     },
-    configure: function(config) { configure(config); }
+    configure: function(config) { configure(config); },
+    toggleNotesCanvas: function() { toggleNotesCanvas(); },
+    toggleChalkboard: function() { toggleChalkboard(); },
 };
 
 function scriptPath() {
@@ -166,7 +168,7 @@ console.log("Wait for drrawings to be loaded");
 		button.style.top = toggleChalkboardButton.top ||  "auto";
 		button.style.right = toggleChalkboardButton.right ||  "auto";
 
-		button.innerHTML = '<a href="#" onclick="toggleChalkboard(); return false;"><i class="fa fa-pen-square"></i></a>'
+		button.innerHTML = '<a href="#" onclick="RevealChalkboard.toggleChalkboard(); return false;"><i class="fa fa-pen-square"></i></a>'
 		document.querySelector(".reveal").appendChild( button );
 	}
 	if ( toggleNotesButton ) {
@@ -183,7 +185,7 @@ console.log("Wait for drrawings to be loaded");
 		button.style.top = toggleNotesButton.top ||  "auto";
 		button.style.right = toggleNotesButton.right ||  "auto";
 
-		button.innerHTML = '<a href="#" onclick="toggleNotesCanvas(); return false;"><i class="fa fa-pen"></i></a>'
+		button.innerHTML = '<a href="#" onclick="RevealChalkboard.toggleNotesCanvas(); return false;"><i class="fa fa-pen"></i></a>'
 		document.querySelector(".reveal").appendChild( button );
 	}
 //alert("Buttons");
@@ -1526,8 +1528,6 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 /*
 	this.drawWithBoardmarker = drawWithBoardmarker;
 	this.drawWithChalk = drawWithChalk;
-	this.toggleNotesCanvas = toggleNotesCanvas;
-	this.toggleChalkboard = toggleChalkboard;
 	this.startRecording = startRecording;
 	this.clear = clear;
 	this.colorNext = colorNext;
@@ -1536,6 +1536,8 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	this.resetAll = resetStorage;
 	this.download = downloadData;
 */
+	this.toggleNotesCanvas = toggleNotesCanvas;
+	this.toggleChalkboard = toggleChalkboard;
 	this.configure = configure;
 	return this;
 };
