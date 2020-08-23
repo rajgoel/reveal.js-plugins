@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 1.0.2
+** Version: 1.0.3
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -21,6 +21,11 @@ window.RevealChalkboard = window.RevealChalkboard || {
     configure: function(config) { configure(config); },
     toggleNotesCanvas: function() { toggleNotesCanvas(); },
     toggleChalkboard: function() { toggleChalkboard(); },
+    colorNext: function() { colorNext(); },
+    colorPrev: function() {colorPrev(); },
+    reset: function() { resetSlide(); },
+    resetAll: function() {resetStorage(); },
+    download: function() { downloadData(); },
 };
 
 function scriptPath() {
@@ -78,6 +83,16 @@ const initChalkboard = function(Reveal){
 		{ color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto'},
 		{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto'}
 	];
+	var keyBindings = { 
+		toggleNotesCanvas: { keyCode: 67, key: 'C', description: 'Toggle notes canvas' },
+		toggleChalkboard: { keyCode: 66, key: 'B', description: 'Toggle chalkboard' },
+		resetSlide: { keyCode: 46, key: 'DEL', description: 'Reset drawings on slide' },
+		resetStorage: { keyCode: 8, key: 'BACKSPACE', description: 'Reset all drawings' },
+		colorNext: { keyCode: 88, key: 'X', description: 'Next color' },
+		colorPrev: { keyCode: 89, key: 'Y', description: 'Previous color' },
+		download: { keyCode: 68, key: 'D', description: 'Download drawings' }
+	};
+
 
 	var theme = "chalkboard";
 	var color = [0, 0];
@@ -88,7 +103,14 @@ const initChalkboard = function(Reveal){
 	var readOnly = undefined;
 
 	var config = configure( Reveal.getConfig().chalkboard || {} );
+	if ( config.keyBindings ) {
+		for (var key in config.keyBindings) {
+			keyBindings[key] = config.keyBindings[key];
+		};
+	}
+
 	function configure( config ) {
+
 		if ( config.boardmarkerWidth || config.penWidth ) boardmarkerWidth = config.boardmarkerWidth || config.penWidth;
 		if ( config.chalkWidth ) chalkWidth = config.chalkWidth;
 		if ( "chalkEffect" in config ) chalkEffect = ("chalkEffect" in config);
@@ -1518,27 +1540,28 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		}
 	};
 
-	Reveal.addKeyBinding( { keyCode: 67, key: 'C', description: 'Toggle notes canvas' }, function() { toggleNotesCanvas(); } );
-	Reveal.addKeyBinding( { keyCode: 66, key: 'B', description: 'Toggle chalkboard' }, function() { toggleChalkboard(); } );
-	Reveal.addKeyBinding( { keyCode: 46, key: 'DEL', description: 'Reset drawings on slide' }, function() { resetSlide(); } );
-	Reveal.addKeyBinding( { keyCode: 8, key: 'BACKSPACE', description: 'Reset all drawings' }, function() { resetStorage(); } );
-	Reveal.addKeyBinding( { keyCode: 88, key: 'X', description: 'Next color' }, function() { colorNext(); } );
-	Reveal.addKeyBinding( { keyCode: 89, key: 'Y', description: 'Previous color' }, function() { colorPrev(); } );
-	Reveal.addKeyBinding( { keyCode: 90, key: 'Z', description: 'Download drawings' }, function() { downloadData(); } );
 
 /*
 	this.drawWithBoardmarker = drawWithBoardmarker;
 	this.drawWithChalk = drawWithChalk;
 	this.startRecording = startRecording;
 	this.clear = clear;
+*/
+	this.toggleNotesCanvas = toggleNotesCanvas;
+	this.toggleChalkboard = toggleChalkboard;
 	this.colorNext = colorNext;
 	this.colorPrev = colorPrev;
 	this.reset = resetSlide;
 	this.resetAll = resetStorage;
 	this.download = downloadData;
-*/
-	this.toggleNotesCanvas = toggleNotesCanvas;
-	this.toggleChalkboard = toggleChalkboard;
 	this.configure = configure;
+
+
+	for (var key in keyBindings) {
+		if ( keyBindings[key] ) {
+			Reveal.addKeyBinding( keyBindings[key], this[key] );
+		}
+	};
+
 	return this;
 };
