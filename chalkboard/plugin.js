@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 1.0.3
+** Version: 1.0.4
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -23,9 +23,9 @@ window.RevealChalkboard = window.RevealChalkboard || {
     toggleChalkboard: function() { toggleChalkboard(); },
     colorNext: function() { colorNext(); },
     colorPrev: function() {colorPrev(); },
-    reset: function() { resetSlide(); },
-    resetAll: function() {resetStorage(); },
-    download: function() { downloadData(); },
+    reset: function() { reset(); },
+    resetAll: function() { resetAll(); },
+    download: function() { download(); },
 };
 
 function scriptPath() {
@@ -86,8 +86,8 @@ const initChalkboard = function(Reveal){
 	var keyBindings = { 
 		toggleNotesCanvas: { keyCode: 67, key: 'C', description: 'Toggle notes canvas' },
 		toggleChalkboard: { keyCode: 66, key: 'B', description: 'Toggle chalkboard' },
-		resetSlide: { keyCode: 46, key: 'DEL', description: 'Reset drawings on slide' },
-		resetStorage: { keyCode: 8, key: 'BACKSPACE', description: 'Reset all drawings' },
+		reset: { keyCode: 46, key: 'DEL', description: 'Reset drawings on slide' },
+		resetAll: { keyCode: 8, key: 'BACKSPACE', description: 'Reset all drawings' },
 		colorNext: { keyCode: 88, key: 'X', description: 'Next color' },
 		colorPrev: { keyCode: 89, key: 'Y', description: 'Previous color' },
 		download: { keyCode: 68, key: 'D', description: 'Download drawings' }
@@ -1559,9 +1559,11 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 
 	for (var key in keyBindings) {
 		if ( keyBindings[key] ) {
-			Reveal.addKeyBinding( keyBindings[key], this[key] );
+			Reveal.addKeyBinding( keyBindings[key], RevealChalkboard[key] );
 		}
 	};
+
+	Reveal.addKeyBinding( { keyCode: 65, key: 'A', description: 'Test' }, function() { reset(); } );
 
 	return this;
 };
