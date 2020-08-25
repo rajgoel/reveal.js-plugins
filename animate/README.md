@@ -49,6 +49,8 @@ For animation items the parameters  `duration`, `delay`, and `when` for the [`an
 
 If a slide has fragments, the `animation` object can be provided as an array of an array. The first item of the array is an array of animations applied to the main slide, the following items are arrays of animations applied to the fragments.
 
+The animate plugin is designed to work with the [`audio-slideshow` plugin](https://github.com/rajgoel/reveal.js-plugins/tree/master/audio-slideshow) such that the timeline of the audio is synched with the timeline of the animation and that the animation is controlled with the audio controls. Alternatively, the animations can be controlled via the functions `play()`, `pause()`, and `seek(timstamp)`.
+
 ## Examples
 
 The [demo](https://rajgoel.github.io/reveal.js-demos/animate-demo.html) includes various animations showcasing different ways of using the plugin. Please have a look at the the [source code](https://github.com/rajgoel/reveal.js-demos/blob/master/animate-demo.html).
