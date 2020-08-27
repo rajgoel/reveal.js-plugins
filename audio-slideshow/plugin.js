@@ -42,6 +42,7 @@ const initAudioSlideshow = function(Reveal){
 	var currentAudio = null;
 	var previousAudio = null;
 	var timer = null;
+	let noMoreNextAudio = 0;
 
 	Reveal.addEventListener( 'fragmentshown', function( event ) {
 		if ( timer ) { clearTimeout( timer ); timer = null; }
@@ -383,11 +384,14 @@ setupAudioElement
 			if ( nextAudio ) {
 //console.debug( "Preload: " + nextAudio.id );
 				nextAudio.load();
+			} else {
+				noMoreNextAudio++;
 			}
 		} );
 		audioElement.addEventListener( 'pause', function( event ) {
 			if ( timer ) { clearTimeout( timer ); timer = null; }
 			document.dispatchEvent( new CustomEvent('stopplayback') );
+			if (noMoreNextAudio===1) document.dispatchEvent( new CustomEvent('slideshowFinished') );
 		} );
 		audioElement.addEventListener( 'seeked', function( event ) {
 			var evt = new CustomEvent('seekplayback');
