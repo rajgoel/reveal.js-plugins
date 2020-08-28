@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 1.0.4
+** Version: 1.0.5
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -23,6 +23,7 @@ window.RevealChalkboard = window.RevealChalkboard || {
     toggleChalkboard: function() { toggleChalkboard(); },
     colorNext: function() { colorNext(); },
     colorPrev: function() {colorPrev(); },
+    clear: function() { clear(); },
     reset: function() { reset(); },
     resetAll: function() { resetAll(); },
     download: function() { download(); },
@@ -86,6 +87,7 @@ const initChalkboard = function(Reveal){
 	var keyBindings = { 
 		toggleNotesCanvas: { keyCode: 67, key: 'C', description: 'Toggle notes canvas' },
 		toggleChalkboard: { keyCode: 66, key: 'B', description: 'Toggle chalkboard' },
+		clear: { keyCode: 171, key: '+', description: 'Clear drawings on slide' },
 		reset: { keyCode: 46, key: 'DEL', description: 'Reset drawings on slide' },
 		resetAll: { keyCode: 8, key: 'BACKSPACE', description: 'Reset all drawings' },
 		colorNext: { keyCode: 88, key: 'X', description: 'Next color' },
@@ -158,18 +160,11 @@ const initChalkboard = function(Reveal){
 
 	function whenReady( callback ) {
 		// wait for drawings to be loaded and markdown to be parsed
-		if ( loaded !== null ) {
-			for (var i = 0; i < storage[1].data.length; i++) {
-				var slide = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v );
-				if ( !slide ) {
-console.log("Wait for presentation to be ready"); 
-					setTimeout( whenReady, 500, callback )
-				}
-			}
+		if ( document.querySelectorAll(".pdf-page").length && loaded !== null ) {
 			callback();
 		}
 		else {
-console.log("Wait for drrawings to be loaded"); 
+console.log("Wait for pdf pages to be created and drawings to be loaded"); 
 			setTimeout( whenReady, 500, callback )
 		}
 	}
@@ -419,111 +414,165 @@ console.log("Wait for drrawings to be loaded");
 //console.log("createPrintout" + printMode)
 
 	function createPrintout( ) {
+console.warn(Reveal.getTotalSlides(),Reveal.getSlidesElement());
 		if ( storage[1].data.length == 0 ) return; 
 console.log( 'Create printout for ' + storage[1].data.length + " slides");
 		drawingCanvas[0].container.style.opacity = 0; // do not print notes canvas
 		drawingCanvas[0].container.style.visibility = 'hidden';
-		var nextSlide = [];
-		for (var i = 0; i < storage[1].data.length; i++) {
-			var slide = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v );
-			if ( !slide ) {
-alert("Something went wrong creating printouts for drawings.");
-				return;
-			}
-			nextSlide.push( slide.nextSibling );
-		}
 
 		var patImg = new Image();
 		patImg.onload = function () {
-			var width = Reveal.getConfig().width;
-			var height = Reveal.getConfig().height;
-			var scale = 1;
-			var xOffset = 0;
-			var yOffset = 0;
-			if ( width != storage[1].width || height != storage[1].height ) {
-				scale = Math.min( width/storage[1].width, height/storage[1].height);
-				xOffset = (width - storage[1].width * scale)/2;
-				yOffset = (height - storage[1].height * scale)/2;
-			}
-			mode = 1;
-
-			for (var i = 0; i < storage[1].data.length; i++) {
+			var slides = getSlidesArray();
+			for (var i = storage[1].data.length-1; i>=0; i--) {
 console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + storage[1].data[i].slide.v );
-				var parent = Reveal.getSlide( storage[1].data[i].slide.h, storage[1].data[i].slide.v ).parentElement;
 				var slideData = getSlideData( storage[1].data[i].slide, 1 );
-
-				var imgCanvas = document.createElement('canvas');
-				imgCanvas.width = width;
-				imgCanvas.height = height;
-
-				var imgCtx = imgCanvas.getContext("2d");
-				imgCtx.fillStyle = imgCtx.createPattern( patImg ,'repeat');
-				imgCtx.rect(0,0,imgCanvas.width,imgCanvas.height);
-				imgCtx.fill();
-
-				for (var j = 0; j < slideData.events.length; j++) {
-					switch ( slideData.events[j].type ) {
-						case "draw":
-							for (var k = 1; k < slideData.events[j].curve.length; k++) {
-								draw[1]( imgCtx,
-									xOffset + slideData.events[j].curve[k-1].x*scale,
-									yOffset + slideData.events[j].curve[k-1].y*scale,
-									xOffset + slideData.events[j].curve[k].x*scale,
-									yOffset + slideData.events[j].curve[k].y*scale
-								);
-							}
-							break;
-						case "erase":
-							for (var k = 0; k < slideData.events[j].curve.length; k++) {
-								eraseWithSponge( imgCtx,
-									xOffset + slideData.events[j].curve[k].x*scale,
-									yOffset + slideData.events[j].curve[k].y*scale
-								);
-							}
-							break;
-						case "setcolor":
-								setColor(slideData.events[j].index);
-								break;
-						case "clear":
-							addPrintout( parent, nextSlide[i], imgCanvas, patImg );
-							imgCtx.clearRect(0,0,imgCanvas.width,imgCanvas.height);
-							imgCtx.fill();
-							break;
-						default:
-							break;
-					}
-				}
-				mode = 0;
-				if ( slideData.events.length ) {
-					addPrintout( parent, nextSlide[i], imgCanvas, patImg );
-				}
+				var drawings = createDrawings( slideData, patImg );
+				var slide = slides[ storage[1].data[i].slide.h][ storage[1].data[i].slide.v ];
+//console.log("Slide:", slide);
+				addDrawings( slide, drawings );
+				
 			}
-			Reveal.sync();
+//			Reveal.sync();
 		};
 		patImg.src = background[1];
 	}
 
-	function addPrintout( parent, nextSlide, imgCanvas, patImg ) {
-		var slideCanvas = document.createElement('canvas');
-		slideCanvas.width = Reveal.getConfig().width;
-		slideCanvas.height = Reveal.getConfig().height;
-		var ctx = slideCanvas.getContext("2d");
-		ctx.fillStyle = ctx.createPattern( patImg ,'repeat');
-		ctx.rect(0,0,slideCanvas.width,slideCanvas.height);
-		ctx.fill();
-		ctx.drawImage(imgCanvas, 0, 0);
-
-		var newSlide = document.createElement( 'section' );
-		newSlide.classList.add( 'present' );
-		newSlide.innerHTML = '<h1 style="visibility:hidden">Drawing</h1>';
-		newSlide.setAttribute("data-background-size", '100% 100%' );
-		newSlide.setAttribute("data-background-repeat", 'norepeat' );
-		newSlide.setAttribute("data-background", 'url("' + slideCanvas.toDataURL("image/png") +'")' );
-		if ( nextSlide != null ) {
-			parent.insertBefore( newSlide, nextSlide );
+	function getSlidesArray() {
+		var horizontal = document.querySelectorAll('.slides > div.pdf-page > section, .slides > section');
+		var slides = [];
+		var slidenumber = undefined;
+		for ( var i=0; i < horizontal.length; i++) {
+			if ( horizontal[i].parentElement.classList.contains("pdf-page") ) {
+				// Horizontal slide
+				if ( horizontal[i].getAttribute("data-slide-number") != slidenumber ) {
+					// new slide
+					slides.push([]);
+					slides[slides.length-1].push(horizontal[i]);
+					slidenumber = horizontal[i].getAttribute("data-slide-number");
+				}
+				else {
+					// fragment of same slide
+					slides[slides.length-1][slides[slides.length-1].length-1] = horizontal[i];
+				}
+			}
+			else {		
+				// Vertical slides
+				var vertical = horizontal[i].querySelectorAll('section'); 
+				slides.push([]);
+				var slidenumber = undefined;
+				for ( var j=0; j < vertical.length; j++) {
+					if ( vertical[j].getAttribute("data-slide-number") != slidenumber ) {
+						// new slide
+						slides[slides.length-1].push(vertical[j]);
+						slidenumber = vertical[j].getAttribute("data-slide-number");
+					}
+					else {
+						// fragment of same slide
+						slides[slides.length-1][slides[slides.length-1].length-1] = vertical[j];
+					}
+				}
+			}
 		}
-		else {
-			parent.append( newSlide );
+//console.log("Slides:", slides);
+		return slides;
+	}
+
+	function cloneCanvas(oldCanvas) {
+		//create a new canvas
+		var newCanvas = document.createElement('canvas');
+		var context = newCanvas.getContext('2d');
+		//set dimensions
+		newCanvas.width = oldCanvas.width;
+		newCanvas.height = oldCanvas.height;
+		//apply the old canvas to the new one
+		context.drawImage(oldCanvas, 0, 0);
+		//return the new canvas
+		return newCanvas;
+	}
+
+	function createDrawings( slideData, patImg ) {
+		var width = Reveal.getConfig().width;
+		var height = Reveal.getConfig().height;
+		var scale = 1;
+		var xOffset = 0;
+		var yOffset = 0;
+		if ( width != storage[1].width || height != storage[1].height ) {
+			scale = Math.min( width/storage[1].width, height/storage[1].height);
+			xOffset = (width - storage[1].width * scale)/2;
+			yOffset = (height - storage[1].height * scale)/2;
+		}
+		mode = 1;
+console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + data.slide.v */);
+//		var parent = Reveal.getSlide( data.slide.h, data.slide.v ).parentElement;
+//		var slideData = getSlideData( data.slide, 1 );
+
+		var drawings = [];
+		var imgCanvas = document.createElement('canvas');
+		imgCanvas.width = width;
+		imgCanvas.height = height;
+
+		var imgCtx = imgCanvas.getContext("2d");
+		imgCtx.fillStyle = imgCtx.createPattern( patImg ,'repeat');
+		imgCtx.rect(0,0,imgCanvas.width,imgCanvas.height);
+		imgCtx.fill();
+
+		for (var j = 0; j < slideData.events.length; j++) {
+			switch ( slideData.events[j].type ) {
+				case "draw":
+					for (var k = 1; k < slideData.events[j].curve.length; k++) {
+						draw[1]( imgCtx,
+							xOffset + slideData.events[j].curve[k-1].x*scale,
+							yOffset + slideData.events[j].curve[k-1].y*scale,
+							xOffset + slideData.events[j].curve[k].x*scale,
+							yOffset + slideData.events[j].curve[k].y*scale
+						);
+					}
+					break;
+				case "erase":
+					for (var k = 0; k < slideData.events[j].curve.length; k++) {
+						eraseWithSponge( imgCtx,
+								xOffset + slideData.events[j].curve[k].x*scale,
+								yOffset + slideData.events[j].curve[k].y*scale
+						);
+					}
+					break;
+				case "setcolor":
+					setColor(slideData.events[j].index);
+					break;
+				case "clear":
+					drawings.push( cloneCanvas(imgCanvas) );
+//					addPrintout( parent, nextSlide[i], imgCanvas, patImg );
+					imgCtx.clearRect(0,0,imgCanvas.width,imgCanvas.height);
+					imgCtx.fill();
+					break;
+				default:
+					break;
+			}
+		}
+		drawings.push( cloneCanvas(imgCanvas) );
+
+		mode = 0;
+
+		return drawings;
+	}
+
+	function addDrawings( slide, drawings ) {
+		var parent = slide.parentElement.parentElement;
+		var nextSlide = slide.parentElement.nextElementSibling;
+
+		for (var i = 0; i < drawings.length; i++) {
+			var newPDFPage = document.createElement( 'div' );
+			newPDFPage.classList.add('pdf-page');
+			newPDFPage.style.height = Reveal.getConfig().height;
+//			newPDFPage.innerHTML = '<h1>Drawing should be here!</h1>';
+			newPDFPage.append(drawings[i]);
+//console.log("Add drawing", newPDFPage);
+			if ( nextSlide != null ) {
+				parent.insertBefore( newPDFPage, nextSlide );
+			}
+			else {
+				parent.append( newPDFPage );
+			}
 		}
 	}
 
@@ -1315,6 +1364,7 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			updateReadOnlyMode();
 		}
 		else {
+console.log("Create printout when ready");
 			whenReady( createPrintout );
 		}
 	});
@@ -1545,12 +1595,12 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 	this.drawWithBoardmarker = drawWithBoardmarker;
 	this.drawWithChalk = drawWithChalk;
 	this.startRecording = startRecording;
-	this.clear = clear;
 */
 	this.toggleNotesCanvas = toggleNotesCanvas;
 	this.toggleChalkboard = toggleChalkboard;
 	this.colorNext = colorNext;
 	this.colorPrev = colorPrev;
+	this.clear = clear;
 	this.reset = resetSlide;
 	this.resetAll = resetStorage;
 	this.download = downloadData;
@@ -1562,8 +1612,6 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			Reveal.addKeyBinding( keyBindings[key], RevealChalkboard[key] );
 		}
 	};
-
-	Reveal.addKeyBinding( { keyCode: 65, key: 'A', description: 'Test' }, function() { reset(); } );
 
 	return this;
 };
