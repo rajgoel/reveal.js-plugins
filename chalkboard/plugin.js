@@ -202,7 +202,7 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 		button.style.top = toggleNotesButton.top ||  "auto";
 		button.style.right = toggleNotesButton.right ||  "auto";
 
-		button.innerHTML = '<a href="#" onclick="RevealChalkboard.toggleNotesCanvas(); return false;"><i class="fas fa-pen"></i></i></a>'
+		button.innerHTML = '<a href="#" onclick="RevealChalkboard.toggleNotesCanvas(); return false;"><i class="fas fa-pen"></i></a>'
 		document.querySelector(".reveal").appendChild( button );
 	}
 //alert("Buttons");
