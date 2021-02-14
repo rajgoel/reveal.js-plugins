@@ -115,7 +115,7 @@ const initChalkboard = function(Reveal){
 
 		if ( config.boardmarkerWidth || config.penWidth ) boardmarkerWidth = config.boardmarkerWidth || config.penWidth;
 		if ( config.chalkWidth ) chalkWidth = config.chalkWidth;
-		if ( "chalkEffect" in config ) chalkEffect = ("chalkEffect" in config);
+		if ( "chalkEffect" in config ) chalkEffect = config.chalkEffect;
 		if ( config.rememberColor ) rememberColor = config.rememberColor;
 		if ( config.eraser ) eraser = config.eraser;
 		if ("boardmarkers" in config) boardmarkers = config.boardmarkers;
