@@ -342,7 +342,13 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 //console.log(i,fragment, elements[j].animationSchedule[fragment].begin);
 					elements[j].animation.time( elements[j].animationSchedule[fragment].end );
 				}
-
+				var fragments = elements[j].querySelectorAll("svg > [data-fragment-index]");
+//console.log(i,fragment, elements[j], fragments);
+				for ( var k = 0; k < fragments.length; k++ ) {
+					if ( fragments[k].getAttribute("data-fragment-index") < fragment ) {
+						fragments[k].classList.add("visible");
+					}
+				}
 			}			
 		}
 	}
