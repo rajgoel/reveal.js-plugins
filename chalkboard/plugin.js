@@ -1520,6 +1520,17 @@ console.log("Create printout when ready");
 		}
 	};
 
+	function colorIndex( idx ) {
+		if ( !readOnly ) {
+			setColor(idx);
+			recordEvent( { type: "setcolor", index: idx, begin: Date.now() - slideStart } );
+			// broadcast
+			var message = new CustomEvent('send');
+			message.content = { sender: 'chalkboard-plugin', type: 'setcolor', index: idx };
+			document.dispatchEvent( message );
+		}
+	}
+
 	function colorNext() {
 		if ( !readOnly ) {
 			let idx = cycleColorNext();
@@ -1605,6 +1616,7 @@ console.log("Create printout when ready");
 */
 	this.toggleNotesCanvas = toggleNotesCanvas;
 	this.toggleChalkboard = toggleChalkboard;
+	this.colorIndex = colorIndex;
 	this.colorNext = colorNext;
 	this.colorPrev = colorPrev;
 	this.clear = clear;
