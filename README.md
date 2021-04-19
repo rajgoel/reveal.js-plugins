@@ -1,7 +1,3 @@
-```diff
-- Important notes: This repository is is for reveal.s v4.0.2. For older versions of reveal.js, please use branch 'v3'.
-```
-
 # reveal.js-plugins
 
 This is a collection of plugins for [Reveal.js](https://github.com/hakimel/reveal.js) - a framework for easily creating beautiful presentations using HTML. Example presentations and demos for these plugins can be found and added [here](https://github.com/rajgoel/reveal.js-plugins/wiki/Example-presentations).
