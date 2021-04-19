@@ -22,19 +22,14 @@ Copy the files ```plugin.js``` and ```svg.min.js``` into the plugin folder of yo
 ```
 
 By default animations only play when using the [Auto-Slide](https://revealjs.com/auto-slide/) feature or when playing (or recording) an [Audio-Slideshow](https://github.com/rajgoel/reveal.js-plugins/tree/master/audio-slideshow). In order to always play an animation when moving to a slide, the plugin can be configured by setting the `autoplay` parameter to `true`:
-```html
-<script src="plugin/animate/plugin.js"></script>
-<script src="plugin/animate/svg.min.js"></script>
-
-<script>
-    Reveal.initialize({
-        // ...
+```js
+Reveal.initialize({
+	// ...
 	animate: {
 		autoplay: true
 	}
-        // ...
-    });
-</script>
+	// ...
+});
 ```
 
 
