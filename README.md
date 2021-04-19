@@ -25,11 +25,7 @@ The source code of the demos can be found here: https://github.com/rajgoel/revea
 
 ## Download
 
-You can download the plugins into the ```bower_components``` folder using
-
-```bower install reveal.js-plugins```
-
-or use npm to install the plugins into the ```node_modules```folder using
+You can use npm to install the plugins into the ```node_modules```folder using
  
 ```npm install  reveal.js-plugins```
 
