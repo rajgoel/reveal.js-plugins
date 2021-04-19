@@ -73,6 +73,36 @@ The following example loads a heart and creates a heartbeat animation.
 </div>
 ```
 
+### Example: Fragments
+
+The following example loads a SVG file and makes selected elements of the svg appear as fragments.
+
+```html
+<span class="fragment"></span>
+<span class="fragment"></span>
+<span class="fragment"></span>
+<span class="fragment"></span>
+<span class="fragment"></span>
+<span class="fragment"></span>
+<span class="fragment"></span>
+<span class="fragment"></span>
+
+<div data-animate data-src="animate/decisiontree.svg">
+<!--
+{ "setup": [
+{ "element": "#Price", "modifier": "attr", "parameters": [ {"class": "fragment", "data-fragment-index": "0"} ] },
+{ "element": "#Host1", "modifier": "attr", "parameters": [ {"class": "fragment", "data-fragment-index": "1"} ] },
+{ "element": "#Choice11", "modifier": "attr", "parameters": [ {"class": "fragment", "data-fragment-index": "2"} ] },
+{ "element": "#Choice12", "modifier": "attr", "parameters": [ {"class": "fragment", "data-fragment-index": "3"} ] },
+{ "element": "#Host2", "modifier": "attr", "parameters": [ {"class": "fragment", "data-fragment-index": "4"} ] },
+{ "element": "#Choice2", "modifier": "attr", "parameters": [ {"class": "fragment", "data-fragment-index": "5"} ] },
+{ "element": "#Host3", "modifier": "attr", "parameters": [ {"class": "fragment", "data-fragment-index": "6"} ] },
+{ "element": "#Choice3", "modifier": "attr", "parameters": [ {"class": "fragment", "data-fragment-index": "7"} ] }
+]}
+-->
+</div>
+
+```
 ### Example: Adding SVG elements
 
 The following example loads a SVG file and adds additional SVG elements to it upon loading. When advancing through the fragments, these elements are shown.
@@ -221,8 +251,9 @@ The following example loads an SVG file, clones elements of the SVG, and manipul
 </div>
 ```
 
+
 ## License
 
 MIT licensed
 
-Copyright (C) 2020 Asvin Goel
+Copyright (C) 2021 Asvin Goel

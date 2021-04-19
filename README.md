@@ -8,6 +8,7 @@ This is a collection of plugins for [Reveal.js](https://github.com/hakimel/revea
 
 This collections includes the following plugins:
 
+- [Animate](https://github.com/rajgoel/reveal.js-plugins/tree/master/animate) ([Demo](https://rajgoel.github.io/reveal.js-demos/animate-demo.html)): A plugin for animations using SVG.js.
 - [Anything](https://github.com/rajgoel/reveal.js-plugins/tree/master/anything) ([Demo](https://rajgoel.github.io/reveal.js-demos/anything-demo.html)): A plugin for adding plots, charts, animated SVGs,or anything else inside an HTML object using a JSON string and a javascript function.
 - [Audio slideshow](https://github.com/rajgoel/reveal.js-plugins/tree/master/audio-slideshow) ([Demo](https://rajgoel.github.io/reveal.js-demos/audio-slideshow-demo.html)): A plugin for audio playback and recording.
 - [Chalkboard](https://github.com/rajgoel/reveal.js-plugins/tree/master/chalkboard) ([Demo](https://rajgoel.github.io/reveal.js-demos/chalkboard-demo.html)):
@@ -44,5 +45,5 @@ Please note that the [menu](https://github.com/denehyg/reveal.js-menu)-plugin is
 
 MIT licensed
 
-Copyright (C) 2020 Asvin Goel
+Copyright (C) 2021 Asvin Goel
 
