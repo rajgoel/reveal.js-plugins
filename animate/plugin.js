@@ -20,6 +20,9 @@ window.RevealAnimate = window.RevealAnimate || {
 };
 
 const initAnimate = function(Reveal){
+	var config = Reveal.getConfig().animate || {};
+	var autoplay = config.autoplay;
+
 	var playback = false;
 	var isRecording = false;
 	var timer = null;
@@ -227,7 +230,9 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 		var elements = Reveal.getCurrentSlide().querySelectorAll("[data-animate]");
 		for (var i = 0; i < elements.length; i++ ){
 //console.warn("Play",elements[i]);
-			elements[i].animation.play();
+			if ( elements[i].animation ) {
+				elements[i].animation.play();
+			}
 		}
 		autoPause();
 	}
@@ -288,7 +293,7 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 		if ( timestamp !== undefined ) {
 			seek( timestamp);
 		}
-		if ( Reveal.isAutoSliding() || playback || isRecording ) {
+		if ( Reveal.isAutoSliding() || autoplay || playback || isRecording ) {
 //console.log("Start animation");
 			play();
 		}
