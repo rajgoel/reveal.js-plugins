@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 1.0.5
+** Version: 1.0.6
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -796,66 +796,81 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 /*****************************************************************
 ** Broadcast
 ******************************************************************/
+
+	var eventQueue = [];
+
 	document.addEventListener( 'received', function ( message ) {
-//console.log(JSON.stringify(message));
 		if ( message.content && message.content.sender == 'chalkboard-plugin' ) {
-			switch ( message.content.type ) {
-				case 'showChalkboard':
-					showChalkboard();
-					break;
-				case 'closeChalkboard':
-					closeChalkboard();
-					break;
-				case 'startDrawing':
-					startDrawing(message.content.x, message.content.y, message.content.erase);
-					break;
-				case 'startErasing':
-					if ( message.content ) {
-						message.content.type = "erase";
-						message.content.begin = Date.now() - slideStart;
-						eraseWithSponge(drawingCanvas[mode].context, message.content.x, message.content.y);
-					}
-					break;
-				case 'drawSegment':
-					drawSegment(message.content.x, message.content.y, message.content.erase);
-					break;
-				case 'stopDrawing':
-					stopDrawing();
-					break;
-				case 'clear':
-					clear();
-					break;
-				case 'setcolor':
-					setColor(message.content.index);
-					break;
-				case 'resetSlide':
-					resetSlide(true);
-					break;
-				case 'init':
-					storage = message.content.storage;
-					for (var id = 0; id < 2; id++ ) {
-						drawingCanvas[id].scale = Math.min( drawingCanvas[id].width/storage[id].width, drawingCanvas[id].height/storage[id].height );
-						drawingCanvas[id].xOffset = (drawingCanvas[id].width - storage[id].width * drawingCanvas[id].scale)/2;
-						drawingCanvas[id].yOffset = (drawingCanvas[id].height - storage[id].height * drawingCanvas[id].scale)/2;
-					}
-					clearCanvas( 0 );
-					clearCanvas( 1 );
-					if ( !playback ) {
-						slidechangeTimeout = setTimeout( startPlayback, transition, getSlideDuration(), 0 );
-					}
-					if ( mode == 1 && message.content.mode == 0) {
-						setTimeout( closeChalkboard, transition + 50 );
-					}
-					if ( mode == 0 && message.content.mode == 1) {
-						setTimeout( showChalkboard, transition + 50 );
-					}
-					mode = message.content.mode;
-					break;
-				default:
-					break;
-			}
+			// add message to queue
+			eventQueue.push(message);
 		}
+		if ( eventQueue.length == 1 ) processQueue();
 	});
+
+//console.log(JSON.stringify(message));
+	function processQueue() {
+		// take first message from queue
+		var message = eventQueue.shift();
+
+		switch ( message.content.type ) {
+			case 'showChalkboard':
+				showChalkboard();
+				break;
+			case 'closeChalkboard':
+				closeChalkboard();
+				break;
+			case 'startDrawing':
+				startDrawing(message.content.x, message.content.y, message.content.erase);
+				break;
+			case 'startErasing':
+				if ( message.content ) {
+					message.content.type = "erase";
+					message.content.begin = Date.now() - slideStart;
+					eraseWithSponge(drawingCanvas[mode].context, message.content.x, message.content.y);
+				}
+				break;
+			case 'drawSegment':
+				drawSegment(message.content.x, message.content.y, message.content.erase);
+				break;
+			case 'stopDrawing':
+				stopDrawing();
+				break;
+			case 'clear':
+				clear();
+				break;
+			case 'setcolor':
+				setColor(message.content.index);
+				break;
+			case 'resetSlide':
+				resetSlide(true);
+				break;
+			case 'init':
+				storage = message.content.storage;
+				for (var id = 0; id < 2; id++ ) {
+					drawingCanvas[id].scale = Math.min( drawingCanvas[id].width/storage[id].width, drawingCanvas[id].height/storage[id].height );
+					drawingCanvas[id].xOffset = (drawingCanvas[id].width - storage[id].width * drawingCanvas[id].scale)/2;
+					drawingCanvas[id].yOffset = (drawingCanvas[id].height - storage[id].height * drawingCanvas[id].scale)/2;
+				}
+				clearCanvas( 0 );
+				clearCanvas( 1 );
+				if ( !playback ) {
+					slidechangeTimeout = setTimeout( startPlayback, transition, getSlideDuration(), 0 );
+				}
+				if ( mode == 1 && message.content.mode == 0) {
+					setTimeout( closeChalkboard, transition + 50 );
+				}
+				if ( mode == 0 && message.content.mode == 1) {
+					setTimeout( showChalkboard, transition + 50 );
+				}
+				mode = message.content.mode;
+				break;
+			default:
+				break;
+		}
+
+		// continue with next message if queued
+		if ( eventQueue.length > 0 ) processQueue();
+	}
 
 	document.addEventListener( 'newclient', function() {
 		// broadcast storage
