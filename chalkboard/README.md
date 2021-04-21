@@ -62,9 +62,13 @@ With above configuration the notes canvas is opened and closed when pressing 'c'
 
 If the ```autoSlide``` feature is set or if the ```audio-slideshow``` plugin is used, pre-recorded chalkboard drawings can be played. The slideshow plays back the user interaction with the chalkboard in the same way as it was conducted when recording the data.
 
+## Multiplexing
+
+The plugin supports multiplexing via the [`multiplex` plugin](https://github.com/reveal/multiplex).
+
 ## PDF-Export
 
-If the slideshow is opened in [print mode](https://github.com/hakimel/reveal.js/#pdf-export) the pre-recorded chalkboard drawings (which must be provided in a file, see ```src``` option) are included in the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings are also included if they had been cleared (using the 'DEL' key). Drawings on the notes canvas are not included in the PDF-file.
+If the slideshow is opened in [print mode](https://github.com/hakimel/reveal.js/#pdf-export), the chalkboard drawings in the session storage (see ```storage``` option - print version must be opened in the same tab or window as the original slideshow) or provided in a file (see ```src``` option) are included in the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings on the notes canvas are not included in the PDF-file.
 
 
 ## Configuration
@@ -74,6 +78,7 @@ The plugin has several configuration options:
 - ```boardmarkerWidth```: an integer, the drawing width of the boardmarker; larger values draw thicker lines.
 - ```chalkWidth```: an integer, the drawing width of the chalk; larger values draw thicker lines.
 - ```chalkEffect```: a float in the range ```[0.0, 1.0]```, the intesity of the chalk effect on the chalk board. Full effect (default) ```1.0```, no effect ```0.0```.
+- ```storage```: Optional variable name for session storage of drawings.
 - ```src```: Optional filename for pre-recorded drawings.
 - ```readOnly```: Configuation option allowing to prevent changes to existing drawings. If set to ```true``` no changes can be made, if set to false ```false``` changes can be made, if unset or set to ```undefined``` no changes to the drawings can be made after returning to a slide or fragment for which drawings had been recorded before. In any case the recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the ```RevealChalkboard.clear()``` function).
 - ```toggleNotesButton```: If set to ```true``` a button for opening and closing the notes canvas is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate.
@@ -137,4 +142,4 @@ Reveal.initialize({
 
 MIT licensed
 
-Copyright (C) 2020 Asvin Goel
+Copyright (C) 2021 Asvin Goel
