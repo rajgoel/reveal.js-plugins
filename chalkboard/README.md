@@ -68,7 +68,7 @@ The plugin supports multiplexing via the [`multiplex` plugin](https://github.com
 
 ## PDF-Export
 
-If the slideshow is opened in [print mode](https://github.com/hakimel/reveal.js/#pdf-export), the chalkboard drawings in the session storage (see ```storage``` option - print version must be opened in the same tab or window as the original slideshow) or provided in a file (see ```src``` option) are included in the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings on the notes canvas are not included in the PDF-file.
+If the slideshow is opened in [print mode](https://revealjs.com/pdf-export/), the chalkboard drawings in the session storage (see ```storage``` option - print version must be opened in the same tab or window as the original slideshow) or provided in a file (see ```src``` option) are included in the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings on the notes canvas are not included in the PDF-file.
 
 
 ## Configuration
