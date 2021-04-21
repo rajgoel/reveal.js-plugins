@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 1.0.6
+** Version: 1.1.0
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -21,11 +21,14 @@ window.RevealChalkboard = window.RevealChalkboard || {
     configure: function(config) { configure(config); },
     toggleNotesCanvas: function() { toggleNotesCanvas(); },
     toggleChalkboard: function() { toggleChalkboard(); },
+    colorIndex: function() { colorIndex(); },
     colorNext: function() { colorNext(); },
     colorPrev: function() {colorPrev(); },
     clear: function() { clear(); },
     reset: function() { reset(); },
     resetAll: function() { resetAll(); },
+    updateStorage: function() { updateStorage(); },
+    getData: function() { return getData(); },
     download: function() { download(); },
 };
 
@@ -296,11 +299,44 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 		{ width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: []},
 		{ width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: []}
 	];
-//console.log( JSON.stringify(storage));
 
 	var loaded = null;
-	if ( config.src != null ) {
+
+        if ( config.storage ) {
+		// Get chalkboard drawings from session storage 
+		loaded = initStorage( sessionStorage.getItem( config.storage ) );
+	}
+	
+	if ( !loaded && config.src != null ) {
+		// Get chalkboard drawings from the given file
 		loadData( config.src );
+	}
+
+	/**
+	 * Initialize storage.
+	 */
+	function initStorage( json ) {
+		var success = false;
+		try {
+			var data = JSON.parse( json );
+			for (var id = 0; id < data.length; id++) {
+				if ( drawingCanvas[id].width != data[id].width || drawingCanvas[id].height != data[id].height ) {
+					drawingCanvas[id].scale = Math.min( drawingCanvas[id].width/data[id].width, drawingCanvas[id].height/data[id].height);
+					drawingCanvas[id].xOffset = (drawingCanvas[id].width - data[id].width * drawingCanvas[id].scale)/2;
+					drawingCanvas[id].yOffset = (drawingCanvas[id].height - data[id].height * drawingCanvas[id].scale)/2;
+				}
+				if ( config.readOnly ) {
+					drawingCanvas[id].container.style.cursor = 'default';
+					drawingCanvas[id].canvas.style.cursor = 'default';
+				}
+			}
+			success = true;
+			storage = data;
+		}
+		catch ( err ) {
+			console.warn( "Cannot initialise storage!" );
+		}
+		return success;
 	}
 
 
@@ -311,20 +347,8 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 		var xhr = new XMLHttpRequest();
 		xhr.onload = function() {
 			if (xhr.readyState === 4 && xhr.status != 404 ) {
-				storage = JSON.parse(xhr.responseText);
-				for (var id = 0; id < storage.length; id++) {
-					if ( drawingCanvas[id].width != storage[id].width || drawingCanvas[id].height != storage[id].height ) {
-						drawingCanvas[id].scale = Math.min( drawingCanvas[id].width/storage[id].width, drawingCanvas[id].height/storage[id].height);
-						drawingCanvas[id].xOffset = (drawingCanvas[id].width - storage[id].width * drawingCanvas[id].scale)/2;
-						drawingCanvas[id].yOffset = (drawingCanvas[id].height - storage[id].height * drawingCanvas[id].scale)/2;
-					}
-					if ( config.readOnly ) {
-						drawingCanvas[id].container.style.cursor = 'default';
-						drawingCanvas[id].canvas.style.cursor = 'default';
-					}
-				}
-				loaded = true;
-//console.log("Drawings loaded");
+				loaded = initStorage(xhr.responseText);
+console.log("Drawings loaded from file");
 			}
 			else {
 				config.readOnly = undefined;
@@ -346,6 +370,15 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 		}
 	}
 
+
+	function updateStorage() {
+		var json = JSON.stringify( storage )
+		if ( config.storage ) {
+			sessionStorage.setItem( config.storage, json )
+		}
+		return json;
+	}
+
 	/**
 	 * Get data as json string.
 	 */
@@ -358,7 +391,8 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 				}
 			}
 		}
-		return JSON.stringify( storage );
+
+		return updateStorage();
 	}
 
 	/**
@@ -869,7 +903,12 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 		}
 
 		// continue with next message if queued
-		if ( eventQueue.length > 0 ) processQueue();
+		if ( eventQueue.length > 0 ) { 
+			processQueue();
+		}
+		else {
+			updateStorage();
+		}
 	}
 
 	document.addEventListener( 'newclient', function() {
@@ -1126,6 +1165,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 			if ( event.type == "erase" || event.curve.length > 1 ) {
 				// do not save a line with a single point only
 				recordEvent( event );
+				updateStorage();
 			}
 			event = null;
 		}
@@ -1383,6 +1423,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 				event.timestamp = 0;
 				document.dispatchEvent( event );
 			}
+			updateStorage();
 			updateReadOnlyMode();
 		}
 		else {
@@ -1408,6 +1449,7 @@ console.log("Create printout when ready");
 				document.dispatchEvent( event );
 			}
 
+			updateStorage();
 			updateReadOnlyMode();
 		}
 	});
@@ -1488,7 +1530,8 @@ console.log("Create printout when ready");
 						let idx = color[mode];
 						setColor(idx);
 						recordEvent( { type:"setcolor", index: idx, begin: Date.now() - slideStart } );
-					} else {
+					} else {				updateStorage();
+
 						color[mode] = 0;
 					}
 					notescanvas.style.background = background[0]; //'rgba(255,0,0,0.5)';
@@ -1504,6 +1547,7 @@ console.log("Create printout when ready");
 			event = null;
 			if ( !readOnly ) {
 				recordEvent( { type:"close", begin: Date.now() - slideStart } );
+				updateStorage();
 			}
 			closeChalkboard();
 		}
@@ -1591,6 +1635,7 @@ console.log("Create printout when ready");
 			slideData.duration = 0;
 			slideData.events = [];
 
+			updateStorage();
 			updateReadOnlyMode();
 			// broadcast
 			var message = new CustomEvent('send');
@@ -1615,6 +1660,9 @@ console.log("Create printout when ready");
 					{ width: drawingCanvas[1].width, height: drawingCanvas[1].height, data: []}
 				];
 
+			if ( config.storage ) {
+				sessionStorage.setItem( config.storage, null )
+			}
 			updateReadOnlyMode();
 			// broadcast
 			var message = new CustomEvent('send');
@@ -1638,6 +1686,7 @@ console.log("Create printout when ready");
 	this.reset = resetSlide;
 	this.resetAll = resetStorage;
 	this.download = downloadData;
+	this.updateStorage = updateStorage;
 	this.getData = getData;
 	this.configure = configure;
 
