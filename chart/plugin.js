@@ -4,7 +4,7 @@
 **
 ** A plugin for reveal.js allowing to integrate Chart.js
 **
-** Version: 1.0.0
+** Version: 1.1.0
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -18,7 +18,8 @@ window.RevealChart = window.RevealChart || {
     id: 'RevealChart',
     init: function(deck) {
         initChart(deck);
-    }
+    },
+    update: function(canvas, idx, data) { update(canvas, idx, data); },
 };
 
 const initChart = function(Reveal){
@@ -112,6 +113,12 @@ const initChart = function(Reveal){
 
 	}
 
+	function updateChart(canvas, idx, data) {
+		canvas.chart.data.datasets[idx].data = data;
+		canvas.chart.update();
+		Reveal.layout();
+	}
+
 	var initializeCharts = function(){
 		// Get all canvases
 		var canvases = document.querySelectorAll("canvas");
@@ -176,4 +183,8 @@ const initChart = function(Reveal){
 
 		});
 	});
+
+	this.update = updateChart;
+
+	return this;
 };
