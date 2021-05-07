@@ -40,8 +40,12 @@ const initSeminar = function(Reveal){
 		return;
 	}
 
-	var socket = io.connect( seminar.server + ':' + (seminar.port || 3000) );
-
+//	var socket = io.connect( seminar.server + ':' + (seminar.port || 3000) );
+	var socket = io.connect( seminar.server );
+console.log('connect to ', seminar.server);
+socket.on('connect', function() {
+  console.log('connected', seminar.server, socket.connected);
+});
         const STATUS = {"CHECKEDIN": 1, "JOINING": 2, "JOINED": 3, "HOSTING": 4, "CHAIRING": 5};
 
 	var username = null;
