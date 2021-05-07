@@ -18,10 +18,11 @@ This collections includes the following plugins:
 - [Fullscreen](https://github.com/rajgoel/reveal.js-plugins/tree/master/fullscreen) ([Demo](https://rajgoel.github.io/reveal.js-demos/fullscreen-demo.html)):
  A simple plugin allowing to use fullscreen slides.
 - [Menu](https://github.com/denehyg/reveal.js-menu) ([Demo](https://denehyg.github.io/reveal.js-menu)): A plugin by Greg Denehy for adding a slideout menu.
+- [Seminar](https://github.com/rajgoel/reveal.js-plugins/tree/master/seminar) ([Demo](https://rajgoel.github.io/reveal.js-demos/seminar-demo.html)):
 
 ## Getting started
 
-The source code of the demos can be found here: https://github.com/rajgoel/reveal.js-demos.
+The source code of the demos can be found here: <https://github.com/rajgoel/reveal.js-demos>.
 
 ## Download
 
