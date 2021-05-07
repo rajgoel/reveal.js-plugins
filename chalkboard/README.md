@@ -107,6 +107,7 @@ Reveal.initialize({
         storage: null,
         src: null,
         readOnly: undefined,
+        messageType: 'broadcast',
         toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
         toggleNotesButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
         transition: 800,
@@ -138,6 +139,7 @@ Reveal.initialize({
 });
 ```
 
+For compatibility with the [`multiplex`](https://github.com/reveal/multiplex) plugin, the `messageType` parameter must be set to `'send'`.
 
 ## License
 
