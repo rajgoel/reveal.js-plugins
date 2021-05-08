@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding creating an online seminar.
 **
-** Version: 0.1.0
+** Version: 0.2.0
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -26,9 +26,12 @@ window.RevealSeminar = window.RevealSeminar || {
     leave_room: function() { leave_room(); },
 };
 
+function defaultLogger( event ) {
+	console.log( event  );
+}
 
 const initSeminar = function(Reveal){
-	var seminar = Reveal.getConfig().seminar;
+	var seminar = Reveal.getConfig().seminar || {};
 	if ( !seminar.server ) {
 		alert("Seminar server not specified!");
 		return;
@@ -40,16 +43,20 @@ const initSeminar = function(Reveal){
 		return;
 	}
 
-//	var socket = io.connect( seminar.server + ':' + (seminar.port || 3000) );
+	const logger = window[ seminar.logger || "defaultLogger" ];
+
 	var socket = io.connect( seminar.server );
-console.log('connect to ', seminar.server);
-socket.on('connect', function() {
-  console.log('connected', seminar.server, socket.connected);
-});
+	if ( seminar.callback )
+	logger('connect to ', seminar.server);
+	socket.on('connect', function() {
+		logger('connected to ' + seminar.server);
+	});
+
         const STATUS = {"CHECKEDIN": 1, "JOINING": 2, "JOINED": 3, "HOSTING": 4, "CHAIRING": 5};
 
 	var username = null;
 	var status = null;
+
 
 	function checkin( name ) {
 		if ( status && name && username != name ) {
@@ -65,11 +72,11 @@ socket.on('connect', function() {
 			// checkin to socket sever
 			socket.emit('checkin', username, function( error ){
 				if (error) {
-					console.warn( error );
+					logger( error );
 				}
 				else {
 					status = STATUS.CHECKEDIN;
-					console.log( `Checked in as ${username}` );
+					logger( `checked in as ${username}` );
 				}
 			});
 		}
@@ -78,7 +85,7 @@ socket.on('connect', function() {
 	function open_or_join_room( secret ) {
 		if ( status >= STATUS.HOSTING ) {
 			// already hosting, ignore request to host
-			console.warn( 'Already hosting, ignoring request to host' );
+			logger( 'already hosting, ignoring request to host' );
 			return;
 		}
 		if ( status == STATUS.JOINED ) {
@@ -92,13 +99,14 @@ socket.on('connect', function() {
  		// open or join a seminar as host
 		socket.emit('host_room', { url: seminar.url, name: seminar.room, hash: seminar.hash, secret }, function( error ){
 			if (error) {
-				console.warn( error );
+//				console.warn( error );
+				logger( error );
 			}
 			else {
 				// assume that room is opened and change status later if another host is chair 
 				status = Math.max(status, STATUS.HOSTING);
-console.log("I AM HOST ",status);
-				console.log( `Host room (${seminar.url},${seminar.room},${seminar.hash})` );
+
+				logger( `host room "${seminar.url}|${seminar.room}|${seminar.hash}"` );
 				makeHost();
 			}
 		});
@@ -107,11 +115,11 @@ console.log("I AM HOST ",status);
 	function leave_room() {
 		socket.emit('leave_room', { url: seminar.url, name: seminar.room, hash: seminar.hash }, function( error ){
 			if (error) {
-				console.warn( error );
+				logger( error );
 			}
 			else {
 				status = STATUS.CHECKEDIN;
-				console.log( `Left room (${seminar.url},${seminar.room},${seminar.hash})` );
+				logger( `left room "${seminar.url}|${seminar.room}|${seminar.hash}"` );
 			}
 		});
 	}
@@ -119,13 +127,13 @@ console.log("I AM HOST ",status);
 	function join_room() {
 		// join a seminar as regular participant
 		socket.emit('join_room', { url: seminar.url, name: seminar.room, hash: seminar.hash }, function( error ){
-console.log("Try to join room:", seminar.url, seminar.room, seminar.hash );
+			logger(`try to join room "${seminar.url}|${seminar.room}|${seminar.hash}"` );
 			if (error) {
-				console.warn( error );
+				logger( error );
 				status = STATUS.JOINING;
 			}
 			else {
-console.log( `Joined room (${seminar.url},${seminar.room},${seminar.hash}) as ${socket.id}` );
+				logger( `joined room "${seminar.url}|${seminar.room}|${seminar.hash}" as ${socket.id}` );
 				subscribe();
 				status = STATUS.JOINED;
 			}
@@ -224,7 +232,7 @@ console.log(rooms);
 	});
 */
 	socket.on('room_opened', ( room ) => {
-console.log('room_opened', room, status == STATUS.JOINING, room.url, seminar.url, room.name, seminar.room );
+		logger( `room opened "${seminar.url}|${seminar.room}|..."` );
 
 		if ( status == STATUS.JOINING && room.url == seminar.url && room.name == seminar.room ) {
 			// try to join room as regular participant
@@ -233,7 +241,7 @@ console.log('room_opened', room, status == STATUS.JOINING, room.url, seminar.url
 	});
 
 	socket.on('kicked_out', ( room ) => {
-console.log("kicked_out",room);
+		logger( `kicked out of room "${room.url}|${room.name}|${room.hash}"` );
 		leave_room();
 		if ( status >= STATUS.JOINED ) {
 			// tell other plugins that user is kicked out of the room
@@ -245,8 +253,8 @@ console.log("kicked_out",room);
 	});
 
 	socket.on('chair', ( room ) => {
+		logger( `chairing room "${room.url}|${room.name}|${room.hash}"` );
 		status = STATUS.CHAIRING;
-console.log("I AM CHAIR",status);
 	});
 
 	socket.on('participants', ({ room, hosts, participants }) => {
@@ -262,7 +270,7 @@ console.log("I AM CHAIR",status);
 	socket.on('entered_room', ({ room, user }) => {
 		// make sure to only accept messages within same scope (should not be necessary)
 		if ( room.url != seminar.url || room.name != seminar.room || room.hash != seminar.hash ) return; 
-console.log(`${user.id} entered room`, room );
+		logger(`${user.id} entered room "${room.url}|${room.name}|${room.hash}"` );
 
 		if ( status == STATUS.CHAIRING ) {
 			// send current state to the new participant
@@ -283,7 +291,7 @@ console.log(`${user.id} entered room`, room );
 			Reveal.setState(content.state);
 		}
 		if ( content.custom ) {
-console.log("Received announcement: ", content.custom.timestamp, content.custom.type );
+//console.log("Received announcement: ", content.custom.timestamp, content.custom.type );
 			// forward custom events to other plugins
 			var event = new CustomEvent('received');
 			event.content = content.custom;
@@ -292,7 +300,7 @@ console.log("Received announcement: ", content.custom.timestamp, content.custom.
 	});
 
 	socket.on('message', (  { time, room, sender, content } ) => {
-console.log("Received message: ", content );
+//console.log(`received message: ", content );
 		// make sure to only accept messages within same scope (should not be necessary)
 		if ( room.url != seminar.url || room.name != seminar.room || room.hash != seminar.hash ) return; 
 
