@@ -10,17 +10,21 @@
 **
 ******************************************************************/
 
+import Chart from 'chart.js';
+
 /**
  * Reveal Plugin
  * https://revealjs.com/creating-plugins/
  */
-window.RevealChart = window.RevealChart || {
+const RevealChart = {
     id: 'RevealChart',
     init: function(deck) {
         initChart(deck);
     },
     update: function(canvas, idx, data) { update(canvas, idx, data); },
 };
+
+export default RevealChart;
 
 const initChart = function(Reveal){
 	function parseJSON(str) {

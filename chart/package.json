@@ -1,0 +1,22 @@
+{
+  "name": "reveal-plugin-chart",
+  "version": "2.0.0",
+  "description": "A plugin for reveal.js allowing to integrate Chart.js",
+  "main": "plugin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rajgoel/reveal.js-plugins.git"
+  },
+  "author": "Asvin Goel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rajgoel/reveal.js-plugins/issues"
+  },
+  "homepage": "https://github.com/rajgoel/reveal.js-plugins#readme",
+  "dependencies": {
+    "chart.js": "^2.9.3"
+  }
+}
