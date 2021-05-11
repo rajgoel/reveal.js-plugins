@@ -4,7 +4,7 @@
 **
 ** A plugin for reveal.js allowing to integrate Chart.js
 **
-** Version: 1.1.0
+** Version: 1.2.0
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -41,18 +41,15 @@ const initChart = function(Reveal){
 	  for (var p in obj2) {
 	    try {
 	      // Property in destination object set; update its value.
-	      if ( obj1[p].constructor==Object && obj2[p].constructor==Object ) {
+	      if ( obj1[p] !== null && typeof obj1[p] === 'object' && typeof obj2[p] === 'object' ) {
 	        obj1[p] = mergeRecursive(obj1[p], obj2[p]);
-
-	      } else {
+	      } 
+	      else {
 	        obj1[p] = obj2[p];
-
 	      }
-
 	    } catch(e) {
 	      // Property in destination object not set; create it and set its value.
 	      obj1[p] = obj2[p];
-
 	    }
 	  }
 
@@ -63,7 +60,7 @@ const initChart = function(Reveal){
 	function createChart(canvas, CSV, comments) {
 		canvas.chart = null;
 		var ctx = canvas.getContext("2d");
-		var chartOptions = { responsive: true };
+		var chartOptions = { responsive: true, maintainAspectRatio: false };
 		var chartData = { labels: null, datasets: []};
 		if ( comments !== null ) for (var j = 0; j < comments.length; j++ ){
 			comments[j] = comments[j].replace(/<!--/,'');
@@ -166,7 +163,7 @@ const initChart = function(Reveal){
 	var chartConfig = Reveal.getConfig().chart || {};
 
 	// set global chart options
-	var config = chartConfig["defaults"];
+	var config = chartConfig.defaults;
 	if ( config ) {
 		mergeRecursive(Chart.defaults, config);
 	}
@@ -176,7 +173,7 @@ const initChart = function(Reveal){
 		Reveal.addEventListener('slidechanged', function(){
 			var canvases = Reveal.getCurrentSlide().querySelectorAll("canvas[data-chart]");
 			for (var i = 0; i < canvases.length; i++ ){
-				if ( canvases[i].chart && canvases[i].chart.config.options.animation ) {
+				if ( canvases[i].chart  && canvases[i].chart.config.options.animation !== false ) {
 					recreateChart( canvases[i] );
 				}
 			}
