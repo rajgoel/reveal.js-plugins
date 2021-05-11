@@ -40,24 +40,22 @@ const initAnything = function(Reveal){
 	* Recursively merge properties of two objects without overwriting the first
 	*/
 	function mergeRecursive(obj1, obj2) {
+
 	  for (var p in obj2) {
 	    try {
 	      // Property in destination object set; update its value.
-	      if ( obj2[p].constructor==Object ) {
+	      if ( obj1[p] !== null && typeof obj1[p] === 'object' && typeof obj2[p] === 'object' ) {
 	        obj1[p] = mergeRecursive(obj1[p], obj2[p]);
-	
-	      } else {
-	        if ( !obj1[p] ) obj1[p] = obj2[p];
-	
+	      } 
+	      else {
+	        obj1[p] = obj2[p];
 	      }
-	
 	    } catch(e) {
 	      // Property in destination object not set; create it and set its value.
-	      if ( !obj1[p] ) obj1[p] = obj2[p];
-	
+	      obj1[p] = obj2[p];
 	    }
 	  }
-	
+
 	  return obj1;
 	}
 
