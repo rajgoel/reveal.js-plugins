@@ -32,8 +32,8 @@ Copy the file ```plugin.js``` and the  ```img``` directory into the plugin folde
 ```
 
 In order to include buttons for opening and closing the notes canvas or the chalkboard you should make sure that ```font-awesome``` is available. The easiest way is to include
-```
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+```html
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous">
 ```
 to the ```head``` section of you HTML-file.
 
