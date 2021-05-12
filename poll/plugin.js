@@ -47,7 +47,8 @@ const initPoll = function(Reveal){
 					for (var i = 0; i < siblings.length; i++ ){
 						siblings[i].disabled = true;
 					}
-					vote( poll.getAttribute('data-poll'), button.getAttribute('data-value') ); 
+					vote( poll.getAttribute('data-poll'), button.getAttribute('data-value') );
+					button.classList.add("selected"); 
 					button.blur();
 				});
 			}
