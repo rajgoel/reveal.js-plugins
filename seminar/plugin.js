@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding creating an online seminar.
 **
-** Version: 0.2.0
+** Version: 0.3.0
 **
 ** License: MIT license (see LICENSE.md)
 **
