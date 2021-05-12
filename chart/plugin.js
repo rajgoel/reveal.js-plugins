@@ -4,7 +4,7 @@
 **
 ** A plugin for reveal.js allowing to integrate Chart.js
 **
-** Version: 1.2.0
+** Version: 1.3.0
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -154,9 +154,21 @@ const initChart = function(Reveal){
 	}
 
 	function recreateChart(canvas) {
+		// clear data to redraw animation
+		var data = canvas.chart.data.datasets;
+		canvas.chart.data.datasets = []; 
+		canvas.chart.update();
+		canvas.style.visibility = "hidden";
+		setTimeout( function(canvas, data) { 
+			canvas.chart.data.datasets = data; 
+			canvas.style.visibility = "visible"; 
+			canvas.chart.update(); 
+		}, 500, canvas, data); // wait for slide transition to re-add data and animation
+/*
 		var config = canvas.chart.config;
 		canvas.chart.destroy();
-		setTimeout( function() { canvas.chart = new Chart(canvas, config); }, 500); // wait for slide transition
+		setTimeout( function() { canvas.chart = new Chart(canvas, config);}, 500); // wait for slide transition
+*/
 	}
 
 	// check if chart option is given or not
