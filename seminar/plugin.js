@@ -97,7 +97,7 @@ const initSeminar = function(Reveal){
 		}
 
  		// open or join a seminar as host
-		socket.emit('host_room', { url: seminar.url, name: seminar.room, hash: seminar.hash, secret }, function( error ){
+		socket.emit('host_room', { venue: seminar.url, name: seminar.room, hash: seminar.hash, secret }, function( error ){
 			if (error) {
 //				console.warn( error );
 				logger( error );
@@ -113,7 +113,7 @@ const initSeminar = function(Reveal){
 	}
 
 	function leave_room() {
-		socket.emit('leave_room', { url: seminar.url, name: seminar.room, hash: seminar.hash }, function( error ){
+		socket.emit('leave_room', { venue: seminar.url, name: seminar.room, hash: seminar.hash }, function( error ){
 			if (error) {
 				logger( error );
 			}
@@ -126,7 +126,7 @@ const initSeminar = function(Reveal){
 
 	function join_room() {
 		// join a seminar as regular participant
-		socket.emit('join_room', { url: seminar.url, name: seminar.room, hash: seminar.hash }, function( error ){
+		socket.emit('join_room', { venue: seminar.url, name: seminar.room, hash: seminar.hash }, function( error ){
 			logger(`try to join room "${seminar.url}|${seminar.room}|${seminar.hash}"` );
 			if (error) {
 				logger( error );
@@ -164,7 +164,7 @@ const initSeminar = function(Reveal){
 	function sendMessage( evt ) {
 		// send message w/o copy
 		var data = {
-			url: seminar.url, 
+			venue: seminar.url, 
 			name: seminar.room,
 			hash: seminar.hash, 
 			recipient: (evt.content || {}).recipient,
@@ -190,7 +190,7 @@ const initSeminar = function(Reveal){
 
 	function broadcastState( evt ) {
 		var data = {
-			url: seminar.url, 
+			venue: seminar.url, 
 			name: seminar.room,
 			hash: seminar.hash, 
 			recipient: null,
@@ -232,16 +232,16 @@ console.log(rooms);
 	});
 */
 	socket.on('room_opened', ( room ) => {
-		logger( `room opened "${seminar.url}|${seminar.room}|..."` );
+		logger( `room opened "${room.venue}|${room.name}|..."` );
 
-		if ( status == STATUS.JOINING && room.url == seminar.url && room.name == seminar.room ) {
+		if ( status == STATUS.JOINING && room.venue == seminar.url && room.name == seminar.room ) {
 			// try to join room as regular participant
 			join_room();
 		}
 	});
 
 	socket.on('kicked_out', ( room ) => {
-		logger( `kicked out of room "${room.url}|${room.name}|${room.hash}"` );
+		logger( `kicked out of room "${room.venue}|${room.name}|${room.hash}"` );
 		leave_room();
 		if ( status >= STATUS.JOINED ) {
 			// tell other plugins that user is kicked out of the room
@@ -253,13 +253,13 @@ console.log(rooms);
 	});
 
 	socket.on('chair', ( room ) => {
-		logger( `chairing room "${room.url}|${room.name}|${room.hash}"` );
+		logger( `chairing room "${room.venue}|${room.name}|${room.hash}"` );
 		status = STATUS.CHAIRING;
 	});
 
 	socket.on('participants', ({ room, hosts, participants }) => {
 		// make sure to only accept messages within same scope (should not be necessary)
-		if ( room.url != seminar.url || room.name != seminar.room || room.hash != seminar.hash ) return; 
+		if ( room.venue != seminar.url || room.name != seminar.room || room.hash != seminar.hash ) return; 
 
 		// inform other plugins about participants
 		var event = new CustomEvent('participants');
@@ -269,8 +269,8 @@ console.log(rooms);
 
 	socket.on('entered_room', ({ room, user }) => {
 		// make sure to only accept messages within same scope (should not be necessary)
-		if ( room.url != seminar.url || room.name != seminar.room || room.hash != seminar.hash ) return; 
-		logger(`${user.id} entered room "${room.url}|${room.name}|${room.hash}"` );
+		if ( room.venue != seminar.url || room.name != seminar.room || room.hash != seminar.hash ) return; 
+		logger(`${user.id} entered room "${room.venue}|${room.name}|${room.hash}"` );
 
 		if ( status == STATUS.CHAIRING ) {
 			// send current state to the new participant
@@ -284,7 +284,7 @@ console.log(rooms);
 	socket.on('announcement', (  { time, room, sender, content } ) => {
 //console.log("Received message: ", content );
 		// make sure to only accept messages within same scope (should not be necessary)
-		if ( room.url != seminar.url || room.name != seminar.room || room.hash != seminar.hash ) return; 
+		if ( room.venue != seminar.url || room.name != seminar.room || room.hash != seminar.hash ) return; 
 
 		if ( content.state && content.state != Reveal.getState() ) {
 			// change slide if necessary
@@ -302,7 +302,7 @@ console.log(rooms);
 	socket.on('message', (  { time, room, sender, content } ) => {
 //console.log(`received message: ", content );
 		// make sure to only accept messages within same scope (should not be necessary)
-		if ( room.url != seminar.url || room.name != seminar.room || room.hash != seminar.hash ) return; 
+		if ( room.venue != seminar.url || room.name != seminar.room || room.hash != seminar.hash ) return; 
 
 		if ( content ) {
 			// forward custom events to other plugins
