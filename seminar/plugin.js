@@ -36,7 +36,7 @@ const initSeminar = function(Reveal){
 		alert("Seminar server not specified!");
 		return;
 	}
-	seminar.url = seminar.url || window.location.host + (window.location.path || "/"); 
+	seminar.url = seminar.url || window.location.host; 
 	seminar.room = seminar.room || seminar.url;
 	if ( !seminar.hash ) {
 		alert("Hash not specified!");
