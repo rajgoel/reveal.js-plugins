@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 1.3.0
+** Version: 1.4.0
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -106,7 +106,7 @@ const initChalkboard = function(Reveal){
         var colorButtons = false;
 	var transition = 800;
 
-	var readOnly = undefined;
+	var readOnly = false;
 	var messageType = 'broadcast';
 
 	var config = configure( Reveal.getConfig().chalkboard || {} );
@@ -999,15 +999,11 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 
 	function startRecording() {
 		resetSlide( true );
-		updateReadOnlyMode();
 		slideStart = Date.now();
 	}
 
 	function startPlayback( timestamp, finalMode, resized ) {
 //console.log("playback " + timestamp );
-		if ( resized == undefined ) {
-			updateReadOnlyMode();
-		}
 		slideStart = Date.now() - timestamp;
 		closeChalkboard();
 		mode = 0;
@@ -1421,31 +1417,6 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 
 	} );
 
-	function updateReadOnlyMode() {
-//console.log("updateReadOnlyMode");
-		if ( config.readOnly == undefined ) {
-			readOnly = ( getSlideDuration() > 0 );
-			if ( readOnly ) {
-				drawingCanvas[0].container.style.cursor = 'default';
-				drawingCanvas[1].container.style.cursor = 'default';
-				drawingCanvas[0].canvas.style.cursor = 'default';
-				drawingCanvas[1].canvas.style.cursor = 'default';
-				if ( notescanvas.style.pointerEvents != "none" ) {
-					event = null;
-					notescanvas.style.background = 'rgba(0,0,0,0)';
-					notescanvas.style.pointerEvents = "none";
-				}
-
-			}
-			else {
-				drawingCanvas[0].container.style.cursor = pens[0][color[0]].cursor;
-				drawingCanvas[1].container.style.cursor = pens[1][color[1]].cursor;
-				drawingCanvas[0].canvas.style.cursor = pens[0][color[0]].cursor;
-				drawingCanvas[1].canvas.style.cursor = pens[1][color[1]].cursor;
-			}
-		}
-	}
-
 	Reveal.addEventListener( 'ready', function( evt ) {
 //console.log('ready');
 		if ( !printMode ) {
@@ -1460,7 +1431,6 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 				document.dispatchEvent( event );
 			}
 			updateStorage();
-			updateReadOnlyMode();
 		}
 		else {
 console.log("Create printout when ready");
@@ -1486,7 +1456,6 @@ console.log("Create printout when ready");
 			}
 
 			updateStorage();
-			updateReadOnlyMode();
 		}
 	});
 	Reveal.addEventListener( 'fragmentshown', function( evt ) {
@@ -1508,7 +1477,6 @@ console.log("Create printout when ready");
 				startPlayback( getSlideDuration(), 0 );
 //				closeChalkboard();
 			}
-			updateReadOnlyMode();
 		}
 	});
 	Reveal.addEventListener( 'fragmenthidden', function( evt ) {
@@ -1527,7 +1495,6 @@ console.log("Create printout when ready");
 				startPlayback( getSlideDuration() );
 				closeChalkboard();
 			}
-			updateReadOnlyMode();
 		}
 	});
 
@@ -1696,7 +1663,6 @@ console.log("Create printout when ready");
 			slideData.events = [];
 
 			updateStorage();
-			updateReadOnlyMode();
 			// broadcast
 			var message = new CustomEvent(messageType);
 			message.content = { sender: 'chalkboard-plugin', type: 'resetSlide', timestamp: Date.now() - slideStart };
@@ -1723,7 +1689,6 @@ console.log("Create printout when ready");
 			if ( config.storage ) {
 				sessionStorage.setItem( config.storage, null )
 			}
-			updateReadOnlyMode();
 			// broadcast
 			var message = new CustomEvent(messageType);
 			message.content = { sender: 'chalkboard-plugin', type: 'init', timestamp: Date.now() - slideStart, storage: storage, mode: mode };
