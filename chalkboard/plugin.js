@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 1.2.0
+** Version: 1.3.0
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -103,6 +103,7 @@ const initChalkboard = function(Reveal){
 	var color = [0, 0];
 	var toggleChalkboardButton = true;
 	var toggleNotesButton = true;
+        var colorButtons = false;
 	var transition = 800;
 
 	var readOnly = undefined;
@@ -146,9 +147,10 @@ const initChalkboard = function(Reveal){
 
 		if (config.toggleChalkboardButton != undefined) toggleChalkboardButton = config.toggleChalkboardButton;
 		if (config.toggleNotesButton != undefined)  toggleNotesButton = config.toggleNotesButton;
+		if (config.colorButtons != undefined)  colorButtons = config.colorButtons;
 		if (config.transition) transition = config.transition;
 
-		if (config.readOnly) readOnly = config.readOnly;
+		if (config.readOnly != undefined) readOnly = config.readOnly;
 		if (config.messageType) messageType = config.messageType;
 
 		if ( drawingCanvas && ( config.theme || config.background || config.grid ) ) {
@@ -232,6 +234,28 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 	var slidechangeTimeout = null;
 	var playback = false;
 
+	function createPalette( colors, length ) {
+		if ( length === true || length > colors.length ) {
+			length = colors.length;
+		}
+		var palette = document.createElement( 'div' );
+		palette.classList.add('palette');
+		var list = document.createElement( 'ul' );
+		// color pickers
+		for (var i = 0; i < length; i++ ) {
+			var colorButton = document.createElement( 'li' );
+			colorButton.setAttribute("data-color",i);
+			colorButton.innerHTML = '<i class="fa fa-square"></i>';
+			colorButton.style.color = colors[i].color;
+			colorButton.addEventListener("click", function(e) {
+				colorIndex(e.target.parentElement.getAttribute("data-color"));
+			});
+			list.appendChild( colorButton );
+		}
+		palette.appendChild( list );
+		return palette;
+	};
+
 	function setupDrawingCanvas( id ) {
 		var container = document.createElement( 'div' );
 		container.id = drawingCanvas[id].id;
@@ -245,7 +269,6 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 		drawingCanvas[id].scale = 1;
 		drawingCanvas[id].xOffset = 0;
 		drawingCanvas[id].yOffset = 0;
-
 
 		if ( id == "0" ) {
 			container.style.background = 'rgba(0,0,0,0)';
@@ -262,13 +285,25 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 			else if ( drawingCanvas[id].height > drawingCanvas[id].width/aspectRatio ) {
 				drawingCanvas[id].yOffset = ( drawingCanvas[id].height - drawingCanvas[id].width/aspectRatio ) / 2;
 			}
+
+			if ( colorButtons ) {
+				var palette = createPalette( boardmarkers, colorButtons );
+				palette.style.visibility = 'hidden'; // only show palette in drawing mode
+				container.appendChild(palette);
+			}
 		}
 		else {
 			container.style.background = 'url("' + background[id] + '") repeat';
 			container.style.zIndex = 26;
 			container.style.opacity = 0;
 			container.style.visibility = 'hidden';
+
+			if ( colorButtons ) {
+				var palette = createPalette( chalks, colorButtons );
+				container.appendChild(palette);
+			}
 		}
+
 
 		var sponge = document.createElement( 'img' );
 		sponge.src = eraser.src;
@@ -677,7 +712,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 
 
 	/**
-	 * Oboardmarkers an overlay for the chalkboard.
+	 * Show an overlay for the chalkboard.
 	 */
 	function showChalkboard() {
 //console.log("showChalkboard");
@@ -1520,11 +1555,19 @@ console.log("Create printout when ready");
 			}
 			else {
 				if ( notescanvas.style.pointerEvents != "none" ) {
+					// hide notes canvas
+					if ( colorButtons) {
+						notescanvas.querySelector(".palette").style.visibility = "hidden";
+					}
 					event = null;
 					notescanvas.style.background = 'rgba(0,0,0,0)';
 					notescanvas.style.pointerEvents = "none";
 				}
 				else {
+					// show notes canvas
+					if ( colorButtons) {
+						notescanvas.querySelector(".palette").style.visibility = "visible";
+					}
 					notescanvas.style.background = background[0]; //'rgba(255,0,0,0.5)';
 					notescanvas.style.pointerEvents = "auto";
 
