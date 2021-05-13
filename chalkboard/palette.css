@@ -1,0 +1,28 @@
+div.palette {
+  position: absolute;
+/*
+  height: 260px;
+  margin: -130px 0 0 0px;
+*/  
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  left: -10px;
+  padding-left:10px;
+  border-radius: 10px;
+  border-top:    4px solid #222; 
+  border-right:  4px solid #222; 
+  border-bottom: 4px solid #222;
+  background: black;
+  transition: transform 0.3s;
+}
+
+div.palette > ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+div.palette > ul > li {
+  margin: 10px;
+}
