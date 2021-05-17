@@ -62,9 +62,10 @@ With above configuration the notes canvas is opened and closed when pressing 'c'
 
 If the `autoSlide` feature is set or if the `audio-slideshow` plugin is used, pre-recorded chalkboard drawings can be played. The slideshow plays back the user interaction with the chalkboard in the same way as it was conducted when recording the data.
 
-## Multiplexing
+## Broadcasting
 
-The plugin supports multiplexing via the [`multiplex` plugin](https://github.com/reveal/multiplex).
+The plugin supports broadcasting of drawings via the [`seminar`](https://github.com/rajgoel/reveal.js-plugins/tree/master/seminar) plugin. Alternatively, the [`multiplex`](https://github.com/reveal/multiplex) plugin can be used to share drawings (in this case, the `messageType` parameter (see Configuration) must be set to `'send'`).
+
 
 ## PDF-Export
 
@@ -144,8 +145,6 @@ Reveal.initialize({
 
 });
 ```
-
-For compatibility with the [`multiplex`](https://github.com/reveal/multiplex) plugin, the `messageType` parameter must be set to `'send'`.
 
 ## License
 
