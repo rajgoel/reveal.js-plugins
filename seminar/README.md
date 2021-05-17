@@ -24,7 +24,7 @@ First, make sure to include the plugin and the require `socket.io` scripts:
 
 Optionally, include the `chart`, `poll` and `chalkboard`  plugin:
 ```html
-<script src="../reveal.js-plugins/chart/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js"></script>
 <script src="../reveal.js-plugins/chart/plugin.js"></script>
 <script src="../reveal.js-plugins/poll/plugin.js"></script>
 <script src="../reveal.js-plugins/chalkboard/plugin.js"></script>
