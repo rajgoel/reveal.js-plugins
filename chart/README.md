@@ -25,7 +25,7 @@ Add the plugin and Chart.js to the dependencies in your presentation, as below.
 
 ## Configuration
 
-The plugin has several parameters that you can set for your presentation by providing an ```chart``` option in the reveal.js initialization options. Note that all configuration parameters are optional and the defaults of [Chart.js](http://nnnick.github.io/Chart.js/docs-v2/) will be used for parameters that are not specified.
+The plugin has several parameters that you can set for your presentation by providing an `chart` option in the reveal.js initialization options. Note that all configuration parameters are optional and the defaults of Chart.js will be used for parameters that are not specified.
 
 
 ```javascript
