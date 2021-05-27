@@ -37,6 +37,11 @@ In order to include buttons for opening and closing the notes canvas or the chal
 ```
 to the `head` section of you HTML-file.
 
+Alternatively, if you're using this package via NPM, you can use the built-in font-awesome distribution like so:
+```html
+<link rel="stylesheet" href="node_modules/reveal.js-plugins/menu/font-awesome/css/all.css">
+```
+
 ## Usage
 
 ### Enable & disable
