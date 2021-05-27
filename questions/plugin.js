@@ -87,7 +87,7 @@ const initQnA = function(Reveal){
 		button.style.top = toggleQnAButton.top ||  "auto";
 		button.style.right = toggleQnAButton.right ||  "auto";
 
-		button.innerHTML = '<a href="#" onclick="RevealQnA.toggleQnA(); return false;">' +
+		button.innerHTML = '<a href="#" title="Toggle Q&A dashboard (Q)" onclick="RevealQnA.toggleQnA(); return false;">' +
 				'<span class="fa-stack" style="margin: -10px;"><span class="fa fa-comment fa-stack-1x"></span><strong class="fa-stack-1x fa-inverse qna question-counter" style="font-size:0.5em;"></strong></span>' +
 //<i class="fa fa-comment"></i>
 				'</a>';
