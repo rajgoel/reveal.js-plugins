@@ -88,7 +88,7 @@ const initQnA = function(Reveal){
 		button.style.right = toggleQnAButton.right ||  "auto";
 
 		button.innerHTML = '<a href="#" onclick="RevealQnA.toggleQnA(); return false;">' +
-				'<span class="fa-stack" style="margin: -10px;"><span class="fa fa-comment fa-stack-1x"></span><strong class="fa-stack-1x fa-inverse question-counter" style="font-size:0.5em;"></strong></span>' +
+				'<span class="fa-stack" style="margin: -10px;"><span class="fa fa-comment fa-stack-1x"></span><strong class="fa-stack-1x fa-inverse qna question-counter" style="font-size:0.5em;"></strong></span>' +
 //<i class="fa fa-comment"></i>
 				'</a>';
 		document.querySelector(".reveal").appendChild( button );
@@ -199,7 +199,7 @@ const initQnA = function(Reveal){
 		// increment open question counter
 		if ( question.open ) {
 			counter++;
-			var elements = document.querySelectorAll('.question-counter');
+			var elements = document.querySelectorAll('.qna.question-counter');
 			for ( var i=0; i < elements.length; i++ ) {
 				elements[i].innerHTML = counter;
 			}
@@ -266,14 +266,9 @@ const initQnA = function(Reveal){
 //console.log("Close");
 						// decrement open question counter
 						counter--;
-						var element = document.querySelector('.question-counter');
-						if ( element ) {
-							if ( counter == 0 ) {
-								element.innerHTML = '';
-							}
-							else {
-								element.innerHTML = counter;
-							}
+						var elements = document.querySelectorAll('.qna.question-counter');
+						for ( var i=0; i < elements.length; i++ ) {
+							elements[i].innerHTML = (counter == 0) ? '' : counter;
 						}
 	
 						// close question

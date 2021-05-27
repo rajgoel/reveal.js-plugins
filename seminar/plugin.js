@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding creating an online seminar.
 **
-** Version: 0.3.0
+** Version: 0.4.0
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -12,7 +12,6 @@
 window.RevealSeminar = window.RevealSeminar || {
     id: 'RevealSeminar',
     init: function(deck) {
-
         initSeminar(deck);
     },
     open_or_join_room: function( secret, username ) { 
@@ -24,6 +23,9 @@ window.RevealSeminar = window.RevealSeminar || {
 	join_room(); 
     },
     leave_room: function() { leave_room(); },
+    close_room: function( secret ) { close_room( secret ); },
+    connected: function() { return connected(); },
+    hosting: function() { return hosting(); },
 };
 
 function defaultLogger( event ) {
@@ -57,6 +59,19 @@ const initSeminar = function(Reveal){
 	var username = null;
 	var status = null;
 
+	function connected() {
+		return ( status >= STATUS.JOINED );
+	}
+
+	function hosting() {
+		return ( status >= STATUS.HOSTING );
+	}
+
+	function dispatchStatus() {
+		var event = new CustomEvent('seminar');
+		event.status = status;
+		document.dispatchEvent( event );
+	}
 
 	function checkin( name ) {
 		if ( status && name && username != name ) {
@@ -76,6 +91,7 @@ const initSeminar = function(Reveal){
 				}
 				else {
 					status = STATUS.CHECKEDIN;
+					dispatchStatus();
 					logger( `checked in as ${username}` );
 				}
 			});
@@ -94,6 +110,7 @@ const initSeminar = function(Reveal){
 		}
 		if ( status == STATUS.JOINING ) {
 			status = STATUS.CHECKEDIN;
+			dispatchStatus();
 		}
 
  		// open or join a seminar as host
@@ -105,7 +122,7 @@ const initSeminar = function(Reveal){
 			else {
 				// assume that room is opened and change status later if another host is chair 
 				status = Math.max(status, STATUS.HOSTING);
-
+				dispatchStatus();
 				logger( `host room "${seminar.url}|${seminar.room}|${seminar.hash}"` );
 				makeHost();
 			}
@@ -119,7 +136,21 @@ const initSeminar = function(Reveal){
 			}
 			else {
 				status = STATUS.CHECKEDIN;
+				dispatchStatus();
 				logger( `left room "${seminar.url}|${seminar.room}|${seminar.hash}"` );
+			}
+		});
+	}
+
+	function close_room( secret ) {
+		socket.emit('close_room', { venue: seminar.url, name: seminar.room, hash: seminar.hash, secret }, function( error ){
+			if (error) {
+				logger( error );
+			}
+			else {
+				status = STATUS.CHECKEDIN;
+				dispatchStatus();
+				logger( `room closed "${seminar.url}|${seminar.room}|${seminar.hash}"` );
 			}
 		});
 	}
@@ -131,11 +162,13 @@ const initSeminar = function(Reveal){
 			if (error) {
 				logger( error );
 				status = STATUS.JOINING;
+				dispatchStatus();
 			}
 			else {
 				logger( `joined room "${seminar.url}|${seminar.room}|${seminar.hash}" as ${socket.id}` );
 				subscribe();
 				status = STATUS.JOINED;
+				dispatchStatus();
 			}
 		});
 	}
@@ -249,12 +282,14 @@ console.log(rooms);
 			event.content = room;
 			document.dispatchEvent( event );
 			status = STATUS.JOINING;
+			dispatchStatus();
 		}
 	});
 
 	socket.on('chair', ( room ) => {
 		logger( `chairing room "${room.venue}|${room.name}|${room.hash}"` );
 		status = STATUS.CHAIRING;
+		dispatchStatus();
 	});
 
 	socket.on('participants', ({ room, hosts, participants }) => {
@@ -330,6 +365,9 @@ console.log(rooms);
 	this.open_or_join_room = open_or_join_room;
 	this.join_room = join_room;
 	this.leave_room = leave_room;
+	this.close_room = close_room;
+	this.connected = connected;
+	this.hosting = hosting;
 
 	return this;
 };
