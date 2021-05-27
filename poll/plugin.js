@@ -4,7 +4,7 @@
 ** A plugin for reveal.js adding instant polls within an 
 ** online seminar.
 **
-** Version: 0.1.0
+** Version: 0.1.1
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -41,6 +41,10 @@ const initPoll = function(Reveal){
 
 				// make button clickable
 				buttons[j].addEventListener('click', function(evt){
+					if ( !RevealSeminar.connected() ) {
+						alert("You are currently not connected to the live poll. Your vote is ignored.");
+						return;
+					}
 					const button = evt.target;
 					const poll = button.parentElement;
 					var siblings = poll.querySelectorAll("button");

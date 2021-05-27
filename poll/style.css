@@ -1,0 +1,34 @@
+.poll > button {
+  display: block;
+  background-color: #42affa;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 30px;
+  border-radius: 8px;
+  width: 20em;
+  margin: 0.5em;
+}
+
+.poll > button {
+  transition-duration: 0.4s;
+}
+
+.poll > button:hover {
+  background-color: blue;
+  color: white;
+}
+
+.poll > button:disabled {
+  background-color: darkgray;
+  color: white;
+}
+
+.poll > button.selected:disabled {
+  background-color: blue;
+  color: white;
+}
+
