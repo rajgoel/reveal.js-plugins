@@ -1,0 +1,99 @@
+.qna.dashboard {
+	overflow-y: scroll!important;
+	background: rgba(0,0,0,.8)!important;
+	backdrop-filter: blur(5px);
+}
+
+.qna.ask {
+	padding-top: 20px;
+	padding-bottom: 20px;
+	width: 100%;
+	display: flex;
+	margin-bottom: 10px;
+}
+
+.qna.ask input[type='text'] {
+	font-size: 20px;
+	padding: 10px;
+	height: 30px;
+	border-radius: 0;
+	flex: 1;
+	margin-left: 50px;
+}
+
+.qna.ask button  
+{
+	font-size: 20px;
+	padding: 10px 30px 10px 30px;
+	height: 55px;
+	border: 0;
+	background: none;
+	box-shadow: none;
+	border-radius: 0px;
+	background-color: #42affa;
+	color: white;
+	margin-right: 50px;
+}
+
+.qna.ask button:hover  
+{
+ background-color: lightblue;
+}
+
+.qna.questions {
+}
+
+.qna.question {
+	position: relative;
+	margin: 20px 50px 20px 50px;
+	padding: 30px;
+	border-radius: 5px;
+	color: black;
+}
+
+.qna.question:not(.closed) {
+	background: rgba(255,255,255,.8);
+}
+
+.qna.question.closed {
+	background: rgba(168,168,168,.8);
+}
+
+.qna.question > .user {
+	font-size: 24px;
+	font-weight: bold;
+	color: #555;
+}
+
+.qna.question > .text {
+	color: black;
+}
+
+.qna.question > .votes, 
+.qna.question > .close {
+	position: absolute;
+	right: 10px;
+	font-size: 20px;
+	text-align: middle;
+	color: black;
+}
+
+.qna.question.closed > .votes, 
+.qna.question.closed > .close {
+	color: #555;
+}
+
+.qna.question:not(.closed) > .votes:hover:not(.disabled), 
+.qna.question:not(.closed) > .close:hover:not(.disabled) {
+	color: gray;
+}
+
+.qna.question > .votes {
+	top: 10px;
+}
+
+
+.qna.question > .close {
+	bottom: 10px;
+}
+
