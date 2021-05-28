@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 1.4.0
+** Version: 1.5.0
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -103,7 +103,8 @@ const initChalkboard = function(Reveal){
 	var color = [0, 0];
 	var toggleChalkboardButton = true;
 	var toggleNotesButton = true;
-        var colorButtons = false;
+        var colorButtons = true;
+        var boardHandle = true;
 	var transition = 800;
 
 	var readOnly = false;
@@ -148,6 +149,7 @@ const initChalkboard = function(Reveal){
 		if (config.toggleChalkboardButton != undefined) toggleChalkboardButton = config.toggleChalkboardButton;
 		if (config.toggleNotesButton != undefined)  toggleNotesButton = config.toggleNotesButton;
 		if (config.colorButtons != undefined)  colorButtons = config.colorButtons;
+		if (config.boardHandle != undefined)  boardHandle = config.boardHandle;
 		if (config.transition) transition = config.transition;
 
 		if (config.readOnly != undefined) readOnly = config.readOnly;
@@ -220,6 +222,7 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 	setupDrawingCanvas(1);
 
 	var mode = 0; // 0: notes canvas, 1: chalkboard
+	var board = 0; // board index (only for chalkboard)
 
 	var mouseX = 0;
 	var mouseY = 0;
@@ -301,6 +304,29 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 			if ( colorButtons ) {
 				var palette = createPalette( chalks, colorButtons );
 				container.appendChild(palette);
+			}
+			if ( boardHandle ) {
+				var handle = document.createElement( 'div' );
+				handle.classList.add('boardhandle');
+				handle.innerHTML='<ul><li><a id="previousboard" href="#" title="Previous board"><i class="fas fa-chevron-up"></i></a></li><li><a id="nextboard" href="#" title="Next board"><i class="fas fa-chevron-down"></i></a></li></ul>';
+				handle.querySelector("#previousboard").addEventListener("click", function(e) {
+					e.preventDefault();
+					setBoard(board-1,true);
+					// broadcast
+					var message = new CustomEvent(messageType);
+					message.content = { sender: 'chalkboard-plugin', type: 'setboard', timestamp: Date.now() - slideStart, index: board, status: { mode, board, color } };
+					document.dispatchEvent( message );
+				});
+				handle.querySelector("#nextboard").addEventListener("click", function(e) {
+					e.preventDefault();
+					setBoard(board+1,true);
+					// broadcast
+					var message = new CustomEvent(messageType);
+					message.content = { sender: 'chalkboard-plugin', type: 'setboard', timestamp: Date.now() - slideStart, index: board, status: { mode, board, color } };
+					document.dispatchEvent( message );
+				});
+
+				container.appendChild(handle);
 			}
 		}
 
@@ -493,15 +519,16 @@ console.log("Drawings loaded from file");
 //console.log("createPrintout" + printMode)
 
 	function createPrintout( ) {
-console.warn(Reveal.getTotalSlides(),Reveal.getSlidesElement());
+//console.warn(Reveal.getTotalSlides(),Reveal.getSlidesElement());
 		if ( storage[1].data.length == 0 ) return; 
-console.log( 'Create printout for ' + storage[1].data.length + " slides");
+console.log( 'Create printout(s) for ' + storage[1].data.length + " slides");
 		drawingCanvas[0].container.style.opacity = 0; // do not print notes canvas
 		drawingCanvas[0].container.style.visibility = 'hidden';
 
 		var patImg = new Image();
 		patImg.onload = function () {
 			var slides = getSlidesArray();
+//console.log(slides);
 			for (var i = storage[1].data.length-1; i>=0; i--) {
 console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + storage[1].data[i].slide.v );
 				var slideData = getSlideData( storage[1].data[i].slide, 1 );
@@ -569,6 +596,27 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 		return newCanvas;
 	}
 
+	function getCanvas( template, container, board ) {
+		var idx = container.findIndex(element => element.board === board);
+		if ( idx === -1 ) {
+			var canvas = cloneCanvas(template);
+			if ( !container.length ) {
+				idx = 0;
+				container.push({ board, canvas });
+			}
+			else if ( board < container[0].board ) {
+				idx = 0;
+				container.unshift({ board, canvas });
+			}
+			else if ( board > container[container.length-1].board ) {
+				idx = container.length;
+				container.push({ board, canvas });
+			}
+		}
+
+		return container[idx].canvas;
+	}
+
 	function createDrawings( slideData, patImg ) {
 		var width = Reveal.getConfig().width;
 		var height = Reveal.getConfig().height;
@@ -581,25 +629,24 @@ console.log( 'Create printout for slide ' + storage[1].data[i].slide.h + "." + s
 			yOffset = (height - storage[1].height * scale)/2;
 		}
 		mode = 1;
-console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + data.slide.v */);
-//		var parent = Reveal.getSlide( data.slide.h, data.slide.v ).parentElement;
-//		var slideData = getSlideData( data.slide, 1 );
+		board = 0;
+console.log( 'Create printout(s) for slide ', slideData);
 
 		var drawings = [];
-		var imgCanvas = document.createElement('canvas');
-		imgCanvas.width = width;
-		imgCanvas.height = height;
+		var template = document.createElement('canvas');
+		template.width = width;
+		template.height = height;
 
-		var imgCtx = imgCanvas.getContext("2d");
+		var imgCtx = template.getContext("2d");
 		imgCtx.fillStyle = imgCtx.createPattern( patImg ,'repeat');
-		imgCtx.rect(0,0,imgCanvas.width,imgCanvas.height);
+		imgCtx.rect(0,0,width,height);
 		imgCtx.fill();
 
 		for (var j = 0; j < slideData.events.length; j++) {
 			switch ( slideData.events[j].type ) {
 				case "draw":
 					for (var k = 1; k < slideData.events[j].curve.length; k++) {
-						draw[1]( imgCtx,
+						draw[1]( getCanvas(template,drawings,board).getContext("2d"),
 							xOffset + slideData.events[j].curve[k-1].x*scale,
 							yOffset + slideData.events[j].curve[k-1].y*scale,
 							xOffset + slideData.events[j].curve[k].x*scale,
@@ -609,7 +656,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 					break;
 				case "erase":
 					for (var k = 0; k < slideData.events[j].curve.length; k++) {
-						eraseWithSponge( imgCtx,
+						eraseWithSponge( getCanvas(template,drawings,board).getContext("2d"),
 								xOffset + slideData.events[j].curve[k].x*scale,
 								yOffset + slideData.events[j].curve[k].y*scale
 						);
@@ -618,17 +665,21 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 				case "setcolor":
 					setColor(slideData.events[j].index);
 					break;
+				case "setboard":
+					// Todo: create new canvas for each new index
+					setBoard(slideData.events[j].index);
+//board = 0;
+					break;
 				case "clear":
-					drawings.push( cloneCanvas(imgCanvas) );
-//					addPrintout( parent, nextSlide[i], imgCanvas, patImg );
-					imgCtx.clearRect(0,0,imgCanvas.width,imgCanvas.height);
-					imgCtx.fill();
+					getCanvas(template,drawings,board).getContext("2d").clearRect(0,0,width,height);
+					getCanvas(template,drawings,board).getContext("2d").fill();
 					break;
 				default:
 					break;
 			}
 		}
-		drawings.push( cloneCanvas(imgCanvas) );
+
+		drawings = drawings.sort((a, b) => a.board > b.board && 1 || -1);
 
 		mode = 0;
 
@@ -644,7 +695,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 			newPDFPage.classList.add('pdf-page');
 			newPDFPage.style.height = Reveal.getConfig().height;
 //			newPDFPage.innerHTML = '<h1>Drawing should be here!</h1>';
-			newPDFPage.append(drawings[i]);
+			newPDFPage.append(drawings[i].canvas);
 //console.log("Add drawing", newPDFPage);
 			if ( nextSlide != null ) {
 				parent.insertBefore( newPDFPage, nextSlide );
@@ -846,6 +897,37 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 	}
 
 	/**
+	 * Set the  board
+	 */
+	function setBoard( index, record ) {
+//console.log("Set board",index);
+		board = index;
+		redrawChalkboard( board );
+
+		if ( record ) {
+			recordEvent( { type: "setboard", index: board, begin: Date.now() - slideStart } );
+			updateStorage();
+		}
+	}
+
+	function redrawChalkboard( board ) {
+		clearCanvas( 1 );
+		var slideData = getSlideData( slideIndices, 1 );
+		var index = 0;
+		var play = ( board == 0 );
+		while ( index < slideData.events.length && slideData.events[index].begin < Date.now() - slideStart) {
+			if ( slideData.events[index].type == "setboard" ) {
+				play = ( board == slideData.events[index].index );
+			}
+			else if ( play || slideData.events[index].type == "setcolor" ) {
+				playEvent( 1, slideData.events[index], Date.now() - slideStart );
+			}
+			index++;
+		}
+	}
+
+
+	/**
 	 * Forward cycle color
 	 */
 	function cycleColorNext() {
@@ -882,6 +964,21 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 
 		// synchronize time with seminar host
 		slideStart = Date.now() - message.content.timestamp;
+		// set status
+		if ( mode < message.content.status.mode ) {
+			// open chalkboard
+			showChalkboard();
+		}
+		else if ( mode > message.content.status.mode ) {
+			// close chalkboard
+			closeChalkboard();
+		}
+		if ( board != message.content.status.board ) {
+			board = message.content.status.board;
+			redrawChalkboard( board );
+		};
+		color = message.content.status.color;
+
 		switch ( message.content.type ) {
 			case 'showChalkboard':
 				showChalkboard();
@@ -910,6 +1007,9 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 				break;
 			case 'setcolor':
 				setColor(message.content.index, true);
+				break;
+			case 'setboard':
+				setBoard(message.content.index, true);
 				break;
 			case 'resetSlide':
 				resetSlide(true);
@@ -950,7 +1050,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 	document.addEventListener( 'welcome', function( user ) {
 		// broadcast storage
 		var message = new CustomEvent(messageType);
-		message.content = { sender: 'chalkboard-plugin', recipient: user.id, type: 'init', timestamp: Date.now() - slideStart, storage: storage, mode: mode };
+		message.content = { sender: 'chalkboard-plugin', recipient: user.id, type: 'init', timestamp: Date.now() - slideStart, storage: storage, status: { mode, board, color } };
 		document.dispatchEvent( message );
 	});
 
@@ -1002,11 +1102,12 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 		slideStart = Date.now();
 	}
 
-	function startPlayback( timestamp, finalMode, resized ) {
+	function startPlayback( timestamp, finalMode ) {
 //console.log("playback " + timestamp );
 		slideStart = Date.now() - timestamp;
 		closeChalkboard();
 		mode = 0;
+		board = 0;
 		for ( var id = 0; id < 2; id++ ) {
 			clearCanvas( id );
 			var slideData = getSlideData( slideIndices, id );
@@ -1068,6 +1169,9 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 				break;
 			case "setcolor":
 				setColor(event.index);
+				break;
+			case "setboard":
+				setBoard(event.index);
 				break;
 			case "draw":
 				drawCurve( id, event, timestamp );
@@ -1164,7 +1268,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 			eraseWithSponge(drawingCanvas[mode].context,x,y);
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'startErasing', timestamp: Date.now() - slideStart, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale };
+			message.content = { sender: 'chalkboard-plugin', type: 'startErasing', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale };
 			document.dispatchEvent( message );
 		}
 	}
@@ -1225,7 +1329,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 			startDrawing( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, false );
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'startDrawing', timestamp: Date.now() - slideStart, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: false };
+			message.content = { sender: 'chalkboard-plugin', type: 'startDrawing', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: false };
 			document.dispatchEvent( message );
 /*
 			xLast = mouseX;
@@ -1261,7 +1365,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 			drawSegment( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, ( event.type == "erase" ) );
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'drawSegment', timestamp: Date.now() - slideStart, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( event.type == "erase" ) };
+			message.content = { sender: 'chalkboard-plugin', type: 'drawSegment', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( event.type == "erase" ) };
 			document.dispatchEvent( message );
 /*
         		if (mouseY < drawingCanvas[mode].height && mouseX < drawingCanvas[mode].width) {
@@ -1291,7 +1395,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 		stopDrawing();
 		// broadcast
 		var message = new CustomEvent(messageType);
-		message.content = { sender: 'chalkboard-plugin', timestamp: Date.now() - slideStart, type: 'stopDrawing' };
+		message.content = { sender: 'chalkboard-plugin', timestamp: Date.now() - slideStart, type: 'stopDrawing', status: { mode, board, color } };
 		document.dispatchEvent( message );
 /*
 		if ( event ) {
@@ -1320,7 +1424,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 			startDrawing( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, ( evt.button == 2 || evt.button == 1) );
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'startDrawing', timestamp: Date.now() - slideStart, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( evt.button == 2 || evt.button == 1) };
+			message.content = { sender: 'chalkboard-plugin', type: 'startDrawing', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( evt.button == 2 || evt.button == 1) };
 			document.dispatchEvent( message );
 /*
 			xLast = mouseX;
@@ -1350,7 +1454,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 			drawSegment( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, ( event.type == "erase" ) );
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'drawSegment', timestamp: Date.now() - slideStart, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( event.type == "erase" ) };
+			message.content = { sender: 'chalkboard-plugin', type: 'drawSegment', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( event.type == "erase" ) };
 			document.dispatchEvent( message );
 /*
 			event.curve.push({x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale});
@@ -1375,7 +1479,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 			stopDrawing();
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'stopDrawing', timestamp: Date.now() - slideStart };
+			message.content = { sender: 'chalkboard-plugin', type: 'stopDrawing', timestamp: Date.now() - slideStart, status: { mode, board, color } };
 			document.dispatchEvent( message );
 /*			if(evt.button == 2){
 			}
@@ -1433,7 +1537,7 @@ console.log( 'Create printout for slide ', slideData/*+ data.slide.h + "." + dat
 			updateStorage();
 		}
 		else {
-console.log("Create printout when ready");
+console.log("Create printouts when ready");
 			whenReady( createPrintout );
 		}
 	});
@@ -1547,7 +1651,7 @@ console.log("Create printout when ready");
 
 					// broadcast
 					var message = new CustomEvent(messageType);
-					message.content = { sender: 'chalkboard-plugin', type: 'setcolor', timestamp: Date.now() - slideStart, index: idx };
+					message.content = { sender: 'chalkboard-plugin', type: 'setcolor', timestamp: Date.now() - slideStart, status: { mode, board, color }, index: idx };
 					document.dispatchEvent( message );
 				}
 			}
@@ -1566,7 +1670,7 @@ console.log("Create printout when ready");
 
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'closeChalkboard', timestamp: Date.now() - slideStart };
+			message.content = { sender: 'chalkboard-plugin', type: 'closeChalkboard', timestamp: Date.now() - slideStart, status: { mode, board, color } };
 			document.dispatchEvent( message );
 		}
 		else {
@@ -1575,7 +1679,7 @@ console.log("Create printout when ready");
 				recordEvent( { type:"open", begin: Date.now() - slideStart } );
 				// broadcast
 				var message = new CustomEvent(messageType);
-				message.content = { sender: 'chalkboard-plugin', type: 'showChalkboard', timestamp: Date.now() - slideStart };
+				message.content = { sender: 'chalkboard-plugin', type: 'showChalkboard', timestamp: Date.now() - slideStart, status: { mode, board, color } };
 				document.dispatchEvent( message );
 
 				var idx = 0;
@@ -1588,7 +1692,7 @@ console.log("Create printout when ready");
 
 				// broadcast
 				message = new CustomEvent(messageType);
-				message.content = { sender: 'chalkboard-plugin', type: 'setcolor', timestamp: Date.now() - slideStart, index: idx };
+				message.content = { sender: 'chalkboard-plugin', type: 'setcolor', timestamp: Date.now() - slideStart, index: idx, status: { mode, board, color } };
 				document.dispatchEvent( message );
 
 			}
@@ -1601,7 +1705,7 @@ console.log("Create printout when ready");
 			clearCanvas( mode );
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'clear', timestamp: Date.now() - slideStart };
+			message.content = { sender: 'chalkboard-plugin', type: 'clear', timestamp: Date.now() - slideStart, status: { mode, board, color } };
 			document.dispatchEvent( message );
 		}
 	};
@@ -1612,7 +1716,7 @@ console.log("Create printout when ready");
 //			recordEvent( { type: "setcolor", index: idx, begin: Date.now() - slideStart } );
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'setcolor', timestamp: Date.now() - slideStart, index: idx };
+			message.content = { sender: 'chalkboard-plugin', type: 'setcolor', timestamp: Date.now() - slideStart, index: idx, status: { mode, board, color } };
 			document.dispatchEvent( message );
 		}
 	}
@@ -1624,7 +1728,7 @@ console.log("Create printout when ready");
 //			recordEvent( { type: "setcolor", index: idx, begin: Date.now() - slideStart } );
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'setcolor', timestamp: Date.now() - slideStart, index: idx };
+			message.content = { sender: 'chalkboard-plugin', type: 'setcolor', timestamp: Date.now() - slideStart, index: idx, status: { mode, board, color } };
 			document.dispatchEvent( message );
 		}
 	}
@@ -1636,7 +1740,7 @@ console.log("Create printout when ready");
 //			recordEvent( { type: "setcolor", index: idx, begin: Date.now() - slideStart } );
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'setcolor', timestamp: Date.now() - slideStart, index: idx };
+			message.content = { sender: 'chalkboard-plugin', type: 'setcolor', timestamp: Date.now() - slideStart, index: idx, status: { mode, board, color } };
 			document.dispatchEvent( message );
 		}
 	}
@@ -1665,7 +1769,7 @@ console.log("Create printout when ready");
 			updateStorage();
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'resetSlide', timestamp: Date.now() - slideStart };
+			message.content = { sender: 'chalkboard-plugin', type: 'resetSlide', timestamp: Date.now() - slideStart, status: { mode, board, color } };
 			document.dispatchEvent( message );
 		}
 	};
@@ -1681,17 +1785,23 @@ console.log("Create printout when ready");
 				event = null;
 				closeChalkboard();
 			}
+
+			storage = [
+				{ width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: []},
+				{ width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: []}
+			];
+/*
 			storage = [
 					{ width: drawingCanvas[0].width - 2 * drawingCanvas[0].xOffset, height: drawingCanvas[0].height - 2 * drawingCanvas[0].yOffset, data: []},
 					{ width: drawingCanvas[1].width, height: drawingCanvas[1].height, data: []}
 				];
-
+*/
 			if ( config.storage ) {
 				sessionStorage.setItem( config.storage, null )
 			}
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'init', timestamp: Date.now() - slideStart, storage: storage, mode: mode };
+			message.content = { sender: 'chalkboard-plugin', type: 'init', timestamp: Date.now() - slideStart, storage: storage, status: { mode, board, color } };
 			document.dispatchEvent( message );
 		}
 	};
