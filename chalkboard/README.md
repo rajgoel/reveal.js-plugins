@@ -20,6 +20,7 @@ Multi color support added by Kurt Rinnert [GitHub](https://github.com/rinnert).
 Copy the file `plugin.js` and the  `img` directory into the plugin folder of your reveal.js presentation, i.e. `plugin/chalkboard` and load the plugin as shown below.
 
 ```html
+<link rel="stylesheet" href="plugin/chalkboard/style.css">
 <script src="plugin/chalkboard/plugin.js"></script>
 
 <script>
@@ -86,14 +87,11 @@ The plugin has several configuration options:
 - `chalkEffect`: a float in the range `[0.0, 1.0]`, the intesity of the chalk effect on the chalk board. Full effect (default) `1.0`, no effect `0.0`.
 - `storage`: Optional variable name for session storage of drawings.
 - `src`: Optional filename for pre-recorded drawings.
-- `readOnly`: Configuation option allowing to prevent changes to existing drawings. If set to `true` no changes can be made. However, recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the `RevealChalkboard.clear()` function).
-- `toggleNotesButton`: If set to `true` a button for opening and closing the notes canvas is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate.
-- `toggleChalkboardButton`: If set to `true` a button for opening and closing the chalkboard is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate.
-- `colorButtons`: If set to `true` the notes canvas and chalkboard will show a palette with buttons allowoing to change the color. Alternatively, a numeric value can be given to only provide buttons for the first colors. The palette needs an appropriate style file to be included, e.g. by adding
-  ```
-  <link rel="stylesheet" href="plugin/chalkboard/palette.css">
-  ```
-
+- `readOnly`: Configuation option allowing to prevent changes to existing drawings. If set to `true`, no changes can be made. However, recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the `RevealChalkboard.clear()` function).
+- `toggleNotesButton`: If set to `true`, a button for opening and closing the notes canvas is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate.
+- `toggleChalkboardButton`: If set to `true`, a button for opening and closing the chalkboard is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate.
+- `colorButtons`: If set to `true`, the notes canvas and chalkboard will show a palette with buttons allowing to change the color. Alternatively, a numeric value can be assigned to the parameter limiting the number of colors buttons shown.
+- `boardHandle`: If set to `true`, navigation buttons are shown, allowing to use multiple chalkboards on the same slide. 
 - `transition`: Gives the duration (in milliseconds) of the transition for a slide change, so that the notes canvas is drawn after the transition is completed.
 - `theme`: Can be set to either `"chalkboard"` or `"whiteboard"`.
 
@@ -121,7 +119,8 @@ Reveal.initialize({
         messageType: 'broadcast',
         toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
         toggleNotesButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
-        colorButtons: false,
+        colorButtons: true,
+        boardHandle: true,
         transition: 800,
         theme: "chalkboard",
         background: [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ],
