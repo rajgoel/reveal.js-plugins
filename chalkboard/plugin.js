@@ -69,6 +69,7 @@ const initChalkboard = function(Reveal){
 	var chalkEffect = 1.0;
 	var rememberColor = [true, false];
 	var eraser = { src: path + 'img/sponge.png', radius: 20};
+  var clearChalkboardWarning = true;
 	var boardmarkers = [
 		{ color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto'},
 		{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto'},
@@ -124,6 +125,7 @@ const initChalkboard = function(Reveal){
 		if ( config.chalkEffect ) chalkEffect = config.chalkEffect;
 		if ( config.rememberColor ) rememberColor = config.rememberColor;
 		if ( config.eraser ) eraser = config.eraser;
+    if ( config.clearChalkboardWarning ) clearChalkboardWarning = config.clearChalkboardWarning;
 		if ( config.boardmarkers ) boardmarkers = config.boardmarkers;
 		if ( config.chalks) chalks = config.chalks;
 
@@ -1775,7 +1777,7 @@ console.log("Create printouts when ready");
 	};
 
 	function resetStorage( force ) {
-		var ok = force || confirm("Please confirm to delete all chalkboard drawings!");
+		var ok = force || clearChalkboardWarning || confirm("Please confirm to delete all chalkboard drawings!");
 		if ( ok ) {
 			stopPlayback();
 			slideStart = Date.now();
