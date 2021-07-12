@@ -8,7 +8,7 @@
 ** available, a blank audio file with default  duration is played
 ** instead.
 **
-** Version: 1.0.0
+** Version: 1.0.1
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -95,7 +95,7 @@ const initAudioSlideshow = function(Reveal){
 		document.querySelector(".audio-controls").style.visibility = "visible";
 	} );
 
-	Reveal.addKeyBinding( { keyCode: 171, key: '+', description: 'Toggle audio' }, function() {
+	Reveal.addKeyBinding( { keyCode: 65, key: 'A', description: 'Toggle audio' }, function() {
 		if ( currentAudio ) {
 			if ( timer ) { clearTimeout( timer ); timer = null; }
 			currentAudio.paused ? currentAudio.play() : currentAudio.pause();
