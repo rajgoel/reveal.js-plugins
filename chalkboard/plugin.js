@@ -251,7 +251,11 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 			colorButton.innerHTML = '<i class="fa fa-square"></i>';
 			colorButton.style.color = colors[i].color;
 			colorButton.addEventListener("click", function(e) {
-				colorIndex(e.target.parentElement.getAttribute("data-color"));
+				var element = e.target;
+				while ( !element.hasAttribute("data-color")) {
+					element = element.parentElement;
+				}
+				colorIndex(element.getAttribute("data-color"));
 			});
 			list.appendChild( colorButton );
 		}
