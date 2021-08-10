@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a chalkboard.
 **
-** Version: 1.5.0
+** Version: 1.5.1
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -226,8 +226,10 @@ console.log("Wait for pdf pages to be created and drawings to be loaded");
 
 	var mouseX = 0;
 	var mouseY = 0;
-	var xLast = null;
-	var yLast = null;
+	var lastX = null;
+	var lastY = null;
+
+	var drawing = false;
 
 	var slideStart = Date.now();
 	var slideIndices =  { h:0, v:0 };
@@ -791,8 +793,8 @@ console.log( 'Create printout(s) for slide ', slideData);
 		drawingCanvas[1].sponge.style.visibility = "hidden"; // make sure that the sponge from touch events is hidden
 		drawingCanvas[1].container.style.opacity = 0;
 		drawingCanvas[1].container.style.visibility = 'hidden';
-		xLast = null;
-		yLast = null;
+		lastX = null;
+		lastY = null;
 		event = null;
 		mode = 0;
 	}
@@ -891,7 +893,7 @@ console.log( 'Create printout(s) for slide ', slideData);
 	function setColor( index, record ) {
 		// protect against out of bounds (this could happen when
 		// replaying events recorded with different color settings).
-		if ( index >= boardmarkers[mode].length ) index = 0;
+		if ( index >= pens[mode].length ) index = 0;
 		color[mode] = index;
 		drawingCanvas[mode].canvas.style.cursor = pens[mode][color[mode]].cursor;
 		if ( record ) {
@@ -957,11 +959,11 @@ console.log( 'Create printout(s) for slide ', slideData);
 		if ( message.content && message.content.sender == 'chalkboard-plugin' ) {
 			// add message to queue
 			eventQueue.push(message);
+console.log(JSON.stringify(message));
 		}
 		if ( eventQueue.length == 1 ) processQueue();
 	});
 
-//console.log(JSON.stringify(message));
 	function processQueue() {
 		// take first message from queue
 		var message = eventQueue.shift();
@@ -990,22 +992,32 @@ console.log( 'Create printout(s) for slide ', slideData);
 			case 'closeChalkboard':
 				closeChalkboard();
 				break;
+////
+/*
 			case 'startDrawing':
 				startDrawing(message.content.x, message.content.y, message.content.erase);
 				break;
-			case 'startErasing':
+*/
+			case 'erasePoint':
+////
+/*
 				if ( message.content ) {
 					message.content.type = "erase";
 					message.content.begin = Date.now() - slideStart;
 					eraseWithSponge(drawingCanvas[mode].context, message.content.x, message.content.y);
 				}
+*/
+				eraseWithSponge(drawingCanvas[mode].context, message.content.x, message.content.y);
 				break;
 			case 'drawSegment':
-				drawSegment(message.content.x, message.content.y, message.content.erase);
+				drawSegment(message.content.fromX, message.content.fromY, message.content.toX, message.content.toY, message.content.erase);
 				break;
+////
+/*
 			case 'stopDrawing':
 				stopDrawing();
 				break;
+*/
 			case 'clear':
 				clear();
 				break;
@@ -1036,7 +1048,8 @@ console.log( 'Create printout(s) for slide ', slideData);
 				if ( mode == 0 && message.content.mode == 1) {
 					setTimeout( showChalkboard, transition + 50 );
 				}
-				mode = message.content.mode;
+				mode = message.content.status.mode;
+//if (mode === undefined ) console.error(message);
 				break;
 			default:
 				break;
@@ -1244,12 +1257,14 @@ console.log( 'Create printout(s) for slide ', slideData);
 
 
 	function startDrawing( x, y, erase ) {
+			drawing = true;
+
 			var ctx = drawingCanvas[mode].context;
 			var scale = drawingCanvas[mode].scale;
 			var xOffset = drawingCanvas[mode].xOffset;
 			var yOffset = drawingCanvas[mode].yOffset;
-			xLast = x * scale + xOffset;
-			yLast = y * scale + yOffset;
+			lastX = x * scale + xOffset;
+			lastY = y * scale + yOffset;
 			if ( erase == true) {
 				event = { type: "erase", begin: Date.now() - slideStart, end: null, curve: [{x: x, y: y}]};
 				drawingCanvas[mode].canvas.style.cursor = 'url("' + eraser.src +  '") ' + eraser.radius + ' ' + eraser.radius + ', auto';
@@ -1272,34 +1287,47 @@ console.log( 'Create printout(s) for slide ', slideData);
 			eraseWithSponge(drawingCanvas[mode].context,x,y);
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'startErasing', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale };
+			message.content = { sender: 'chalkboard-plugin', type: 'erasePoint', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale };
 			document.dispatchEvent( message );
 		}
 	}
 
-	function drawSegment( x, y, erase ) {
+	function drawSegment( fromX, fromY, toX, toY, erase ) {
 		var ctx = drawingCanvas[mode].context;
 		var scale = drawingCanvas[mode].scale;
 		var xOffset = drawingCanvas[mode].xOffset;
 		var yOffset = drawingCanvas[mode].yOffset;
-		if ( !event ) {
-			// safeguard if broadcast hickup
-			startDrawing( x, y, erase );
+
+		// Important:
+		// only local events are stored, events received via broadcast are not stored due to concurrency issues.
+
+		if ( event ) {
+			event.curve.push({x: toX, y: toY});
 		}
-		event.curve.push({x: x, y: y});
-		if(y * scale + yOffset < drawingCanvas[mode].height && x * scale + xOffset < drawingCanvas[mode].width) {
+
+		if( 
+                    fromX * scale + xOffset > 0 &&
+                    fromY * scale + yOffset > 0 &&
+                    fromX * scale + xOffset < drawingCanvas[mode].width &&
+                    fromY * scale + yOffset < drawingCanvas[mode].height &&
+                    toX * scale + xOffset > 0 &&
+                    toY * scale + yOffset > 0 &&
+                    toX * scale + xOffset < drawingCanvas[mode].width &&
+                    toY * scale + yOffset < drawingCanvas[mode].height
+                  ) {
 			if ( erase ) {
-				eraseWithSponge(ctx, x * scale + xOffset, y * scale + yOffset);
+				eraseWithSponge(ctx, toX * scale + xOffset, toY * scale + yOffset);
 			}
 			else {
-				draw[mode](ctx, xLast, yLast, x * scale + xOffset, y * scale + yOffset);
+				draw[mode](ctx, fromX * scale + xOffset, fromY * scale + yOffset, toX * scale + xOffset, toY * scale + yOffset);
 			}
-			xLast = x * scale + xOffset;
-			yLast = y * scale + yOffset;
+////			lastX = x * scale + xOffset;
+////			lastY = y * scale + yOffset;
 		}
 	}
 
 	function stopDrawing() {
+		drawing = false;
 		if ( event ) {
 			event.end = Date.now() - slideStart;
 			if ( event.type == "erase" || event.curve.length > 1 ) {
@@ -1331,14 +1359,12 @@ console.log( 'Create printout(s) for slide ', slideData);
 		        mouseX = touch.pageX;
 		        mouseY = touch.pageY;
 			startDrawing( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, false );
+/*
 			// broadcast
 			var message = new CustomEvent(messageType);
+/// TODO: Replace 'startDrawing' with 'drawSsegment' of point
 			message.content = { sender: 'chalkboard-plugin', type: 'startDrawing', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: false };
 			document.dispatchEvent( message );
-/*
-			xLast = mouseX;
-			yLast = mouseY;
-			event = { type: "draw", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}] };
 */
 			touchTimeout = setTimeout( showSponge, 500, mouseX, mouseY );
 		}
@@ -1348,7 +1374,7 @@ console.log( 'Create printout(s) for slide ', slideData);
 //console.log("Touch move");
 		clearTimeout( touchTimeout );
 		touchTimeout = null;
-		if ( event ) {
+		if ( drawing && event ) {
 //			var ctx = drawingCanvas[mode].context;
 			var scale = drawingCanvas[mode].scale;
 			var xOffset = drawingCanvas[mode].xOffset;
@@ -1366,27 +1392,14 @@ console.log( 'Create printout(s) for slide ', slideData);
 				}
 			}
 
-			drawSegment( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, ( event.type == "erase" ) );
+			drawSegment( (lastX - xOffset)/scale, (lastY-yOffset)/scale,  (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, ( event.type == "erase" ) );
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'drawSegment', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( event.type == "erase" ) };
+			message.content = { sender: 'chalkboard-plugin', type: 'drawSegment', timestamp: Date.now() - slideStart, status: { mode, board, color }, fromX: (lastX - xOffset)/scale, fromY: (lastY-yOffset)/scale, toX: (mouseX - xOffset)/scale, toY: (mouseY-yOffset)/scale, erase: ( event.type == "erase" ) };
 			document.dispatchEvent( message );
-/*
-        		if (mouseY < drawingCanvas[mode].height && mouseX < drawingCanvas[mode].width) {
-        		    	evt.preventDefault();
-				event.curve.push({x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale});
-				if ( event.type == "erase" ) {
-					drawingCanvas[mode].sponge.style.left = (mouseX - eraser.radius) +"px" ;
-					drawingCanvas[mode].sponge.style.top = (mouseY - eraser.radius) +"px" ;
-			                eraseWithSponge(ctx, mouseX, mouseY);
-				}
-				else {
-			                draw[mode](ctx, xLast, yLast, mouseX, mouseY);
-				}
-				xLast = mouseX;
-				yLast = mouseY;
-			}
-*/
+
+			lastX = mouseX;
+			lastY = mouseY;
 		}
 	}, false);
 
@@ -1397,19 +1410,12 @@ console.log( 'Create printout(s) for slide ', slideData);
 		// hide sponge image
 		drawingCanvas[mode].sponge.style.visibility = "hidden";
 		stopDrawing();
+////
+/*
 		// broadcast
 		var message = new CustomEvent(messageType);
 		message.content = { sender: 'chalkboard-plugin', timestamp: Date.now() - slideStart, type: 'stopDrawing', status: { mode, board, color } };
 		document.dispatchEvent( message );
-/*
-		if ( event ) {
-			event.end = Date.now() - slideStart;
-			if ( event.type == "erase" || event.curve.length > 1 ) {
-				// do not save a line with a single point only
-				recordEvent( event );
-			}
-			event = null;
-		}
 */
 	}, false);
 
@@ -1428,26 +1434,22 @@ console.log( 'Create printout(s) for slide ', slideData);
 			startDrawing( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, ( evt.button == 2 || evt.button == 1) );
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'startDrawing', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( evt.button == 2 || evt.button == 1) };
-			document.dispatchEvent( message );
-/*
-			xLast = mouseX;
-			yLast = mouseY;
-			if ( evt.button == 2) {
-				event = { type: "erase", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}]};
-				drawingCanvas[mode].canvas.style.cursor = 'url("' + path + 'img/sponge.png") ' + eraser.radius + ' ' + eraser.radius + ', auto';
-				eraseWithSponge(ctx,mouseX,mouseY);
+/// TODO: Replace 'startDrawing' with 'drawSsegment' of point
+//			message.content = { sender: 'chalkboard-plugin', type: 'startDrawing', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( evt.button == 2 || evt.button == 1) };
+////			document.dispatchEvent( message );
+
+			// broadcast erase point if mouse button 1 or 2 are pressed
+			if ( evt.button == 2 || evt.button == 1) {
+				var message = new CustomEvent(messageType);
+				message.content = { sender: 'chalkboard-plugin', type: 'erasePoint', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale };
+				document.dispatchEvent( message );
 			}
-			else {
-				event = { type: "draw", begin: Date.now() - slideStart, end: null, curve: [{x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale}] };
-			}
-*/
 		}
 	} );
 
 	document.addEventListener( 'mousemove', function( evt ) {
 //console.log("Mouse move");
-		if ( event ) {
+		if ( drawing && event ) {
 //			var ctx = drawingCanvas[mode].context;
 			var scale = drawingCanvas[mode].scale;
 			var xOffset = drawingCanvas[mode].xOffset;
@@ -1455,24 +1457,15 @@ console.log( 'Create printout(s) for slide ', slideData);
 
 			mouseX = evt.pageX;
 			mouseY = evt.pageY;
-			drawSegment( (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, ( event.type == "erase" ) );
+			drawSegment( (lastX - xOffset)/scale, (lastY-yOffset)/scale, (mouseX - xOffset)/scale, (mouseY-yOffset)/scale, ( event.type == "erase" ) );
 			// broadcast
 			var message = new CustomEvent(messageType);
-			message.content = { sender: 'chalkboard-plugin', type: 'drawSegment', timestamp: Date.now() - slideStart, status: { mode, board, color }, x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale, erase: ( event.type == "erase" ) };
+			message.content = { sender: 'chalkboard-plugin', type: 'drawSegment', timestamp: Date.now() - slideStart, status: { mode, board, color }, fromX: (lastX - xOffset)/scale, fromY: (lastY-yOffset)/scale, toX: (mouseX - xOffset)/scale, toY: (mouseY-yOffset)/scale, erase: ( event.type == "erase" ) };
 			document.dispatchEvent( message );
-/*
-			event.curve.push({x: (mouseX - xOffset)/scale, y: (mouseY-yOffset)/scale});
-			if(mouseY < drawingCanvas[mode].height && mouseX < drawingCanvas[mode].width) {
-				if ( event.type == "erase" ) {
-					eraseWithSponge(ctx,mouseX,mouseY);
-				}
-				else {
-					draw[mode](ctx, xLast, yLast, mouseX,mouseY);
-				}
-				xLast = mouseX;
-				yLast = mouseY;
-			}
-*/
+
+			lastX = mouseX;
+			lastY = mouseY;
+
 		}
 	} );
 
@@ -1481,18 +1474,12 @@ console.log( 'Create printout(s) for slide ', slideData);
 		drawingCanvas[mode].canvas.style.cursor = pens[mode][color[mode]].cursor;
 		if ( event ) {
 			stopDrawing();
+////
+/*
 			// broadcast
 			var message = new CustomEvent(messageType);
 			message.content = { sender: 'chalkboard-plugin', type: 'stopDrawing', timestamp: Date.now() - slideStart, status: { mode, board, color } };
 			document.dispatchEvent( message );
-/*			if(evt.button == 2){
-			}
-			event.end = Date.now() - slideStart;
-			if ( event.type == "erase" || event.curve.length > 1 ) {
-				// do not save a line with a single point only
-				recordEvent( event );
-			}
-			event = null;
 */
 		}
 	} );
