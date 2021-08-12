@@ -9,7 +9,7 @@
  **
  ** Credits:
  ** Chalkboard effect by Mohamed Moustafa https://github.com/mmoustafa/Chalkboard
- ** Multi color support by Kurt Rinnert https://github.com/rinnert
+ ** Multi color support initially added by Kurt Rinnert https://github.com/rinnert
  ** Compatibility with reveal.js v4 by Hakim El Hattab https://github.com/hakimel
  ******************************************************************/
 
@@ -170,15 +170,17 @@ const initChalkboard = function ( Reveal ) {
 			description: 'Toggle chalkboard'
 		},
 		clear: {
-			keyCode: 171,
-			key: '+',
-			description: 'Clear drawings on slide'
-		},
-		reset: {
 			keyCode: 46,
 			key: 'DEL',
+			description: 'Clear drawings on slide'
+		},
+/*
+		reset: {
+			keyCode: 173,
+			key: '-',
 			description: 'Reset drawings on slide'
 		},
+*/
 		resetAll: {
 			keyCode: 8,
 			key: 'BACKSPACE',
@@ -1137,13 +1139,13 @@ const initChalkboard = function ( Reveal ) {
 			drawSegment( message.content.fromX, message.content.fromY, message.content.toX, message.content.toY, message.content.color );
 			break;
 		case 'clear':
-			clear();
+			clearSlide();
 			break;
 		case 'selectboard':
 			selectBoard( message.content.board, true );
 			break;
 		case 'resetSlide':
-			resetSlide( true );
+			resetSlideDrawings();
 			break;
 		case 'init':
 			storage = message.content.storage;
@@ -1164,6 +1166,7 @@ const initChalkboard = function ( Reveal ) {
 				setTimeout( showChalkboard, transition + 50 );
 			}
 			mode = message.content.mode;
+			board = message.content.board;
 			break;
 		default:
 			break;
@@ -1810,10 +1813,14 @@ const initChalkboard = function ( Reveal ) {
 		}
 	};
 
+	function clearSlide() {
+		recordEvent( { type: 'clear' } );
+		clearCanvas( mode );
+	}
+
 	function clear() {
 		if ( !readOnly ) {
-			recordEvent( { type: 'clear' } );
-			clearCanvas( mode );
+			clearSlide();
 			// broadcast
 			var message = new CustomEvent( messageType );
 			message.content = {
@@ -1847,27 +1854,31 @@ const initChalkboard = function ( Reveal ) {
 		}
 	}
 
+	function resetSlideDrawings() {
+		slideStart = Date.now();
+		closeChalkboard();
+
+		clearCanvas( 0 );
+		clearCanvas( 1 );
+
+		mode = 1;
+		var slideData = getSlideData();
+		slideData.duration = 0;
+		slideData.events = [];
+		mode = 0;
+		var slideData = getSlideData();
+		slideData.duration = 0;
+		slideData.events = [];
+
+		updateStorage();
+	}
+
 	function resetSlide( force ) {
 		var ok = force || confirm( "Please confirm to delete chalkboard drawings on this slide!" );
 		if ( ok ) {
 //console.log("resetSlide ");
 			stopPlayback();
-			slideStart = Date.now();
-			closeChalkboard();
-
-			clearCanvas( 0 );
-			clearCanvas( 1 );
-
-			mode = 1;
-			var slideData = getSlideData();
-			slideData.duration = 0;
-			slideData.events = [];
-			mode = 0;
-			var slideData = getSlideData();
-			slideData.duration = 0;
-			slideData.events = [];
-
-			updateStorage();
+			resetSlideDrawings();
 			// broadcast
 			var message = new CustomEvent( messageType );
 			message.content = {
