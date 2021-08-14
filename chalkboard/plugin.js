@@ -359,6 +359,7 @@ const initChalkboard = function ( Reveal ) {
 	];
 	var touchTimeout = null;
 	var slidechangeTimeout = null;
+	var updateStorageTimeout = null;
 	var playback = false;
 
 	function createPalette( colors, length ) {
@@ -589,12 +590,42 @@ const initChalkboard = function ( Reveal ) {
 	}
 
 
+	function storageChanged( now ) {
+		if ( !now ) {
+			// create or update timer
+			if ( updateStorageTimeout ) {
+				clearTimeout( updateStorageTimeout );
+			}
+			updateStorageTimeout = setTimeout( storageChanged, 1000, true);
+		}
+		else {
+// console.log("Update storage", updateStorageTimeout,  Date.now());
+			updateStorage();
+			updateStorageTimeout = null;
+		}
+	}
+
 	function updateStorage() {
 		var json = JSON.stringify( storage )
 		if ( config.storage ) {
 			sessionStorage.setItem( config.storage, json )
 		}
 		return json;
+	}
+
+	function recordEvent( event ) {
+//console.log(event);
+		event.time = Date.now() - slideStart;
+		if ( mode == 1 ) event.board = board;
+		var slideData = getSlideData();
+		var i = slideData.events.length;
+		while ( i > 0 && event.time < slideData.events[ i - 1 ].time ) {
+			i--;
+		}
+		slideData.events.splice( i, 0, event );
+		slideData.duration = Math.max( slideData.duration, Date.now() - slideStart ) + 1;
+
+		storageChanged();
 	}
 
 	/**
@@ -1176,7 +1207,7 @@ const initChalkboard = function ( Reveal ) {
 		if ( eventQueue.length > 0 ) {
 			processQueue();
 		} else {
-			updateStorage();
+			storageChanged();
 		}
 	}
 
@@ -1228,18 +1259,6 @@ const initChalkboard = function ( Reveal ) {
 		startRecording();
 	} );
 
-	function recordEvent( event ) {
-//console.log(event);
-		event.time = Date.now() - slideStart;
-		if ( mode == 1 ) event.board = board;
-		var slideData = getSlideData();
-		var i = slideData.events.length;
-		while ( i > 0 && event.time < slideData.events[ i - 1 ].time ) {
-			i--;
-		}
-		slideData.events.splice( i, 0, event );
-		slideData.duration = Math.max( slideData.duration, Date.now() - slideStart ) + 1;
-	}
 
 	function startRecording() {
 		resetSlide( true );
@@ -1672,8 +1691,6 @@ const initChalkboard = function ( Reveal ) {
 				event.timestamp = 0;
 				document.dispatchEvent( event );
 			}
-
-			updateStorage();
 		}
 	} );
 	Reveal.addEventListener( 'fragmentshown', function ( evt ) {
@@ -1736,7 +1753,8 @@ const initChalkboard = function ( Reveal ) {
 				toggleChalkboard();
 				notescanvas.style.background = background[ 0 ]; //'rgba(255,0,0,0.5)';
 				notescanvas.style.pointerEvents = 'auto';
-			} else {
+			}
+			else {
 				if ( notescanvas.style.pointerEvents != 'none' ) {
 					// hide notes canvas
 					if ( colorButtons ) {
@@ -1744,9 +1762,8 @@ const initChalkboard = function ( Reveal ) {
 					}
 					notescanvas.style.background = 'rgba(0,0,0,0)';
 					notescanvas.style.pointerEvents = 'none';
-
-					updateStorage();
-				} else {
+				}
+				else {
 					// show notes canvas
 					if ( colorButtons ) {
 						notescanvas.querySelector( '.palette' ).style.visibility = 'visible';
@@ -1771,8 +1788,6 @@ const initChalkboard = function ( Reveal ) {
 			if ( !readOnly ) {
 				recordEvent( { type: 'close' } );
 			}
-			updateStorage();
-
 			closeChalkboard();
 
 			// broadcast
