@@ -43,7 +43,7 @@ Example configuration:
 Reveal.initialize({
   // ...
 	seminar: {
-		server: 'https://reveal-seminar.herokuapp.com', // change server as necessary
+		server: 'https://seminar.eu.openode.io', // change server as necessary
 		room: 'Some room name', // put your room name here
 		hash: '$2a$05$hhgakVn1DWBfgfSwMihABeYToIBEiQGJ.ONa.HWEiNGNI6mxFCy8S', // a hash is required for every seminar room and can be generated on the URL of the socket.io server
 		autoJoin: true // set to true to auto,matically join the seminar room
