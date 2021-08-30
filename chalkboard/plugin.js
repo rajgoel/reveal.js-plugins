@@ -1612,7 +1612,7 @@ const initChalkboard = function ( Reveal ) {
 		} );
 	}
 
-	window.addEventListener( 'resize', function () {
+	function resize() {
 //console.log("resize");
 		// Resize the canvas and draw everything again
 		var timestamp = Date.now() - slideStart;
@@ -1636,8 +1636,7 @@ const initChalkboard = function ( Reveal ) {
 		}
 //console.log( window.innerWidth + "/" + window.innerHeight);
 		startPlayback( timestamp, mode, true );
-
-	} );
+	}
 
 	Reveal.addEventListener( 'pdf-ready', function ( evt ) {
 //		console.log( "Create printouts when ready" );
@@ -1647,6 +1646,8 @@ const initChalkboard = function ( Reveal ) {
 	Reveal.addEventListener( 'ready', function ( evt ) {
 //console.log('ready');
 		if ( !printMode ) {
+			window.addEventListener( 'resize', resize );
+
 			slideStart = Date.now() - getSlideDuration();
 			slideIndices = Reveal.getIndices();
 			if ( !playback ) {
