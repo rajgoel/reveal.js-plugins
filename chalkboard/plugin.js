@@ -569,6 +569,7 @@ const initChalkboard = function ( Reveal ) {
 		xhr.onload = function () {
 			if ( xhr.readyState === 4 && xhr.status != 404 ) {
 				loaded = initStorage( xhr.responseText );
+				updateStorage();
 				console.log( "Drawings loaded from file" );
 			} else {
 				config.readOnly = undefined;
