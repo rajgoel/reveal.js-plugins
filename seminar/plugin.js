@@ -1,9 +1,9 @@
 /*****************************************************************
 ** Author: Asvin Goel, goel@telematique.eu
 **
-** A plugin for reveal.js adding creating an online seminar.
+** A plugin for reveal.js creating an online seminar.
 **
-** Version: 0.4.1
+** Version: 0.4.2
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -33,6 +33,9 @@ function defaultLogger( event ) {
 }
 
 const initSeminar = function(Reveal){
+	var printMode = ( /print-pdf/gi ).test( window.location.search );
+	if ( printMode ) return;
+
 	var seminar = Reveal.getConfig().seminar || {};
 	if ( !seminar.server ) {
 		alert("Seminar server not specified!");
