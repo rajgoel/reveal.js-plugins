@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a Q&A to an online seminar.
 **
-** Version: 0.1.0
+** Version: 0.1.1
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -19,7 +19,7 @@ window.RevealQnA = window.RevealQnA || {
 
 
 const initQnA = function(Reveal){
-	var config = Reveal.getConfig().questions;
+	var config = Reveal.getConfig().questions || {};
         const STATUS = {"JOINED": 3, "HOSTING": 4};
 	var questions = 0;
 	var counter = 0;
