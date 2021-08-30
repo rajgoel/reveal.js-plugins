@@ -282,12 +282,22 @@ const initChalkboard = function ( Reveal ) {
  ******************************************************************/
 
 	function whenReady( callback ) {
-		// wait for drawings to be loaded and markdown to be parsed
-		if ( document.querySelectorAll( ".pdf-page" ).length && loaded !== null ) {
+		// wait for markdown to be parsed
+		if ( !document.querySelector( 'section[data-markdown]:not([data-markdown-parsed])' ) ) {
 			callback();
 		} else {
-			console.log( "Wait for pdf pages to be created and drawings to be loaded" );
+			console.log( "Wait for markdown to be parsed" );
 			setTimeout( whenReady, 500, callback )
+		}
+	}
+
+	function whenLoaded( callback ) {
+		// wait for drawings to be loaded and markdown to be parsed
+		if ( loaded !== null ) {
+			callback();
+		} else {
+			console.log( "Wait for drawings to be loaded" );
+			setTimeout( whenLoaded, 500, callback )
 		}
 	}
 
@@ -677,8 +687,11 @@ const initChalkboard = function ( Reveal ) {
 				return data;
 			}
 		}
+		var page = Number( Reveal.getCurrentSlide().getAttribute('data-pdf-page-number') ); 
+//console.log( indices, Reveal.getCurrentSlide() );
 		storage[ id ].data.push( {
 			slide: indices,
+			page,
 			events: [],
 			duration: 0
 		} );
@@ -710,6 +723,13 @@ const initChalkboard = function ( Reveal ) {
 	var printMode = ( /print-pdf/gi ).test( window.location.search );
 //console.log("createPrintout" + printMode)
 
+	function addPageNumbers() {
+		var slides = Reveal.getSlides();
+		for ( var i=0; i < slides.length; i++) {
+			slides[i].setAttribute('data-pdf-page-number',i.toString());
+		}
+	}
+
 	function createPrintout() {
 		//console.warn(Reveal.getTotalSlides(),Reveal.getSlidesElement());
 		if ( storage[ 1 ].data.length == 0 ) return;
@@ -719,15 +739,15 @@ const initChalkboard = function ( Reveal ) {
 
 		var patImg = new Image();
 		patImg.onload = function () {
-			var slides = getSlidesArray();
+			var slides = Reveal.getSlides();
 //console.log(slides);
 			for ( var i = storage[ 1 ].data.length - 1; i >= 0; i-- ) {
 				console.log( 'Create printout for slide ' + storage[ 1 ].data[ i ].slide.h + '.' + storage[ 1 ].data[ i ].slide.v );
 				var slideData = getSlideData( storage[ 1 ].data[ i ].slide, 1 );
 				var drawings = createDrawings( slideData, patImg );
-				var slide = slides[ storage[ 1 ].data[ i ].slide.h ][ storage[ 1 ].data[ i ].slide.v ];
-//console.log("Slide:", slide);
-				addDrawings( slide, drawings );
+//console.log("Page:", storage[ 1 ].data[ i ].page );
+//console.log("Slide:", slides[storage[ 1 ].data[ i ].page] );
+				addDrawings( slides[storage[ 1 ].data[ i ].page], drawings );
 
 			}
 //			Reveal.sync();
@@ -735,42 +755,6 @@ const initChalkboard = function ( Reveal ) {
 		patImg.src = background[ 1 ];
 	}
 
-	function getSlidesArray() {
-		var horizontal = document.querySelectorAll( '.slides > div.pdf-page > section, .slides > section' );
-		var slides = [];
-		var slidenumber = undefined;
-		for ( var i = 0; i < horizontal.length; i++ ) {
-			if ( horizontal[ i ].parentElement.classList.contains( 'pdf-page' ) ) {
-				// Horizontal slide
-				if ( horizontal[ i ].getAttribute( 'data-slide-number' ) != slidenumber ) {
-					// new slide
-					slides.push( [] );
-					slides[ slides.length - 1 ].push( horizontal[ i ] );
-					slidenumber = horizontal[ i ].getAttribute( 'data-slide-number' );
-				} else {
-					// fragment of same slide
-					slides[ slides.length - 1 ][ slides[ slides.length - 1 ].length - 1 ] = horizontal[ i ];
-				}
-			} else {
-				// Vertical slides
-				var vertical = horizontal[ i ].querySelectorAll( 'section' );
-				slides.push( [] );
-				var slidenumber = undefined;
-				for ( var j = 0; j < vertical.length; j++ ) {
-					if ( vertical[ j ].getAttribute( 'data-slide-number' ) != slidenumber ) {
-						// new slide
-						slides[ slides.length - 1 ].push( vertical[ j ] );
-						slidenumber = vertical[ j ].getAttribute( 'data-slide-number' );
-					} else {
-						// fragment of same slide
-						slides[ slides.length - 1 ][ slides[ slides.length - 1 ].length - 1 ] = vertical[ j ];
-					}
-				}
-			}
-		}
-//console.log("Slides:", slides);
-		return slides;
-	}
 
 	function cloneCanvas( oldCanvas ) {
 		//create a new canvas
@@ -826,7 +810,7 @@ const initChalkboard = function ( Reveal ) {
 		}
 		mode = 1;
 		board = 0;
-		console.log( 'Create printout(s) for slide ', slideData );
+//		console.log( 'Create printout(s) for slide ', slideData );
 
 		var drawings = [];
 		var template = document.createElement( 'canvas' );
@@ -1655,6 +1639,11 @@ const initChalkboard = function ( Reveal ) {
 
 	} );
 
+	Reveal.addEventListener( 'pdf-ready', function ( evt ) {
+//		console.log( "Create printouts when ready" );
+		whenLoaded( createPrintout );
+	});
+
 	Reveal.addEventListener( 'ready', function ( evt ) {
 //console.log('ready');
 		if ( !printMode ) {
@@ -1669,9 +1658,7 @@ const initChalkboard = function ( Reveal ) {
 				document.dispatchEvent( event );
 			}
 			updateStorage();
-		} else {
-			console.log( "Create printouts when ready" );
-			whenReady( createPrintout );
+			whenReady( addPageNumbers );
 		}
 	} );
 	Reveal.addEventListener( 'slidechanged', function ( evt ) {
