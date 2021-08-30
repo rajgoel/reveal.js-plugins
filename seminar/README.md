@@ -49,7 +49,7 @@ Reveal.initialize({
 		autoJoin: true // set to true to auto,matically join the seminar room
 	},
   // ...
-	plugins: [ RevealChart, RevealSeminar, RevealChalkboard, RevealPoll, RevealQuestions  ]
+	plugins: [ RevealChart, RevealSeminar, RevealChalkboard, RevealPoll, RevealQnA  ]
 	// check the respective documentation for the configurations of the other plugins
 });
 ```
