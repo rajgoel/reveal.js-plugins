@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding creating an online seminar.
 **
-** Version: 0.4.0
+** Version: 0.4.1
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -58,6 +58,8 @@ const initSeminar = function(Reveal){
 
 	var username = null;
 	var status = null;
+
+	var receivedState = null;
 
 	function connected() {
 		return ( status >= STATUS.JOINED );
@@ -181,9 +183,11 @@ const initSeminar = function(Reveal){
 		// send a message to recipient
 	}
 */	
+/*
 	function receive( message ) {
 		// receive and process a message
 		if ( message.state ) {
+			receivedState = message.state;
 			Reveal.setState( message.state );
 		}
 		if ( message.content ) {
@@ -193,7 +197,7 @@ const initSeminar = function(Reveal){
 			document.dispatchEvent( event );
 		}
 	}
-
+*/
 	function sendMessage( evt ) {
 		// send message w/o copy
 		var data = {
@@ -237,20 +241,43 @@ const initSeminar = function(Reveal){
 		socket.emit( 'announcement', data );
 	};
 
+	function stateChange( state ) {
+		var current = Reveal.getState();
+		return ( !state || !( 
+                     current.indexh == state.indexh &&
+                     current.indexv == state.indexv &&
+                     current.indexf == state.indexf &&
+                     current.paused == state.paused &&
+                     current.overview == state.overview
+                   ));
+
+	}
+
+	function broadcastStateChange( evt ) {
+		if ( stateChange( receivedState ) ) {
+			// broadcast state change 
+			broadcastState( evt );
+		}
+		else {
+			// ignore state change if the state is the same as the last state received 
+			receivedState = null;
+		}
+	}
+
 	function makeHost() {
 		// Ignore notes windows
 		if ( window.location.search.match( /receiver/gi ) ) return;
 
 		subscribe();
 		// Monitor events that trigger a change in state
-		Reveal.on( 'slidechanged', broadcastState );
-		Reveal.on( 'fragmentshown', broadcastState );
+		Reveal.on( 'slidechanged', broadcastStateChange );
+		Reveal.on( 'fragmentshown', broadcastStateChange );
 	
-		Reveal.on( 'fragmenthidden', broadcastState );
-		Reveal.on( 'overviewhidden', broadcastState );
-		Reveal.on( 'overviewshown', broadcastState );
-		Reveal.on( 'paused', broadcastState );
-		Reveal.on( 'resumed', broadcastState );
+		Reveal.on( 'fragmenthidden', broadcastStateChange );
+		Reveal.on( 'overviewhidden', broadcastStateChange );
+		Reveal.on( 'overviewshown', broadcastStateChange );
+		Reveal.on( 'paused', broadcastStateChange );
+		Reveal.on( 'resumed', broadcastStateChange );
 		document.addEventListener( 'broadcast', function( evt ) { 
 			// broadcast custom events w/o recipient which are sent by other plugins
 			if ( evt && !evt.recipient ) {
@@ -321,8 +348,9 @@ console.log(rooms);
 		// make sure to only accept messages within same scope (should not be necessary)
 		if ( room.venue != seminar.url || room.name != seminar.room || room.hash != seminar.hash ) return; 
 
-		if ( content.state && content.state != Reveal.getState() ) {
+		if ( content.state && stateChange( content.state ) ) {
 			// change slide if necessary
+			receivedState = content.state;
 			Reveal.setState(content.state);
 		}
 		if ( content.custom ) {
