@@ -282,11 +282,13 @@ const initChalkboard = function ( Reveal ) {
  ******************************************************************/
 
 	function whenReady( callback ) {
-		// wait for markdown to be parsed
-		if ( !document.querySelector( 'section[data-markdown]:not([data-markdown-parsed])' ) ) {
+		// wait for markdown to be parsed and code to be highlighted
+		if ( !document.querySelector( 'section[data-markdown]:not([data-markdown-parsed])' ) 
+		     && !document.querySelector( 'code[data-line-numbers*="|"]') 	
+		) {
 			callback();
 		} else {
-			console.log( "Wait for markdown to be parsed" );
+			console.log( "Wait for markdown to be parsed and code to be highlighted" );
 			setTimeout( whenReady, 500, callback )
 		}
 	}
@@ -724,9 +726,22 @@ const initChalkboard = function ( Reveal ) {
 //console.log("createPrintout" + printMode)
 
 	function addPageNumbers() {
+		// determine page number for printouts with fragments serialised
 		var slides = Reveal.getSlides();
+		var page = 0;
 		for ( var i=0; i < slides.length; i++) {
-			slides[i].setAttribute('data-pdf-page-number',i.toString());
+			slides[i].setAttribute('data-pdf-page-number',page.toString());
+			// add number of fragments without fragment indices
+			var count = slides[i].querySelectorAll('.fragment:not([data-fragment-index])').length;
+			var fragments = slides[i].querySelectorAll('.fragment[data-fragment-index]');
+			for ( var j=0; j < fragments.length; j++) {
+				// increasenumber of fragments by highest fragment index (which start at 0)
+				if ( Number(fragments[j].getAttribute('data-fragment-index')) + 1 > count ) {
+					count = Number(fragments[j].getAttribute('data-fragment-index')) + 1;
+				}
+			}
+//console.log(count,fragments.length,( slides[i].querySelector('h1,h2,h3,h4')||{}).innerHTML, page); 
+			page += count + 1;
 		}
 	}
 
