@@ -8,7 +8,7 @@
 ** available, a blank audio file with default  duration is played
 ** instead.
 **
-** Version: 1.0.1
+** Version: 1.0.2
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -130,6 +130,15 @@ const initAudioSlideshow = function(Reveal){
 
 
 	function setup() {
+		// wait for markdown and highlight plugin to be done
+		if (
+			document.querySelector( 'section[data-markdown]:not([data-markdown-parsed])' ) 
+			|| document.querySelector( 'code[data-line-numbers*="|"]')
+		) {
+			setTimeout( setup, 100 );
+			return;
+		}
+
 		// set parameters
 		var config = Reveal.getConfig().audio;
 		if ( config ) {
@@ -150,7 +159,7 @@ const initAudioSlideshow = function(Reveal){
 			opacity = 1;
 		}
 		if ( Reveal.getConfig().audioStartAtFragment ) startAtFragment = Reveal.getConfig().audioStartAtFragment;
-setupAudioElement
+
 		// set style so that audio controls are shown on hover
 		var css='.audio-controls>audio { opacity:' + playerOpacity + ';} .audio-controls:hover>audio { opacity:1;}';
 		style=document.createElement( 'style' );
@@ -205,6 +214,19 @@ setupAudioElement
 	}
 
 	function setupAllAudioElements( container, h, v, slide ) {
+		if ( slide.querySelector( 'code.fragment:not([data-fragment-index])' ) ) {
+			// somehow the timing when code fragments receive the fragment index is weird
+			// this is a work around that shouldn't be necessary
+
+			// create audio elements for slides with code fragments
+			setupAudioElement( container, h + '.' + v, slide.getAttribute( 'data-audio-src' ), '', null  );
+			fragments = slide.querySelectorAll( 'code.fragment' );
+			for ( i = 0; i < fragments.length; i++ ) {
+				setupAudioElement( container, h + '.' + v + '.' + i, null, '', null  );
+			}
+			return;
+		}
+
 		var textContainer =  document.createElement( 'div' );
 		var text = null;
 		if ( !slide.hasAttribute( 'data-audio-src' ) ) {
