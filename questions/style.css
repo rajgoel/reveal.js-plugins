@@ -10,6 +10,7 @@
 	width: 100%;
 	display: flex;
 	margin-bottom: 10px;
+	color: var(--r-main-color);
 }
 
 .qna.ask input[type='text'] {
@@ -30,14 +31,14 @@
 	background: none;
 	box-shadow: none;
 	border-radius: 0px;
-	background-color: #42affa;
-	color: white;
+	background-color: var(--r-link-color);
+	color: var(--r-background-color);
 	margin-right: 50px;
 }
 
 .qna.ask button:hover  
 {
- background-color: lightblue;
+ background-color: var(--r-link-color-hover);
 }
 
 .qna.questions {
