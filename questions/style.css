@@ -97,3 +97,8 @@
 	bottom: 10px;
 }
 
+@media print {
+	.qna { 
+		display: none!important; 
+	}
+}
