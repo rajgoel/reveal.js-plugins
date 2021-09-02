@@ -4,7 +4,7 @@
 **
 ** A plugin for reveal.js allowing to integrate Chart.js
 **
-** Version: 1.3.0
+** Version: 1.3.1
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -112,8 +112,7 @@ const initChart = function(Reveal){
 
 	function updateChart(canvas, idx, data) {
 		canvas.chart.data.datasets[idx].data = data;
-		canvas.chart.update();
-		Reveal.layout();
+		recreateChart( canvas );
 	}
 
 	var initializeCharts = function(){
