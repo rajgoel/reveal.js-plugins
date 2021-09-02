@@ -48,7 +48,7 @@ const initSeminar = function(Reveal){
 		return;
 	}
 
-	const logger = window[ seminar.logger || "defaultLogger" ];
+	const logger = seminar.logger || defaultLogger;
 
 	var socket = io.connect( seminar.server );
 	if ( seminar.callback )
