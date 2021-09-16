@@ -1,6 +1,6 @@
 # Animate
 
-A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to add animations using [SVG.js](https://svgjs.com).
+A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to add animations using [SVG.js](https://svgjs.dev).
 
 [Check out the live demo](https://rajgoel.github.io/reveal.js-demos/animate-demo.html)
 
@@ -55,10 +55,10 @@ An animation can be included in a slide by adding an element with the ```data-an
 The `setup` object is used to manipulate the SVG after loading. The `animation` object is used to create an SVG animation. Both objects are optional and specified by an array including individual changes to the SVG. Each item in the array has the following properties:
 
 - `element` (optional): The selector for any element(s) within the SVG on which the `modifier` is executed with the given `parameters`. If multiple elements match the selector, the modifier is executed in a sequential fashion to all elements matched. If no `element` is provided, the `modifier` is executed on the SVG element.
-- `modifier`: Any function that can be used to [manipulate SVG elements](https://svgjs.com/docs/3.0/manipulating/). Within the `setup` object, the modifier can be any user defined function manipulating the selected elements. Within the `animation` object, no user defined functions are allowed.
+- `modifier`: Any function that can be used to [manipulate SVG elements](https://svgjs.dev/docs/3.0/manipulating/). Within the `setup` object, the modifier can be any user defined function manipulating the selected elements. Within the `animation` object, no user defined functions are allowed.
 - `parameters`: An array of parameters for the chosen `modifier`.
 
-For animation items the parameters  `duration`, `delay`, and `when` for the [`animate()`](https://svgjs.com/docs/3.0/animating/#animate) function may be provided. If they are not provided the defaults are taken according to the documentation of SVG.js.
+For animation items the parameters  `duration`, `delay`, and `when` for the [`animate()`](https://svgjs.dev/docs/3.0/animating/#animate) function may be provided. If they are not provided the defaults are taken according to the documentation of SVG.js.
 
 If a slide has fragments, the `animation` object can be provided as an array of an array. The first item of the array is an array of animations applied to the main slide, the following items are arrays of animations applied to the fragments.
 
