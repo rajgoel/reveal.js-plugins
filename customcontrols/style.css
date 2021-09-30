@@ -29,7 +29,6 @@
 	list-style-type: none;
 	overflow: hidden;
 	margin: 0;
-	padding: 0;
 	border: 1px solid var(--r-link-color);
 	border-radius: 5px;
 	padding: 10px;
@@ -55,7 +54,9 @@
 		display: none;
 	}
 	#customcontrols > ul {
-		bottom: 20px;
+		padding-top: 0px;
+		padding-bottom: 0px;
+		bottom: 30px;
 		border: none;
 		background: none;
 	}
