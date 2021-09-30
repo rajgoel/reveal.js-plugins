@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js creating an online seminar.
 **
-** Version: 0.4.2
+** Version: 0.4.3
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -78,6 +78,46 @@ const initSeminar = function(Reveal){
 		document.dispatchEvent( event );
 	}
 
+	var wakeLock = null; // null -> Wake Lock API not supported
+
+	if ( 'wakeLock' in navigator ) {
+		wakeLock = false; 
+		console.log("Screen Wake Lock API supported");
+//		logger("Screen Wake Lock API supported");
+	}
+
+	async function requestWakeLock() {
+		if ( wakeLock === false ) {
+			try {
+				wakeLock = await navigator.wakeLock.request('screen');
+				console.log('Wake Lock is active!');
+//				logger('Wake Lock is active!');
+				wakeLock.addEventListener('release', () => {
+					// the wake lock has been released
+					console.log('Wake Lock has been released');
+//					logger('Wake Lock has been released');
+					wakeLock = false;
+				});
+			} catch (err) {
+  				// The Wake Lock request has failed - usually system related, such as battery.
+				console.warn(`${err.name}, ${err.message}`);
+				wakeLock = false; 
+			}
+		}
+	}
+
+	function releaseWakeLock() {
+		if ( wakeLock ) {
+			wakeLock.release();
+		}
+	}
+
+	document.addEventListener('visibilitychange', async () => {
+		if ( document.visibilityState === 'visible' && connected() ) {
+			requestWakeLock();
+		}
+	});
+
 	function checkin( name ) {
 		if ( status && name && username != name ) {
 			// check out if user name changed
@@ -130,6 +170,7 @@ const initSeminar = function(Reveal){
 				dispatchStatus();
 				logger( `host room "${seminar.url}|${seminar.room}|${seminar.hash}"` );
 				makeHost();
+				requestWakeLock();
 			}
 		});
 	}
@@ -143,6 +184,7 @@ const initSeminar = function(Reveal){
 				status = STATUS.CHECKEDIN;
 				dispatchStatus();
 				logger( `left room "${seminar.url}|${seminar.room}|${seminar.hash}"` );
+				releaseWakeLock();
 			}
 		});
 	}
@@ -156,6 +198,7 @@ const initSeminar = function(Reveal){
 				status = STATUS.CHECKEDIN;
 				dispatchStatus();
 				logger( `room closed "${seminar.url}|${seminar.room}|${seminar.hash}"` );
+				releaseWakeLock();
 			}
 		});
 	}
@@ -168,12 +211,14 @@ const initSeminar = function(Reveal){
 				logger( error );
 				status = STATUS.JOINING;
 				dispatchStatus();
+				releaseWakeLock();
 			}
 			else {
 				logger( `joined room "${seminar.url}|${seminar.room}|${seminar.hash}" as ${socket.id}` );
 				subscribe();
 				status = STATUS.JOINED;
 				dispatchStatus();
+				requestWakeLock();
 			}
 		});
 	}
@@ -313,6 +358,7 @@ console.log(rooms);
 			document.dispatchEvent( event );
 			status = STATUS.JOINING;
 			dispatchStatus();
+			releaseWakeLock();
 		}
 	});
 
