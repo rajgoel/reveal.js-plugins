@@ -299,12 +299,6 @@ console.warn( "toggleQnAButton is deprecated, use customcontrols plugin instead!
 	});
 
 
-/*
-	Reveal.addEventListener('ready', function(){
-//alert("READY");
-		initializeQnA();
-	});
-*/
 	this.toggleQnA = toggleQnA;
 
 	return this;
