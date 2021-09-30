@@ -20,11 +20,13 @@ const initCustomControls = function(Reveal){
 
 	var collapseIcon = config.collapseIcon || '<i class="fa fa-chevron-down"></i>';
 	var expandIcon = config.expandIcon || '<i class="fa fa-chevron-up"></i>';
+	var tooltip = config.tooltip || 'Show/hide controls';
 
 	var div = document.createElement( 'div' );
 	div.id = 'customcontrols';
 
 	var toggleButton = document.createElement( 'button' );
+	toggleButton.title = tooltip;
 	toggleButton.innerHTML = '<span id="collapse-customcontrols">' + collapseIcon + '</span>' + '<span id="expand-customcontrols">' + expandIcon + '</span>';
 
 	toggleButton.addEventListener('click', function( event ) {
