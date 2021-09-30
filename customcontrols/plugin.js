@@ -37,6 +37,7 @@ const initCustomControls = function(Reveal){
 		else {
 			div.classList.add('collapsed');
 		}
+		toggleButton.blur(); // unfocus button
 	});
 
 	div.appendChild(toggleButton);
