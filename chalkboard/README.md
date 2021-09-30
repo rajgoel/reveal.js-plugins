@@ -7,7 +7,7 @@ With this plugin you can add a chalkboard to reveal.js. The plugin provides two 
 
 The main use case in mind when implementing the plugin is classroom usage in which you may want to explain some course content and quickly need to make some notes.
 
-The plugin records all drawings made so that they can be play backed using the ```autoSlide``` feature or the ```audio-slideshow``` plugin.
+The plugin records all drawings made so that they can be play backed using the `autoSlide` feature or the `audio-slideshow` plugin.
 
 [Check out the live demo](https://rajgoel.github.io/reveal.js-demos/chalkboard-demo.html)
 
@@ -15,15 +15,16 @@ The chalkboard effect is based on [Chalkboard](https://github.com/mmoustafa/Chal
 
 ## Installation
 
-Copy the file ```plugin.js``` and the  ```img``` directory into the plugin folder of your reveal.js presentation, i.e. ```plugin/chalkboard``` and load the plugin as shown below.
+Copy the file `plugin.js` and the  `img` directory into the plugin folder of your reveal.js presentation, i.e. `plugin/chalkboard` and load the plugin as shown below.
 
 ```html
 <script src="plugin/chalkboard/plugin.js"></script>
+<script src="plugin/chalkboard/customcontrols.js"></script>
 
 <script>
     Reveal.initialize({
         // ...
-        plugins: [ RevealChalkboard ],
+        plugins: [ RevealChalkboard, RevealCustomControls ],
         // ...
     });
 </script>
@@ -32,11 +33,12 @@ Copy the file ```plugin.js``` and the  ```img``` directory into the plugin folde
 The following stylesheet
 ```html
 <link rel="stylesheet" href="plugin/chalkboard/style.css">
+<link rel="stylesheet" href="plugin/customcontrols/style.css">
 ```
-has to be included to the ```head``` section of you HTML-file.
+has to be included to the `head` section of you HTML-file.
 
 
-In order to include buttons for opening and closing the notes canvas or the chalkboard you should make sure that ```font-awesome``` is available. The easiest way is to include
+In order to include buttons for opening and closing the notes canvas or the chalkboard you should make sure that `font-awesome` is available. The easiest way is to include
 ```
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 ```
@@ -64,7 +66,7 @@ to the ```head``` section of you HTML-file.
 
 ## Playback
 
-If the ```autoSlide``` feature is set or if the ```audio-slideshow``` plugin is used, pre-recorded chalkboard drawings can be played. The slideshow plays back the user interaction with the chalkboard in the same way as it was conducted when recording the data.
+If the `autoSlide` feature is set or if the `audio-slideshow` plugin is used, pre-recorded chalkboard drawings can be played. The slideshow plays back the user interaction with the chalkboard in the same way as it was conducted when recording the data.
 
 ## Multiplexing
 
@@ -72,7 +74,7 @@ The plugin supports multiplexing via the [`multiplex` plugin](https://github.com
 
 ## PDF-Export
 
-If the slideshow is opened in [print mode](https://revealjs.com/pdf-export/), the chalkboard drawings in the session storage (see ```storage``` option - print version must be opened in the same tab or window as the original slideshow) or provided in a file (see ```src``` option) are included in the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings on the notes canvas are not included in the PDF-file.
+If the slideshow is opened in [print mode](https://revealjs.com/pdf-export/), the chalkboard drawings in the session storage (see `storage` option - print version must be opened in the same tab or window as the original slideshow) or provided in a file (see `src` option) are included in the PDF-file. Each drawing on the chalkboard is added after the slide that was shown when opening the chalkboard. Drawings on the notes canvas are not included in the PDF-file.
 
 
 ## Configuration
@@ -85,8 +87,6 @@ The plugin has several configuration options:
 - ```storage```: Optional variable name for session storage of drawings.
 - ```src```: Optional filename for pre-recorded drawings.
 - ```readOnly```: Configuation option allowing to prevent changes to existing drawings. If set to ```true``` no changes can be made, if set to false ```false``` changes can be made, if unset or set to ```undefined``` no changes to the drawings can be made after returning to a slide or fragment for which drawings had been recorded before. In any case the recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the ```RevealChalkboard.clear()``` function).
-- ```toggleNotesButton```: If set to ```true``` a button for opening and closing the notes canvas is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate.
-- ```toggleChalkboardButton```: If set to ```true``` a button for opening and closing the chalkboard is shown. Alternatively, the css position attributes can be provided if the default position is not appropriate.
 - ```transition```: Gives the duration (in milliseconds) of the transition for a slide change, so that the notes canvas is drawn after the transition is completed.
 - ```theme```: Can be set to either ```"chalkboard"``` or ```"whiteboard"```.
 
@@ -111,8 +111,6 @@ Reveal.initialize({
         storage: null,
         src: null,
         readOnly: undefined,
-        toggleChalkboardButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
-        toggleNotesButton: { left: "30px", bottom: "30px", top: "auto", right: "auto" },
         transition: 800,
         theme: "chalkboard",
         background: [ 'rgba(127,127,127,.1)' , path + 'img/blackboard.png' ],
@@ -136,6 +134,18 @@ Reveal.initialize({
                 { color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto'},
                 { color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto'}
         ]
+    },
+    customcontrols: {
+  		controls: [
+  			{ icon: '<i class="fa fa-pen-square"></i>',
+  			  title: 'Toggle chalkboard (B)',
+  			  action: 'RevealChalkboard.toggleChalkboard();'
+  			},
+  			{ icon: '<i class="fa fa-pen"></i>',
+  			  title: 'Toggle notes canvas (C)',
+  			  action: 'RevealChalkboard.toggleNotesCanvas();'
+  			}
+  		]
     },
     // ...
 

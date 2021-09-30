@@ -3,8 +3,8 @@
  **
  ** A plugin for reveal.js adding a chalkboard.
  **
- ** Version: 2.0.0
- **d
+ ** Version: 2.1.0
+ **
  ** License: MIT license (see LICENSE.md)
  **
  ** Credits:
@@ -206,8 +206,8 @@ const initChalkboard = function ( Reveal ) {
 
 	var theme = 'chalkboard';
 	var color = [ 0, 0 ];
-	var toggleChalkboardButton = true;
-	var toggleNotesButton = true;
+	var toggleChalkboardButton = false;
+	var toggleNotesButton = false;
 	var colorButtons = true;
 	var boardHandle = true;
 	var transition = 800;
@@ -303,8 +303,8 @@ const initChalkboard = function ( Reveal ) {
 		}
 	}
 
-
 	if ( toggleChalkboardButton ) {
+console.warn( "toggleChalkboardButton is deprecated, use customcontrols plugin instead!" );
 //console.log("toggleChalkboardButton")
 		var button = document.createElement( 'div' );
 		button.className = "chalkboard-button";
@@ -323,6 +323,7 @@ const initChalkboard = function ( Reveal ) {
 		document.querySelector( ".reveal" ).appendChild( button );
 	}
 	if ( toggleNotesButton ) {
+console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instead!" );
 //console.log("toggleNotesButton")
 		var button = document.createElement( 'div' );
 		button.className = "chalkboard-button";

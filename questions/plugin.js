@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a Q&A to an online seminar.
 **
-** Version: 0.1.1
+** Version: 0.1.2
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -21,6 +21,7 @@ window.RevealQnA = window.RevealQnA || {
 const initQnA = function(Reveal){
 	var config = Reveal.getConfig().questions || {};
         const STATUS = {"JOINED": 3, "HOSTING": 4};
+	var connected = false;
 	var questions = 0;
 	var counter = 0;
 
@@ -71,9 +72,10 @@ const initQnA = function(Reveal){
 	container.appendChild(questionList);
 	document.querySelector( '.reveal' ).appendChild( container );
 
-	toggleQnAButton = config.toggleQnAButton || true;
+	toggleQnAButton = config.toggleQnAButton || false;
 
 	if ( toggleQnAButton ) {
+console.warn( "toggleQnAButton is deprecated, use customcontrols plugin instead!" );
 		var button = document.createElement( 'div' );
 		button.className = "toggle-questions";
 		button.id = "toggle-questions";
@@ -94,6 +96,7 @@ const initQnA = function(Reveal){
 		document.querySelector(".reveal").appendChild( button );
 	}
 
+
 /*
 	function initializeQnA() {
 
@@ -101,12 +104,12 @@ const initQnA = function(Reveal){
 */
 
 
-	function toggleQnA( visibility ) {
-		if ( !visibility ) {
-			visibility = document.querySelector('.qna.dashboard').style.visibility == "hidden" ? "visible" : "hidden";
+	function toggleQnA( show ) {
+		if ( show == undefined ) {
+			show = document.querySelector('.qna.dashboard').style.visibility == "hidden";
 		}
 
-		document.querySelector('.qna.dashboard').style.visibility = visibility;
+		document.querySelector('.qna.dashboard').style.visibility = show ? "visible" : "hidden";
 	}
 
 
@@ -214,13 +217,13 @@ const initQnA = function(Reveal){
 	document.addEventListener( 'seminar', function ( message ) {
 		// update status
 //console.log(message.status);
-		var visibility = ( message.status >= STATUS.JOINED ) ? "visible" : "hidden";
-		var buttons = document.querySelectorAll('.toggle-questions');
+		var connected = ( message.status >= STATUS.JOINED );
+		var buttons = document.querySelectorAll('#toggle-questions');
 		for (var i = 0; i < buttons.length; i++) {
-			buttons[i].style.visibility = visibility;
+			buttons[i].style.display = connected ? "inherit" : "none";
 		}
-		if ( visibility == "hidden" ) {
-			toggleQnA( visibility ); // close Q&A
+		if ( !connected ) {
+			toggleQnA( false ); // close Q&A
 			Reveal.removeKeyBinding( 81 );
 		}
 		else {
