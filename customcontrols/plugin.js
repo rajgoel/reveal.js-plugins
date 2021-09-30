@@ -3,7 +3,7 @@
 **
 ** A plugin replacing the default controls by custom controls.
 **
-** Version: 1.0.0
+** Version: 2.0.0
 ** 
 ** License: MIT license (see LICENSE.md)
 **
@@ -16,37 +16,48 @@ window.RevealCustomControls = window.RevealCustomControls || {
 };
 
 const initCustomControls = function(Reveal){
-	var config = Reveal.getConfig().customcontrols || 
-		{ 
-			slideNumberCSS : 'position: fixed; display: block; right: 90px; top: auto; left: auto; width: 50px; bottom: 30px; z-index: 31; font-family: Helvetica, sans-serif; font-size:  12px; line-height: 1; padding: 5px; text-align: center; border-radius: 10px; background-color: rgba(128,128,128,.5)',
-			controls: [
-				{
-					icon: '<i class="fa fa-caret-left"></i>', 
-	 				css: 'position: fixed; right: 60px; bottom: 30px; z-index: 30; font-size: 24px;', 
-					action: 'Reveal.prev(); return false;' 
-				}, 
-				{
-					icon: '<i class="fa fa-caret-right"></i>', 
-					css: 'position: fixed; right: 30px; bottom: 30px; z-index: 30; font-size: 24px;', 
-					action: 'Reveal.next(); return false;' 
-				} 
-			] 
-		};
+	var config = Reveal.getConfig().customcontrols || {};
 
-	var reveal = document.querySelector(".reveal");
+	var collapseIcon = config.collapseIcon || '<i class="fa fa-chevron-down"></i>';
+	var expandIcon = config.expandIcon || '<i class="fa fa-chevron-up"></i>';
 
+	var div = document.createElement( 'div' );
+	div.id = 'customcontrols';
+
+	var toggleButton = document.createElement( 'button' );
+	toggleButton.innerHTML = '<span id="collapse-customcontrols">' + collapseIcon + '</span>' + '<span id="expand-customcontrols">' + expandIcon + '</span>';
+
+	toggleButton.addEventListener('click', function( event ) {
+		var div = document.querySelector("div#customcontrols");
+		if ( div.classList.contains('collapsed') ) {
+			div.classList.remove('collapsed');
+		}
+		else {
+			div.classList.add('collapsed');
+		}
+	});
+
+	div.appendChild(toggleButton);
+
+	var controls = document.createElement( 'ul' );
 	for (var i = 0; i < config.controls.length; i++ ) {
-		var control = document.createElement( 'div' );
-		control.className = "customcontrols";
-		control.style.cssText = config.controls[i].css;
-		control.innerHTML = '<a href="#" onclick="' + config.controls[i].action + '">' + config.controls[i].icon + '</a>';
-		document.querySelector(".reveal").appendChild( control );
+		var control = document.createElement( 'li' );
+		if ( config.controls[i].id ) {
+			control.id = config.controls[i].id;
+		}
+		control.innerHTML = '<button ' + ( config.controls[i].title ? 'title="' + config.controls[i].title + '" ': '' ) + 'onclick="' + config.controls[i].action + '">' + config.controls[i].icon + '</button>';
+		controls.appendChild( control );
 	}
+	div.appendChild( controls );
 
-	Reveal.addEventListener( 'ready', function( event ) {
-		if ( Reveal.getConfig().slideNumber && config.slideNumberCSS ) {
-			var slideNumber = document.querySelector(".reveal .slide-number");
-			slideNumber.style.cssText = config.slideNumberCSS;
+
+	document.querySelector(".reveal").appendChild( div );
+
+	document.addEventListener( 'resize', function( event ) {
+		// expand controls to make sure they are visible
+		var div = document.querySelector("div#customcontrols.collapsed");
+		if ( div ) {
+			div.classList.remove('collapsed');
 		}
 	} );
 
