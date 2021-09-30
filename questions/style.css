@@ -5,11 +5,9 @@
 }
 
 .qna.ask {
-	padding-top: 20px;
-	padding-bottom: 20px;
 	width: 100%;
-	display: flex;
 	margin-bottom: 10px;
+	padding: 20px 50px 20px 50px;
 	color: var(--r-main-color);
 }
 
@@ -18,8 +16,7 @@
 	padding: 10px;
 	height: 30px;
 	border-radius: 0;
-	flex: 1;
-	margin-left: 50px;
+	width: calc(100% - 240px);
 }
 
 .qna.ask button  
@@ -33,7 +30,7 @@
 	border-radius: 0px;
 	background-color: var(--r-link-color);
 	color: var(--r-background-color);
-	margin-right: 50px;
+	width: 120px;
 }
 
 .qna.ask button:hover  
