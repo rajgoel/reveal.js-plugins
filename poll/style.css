@@ -1,8 +1,8 @@
 .poll > button {
   display: block;
-  background-color: #42affa;
+  background-color: var(--r-link-color);
   border: none;
-  color: white;
+  color: var(--r-background-color);
   padding: 15px 32px;
   text-align: center;
   text-decoration: none;
@@ -18,17 +18,14 @@
 }
 
 .poll > button:hover {
-  background-color: blue;
-  color: white;
+  background-color: var(--r-link-color-hover);
 }
 
 .poll > button:disabled {
   background-color: darkgray;
-  color: white;
 }
 
 .poll > button.selected:disabled {
-  background-color: blue;
-  color: white;
+  background-color: var(--r-link-color-dark);
 }
 
