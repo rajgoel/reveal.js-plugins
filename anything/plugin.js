@@ -10,10 +10,10 @@
 ******************************************************************/
 
 window.RevealAnything = window.RevealAnything || {
-    id: 'RevealAnything',
-    init: function(deck) {
-	if ( Reveal.getConfig().anything ) initAnything(deck);
-    }
+	id: 'RevealAnything',
+	init: function(deck) {
+		if ( Reveal.getConfig().anything ) initAnything(deck);
+	}
 };
 
 const initAnything = function(Reveal){
