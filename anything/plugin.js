@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js allowing to easily integrate any content
 **
-** Version: 1.0.0
+** Version: 1.0.1
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -12,7 +12,7 @@
 window.RevealAnything = window.RevealAnything || {
     id: 'RevealAnything',
     init: function(deck) {
-        initAnything(deck);
+	if ( Reveal.getConfig().anything ) initAnything(deck);
     }
 };
 
