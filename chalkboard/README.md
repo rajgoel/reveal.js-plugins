@@ -19,7 +19,7 @@ Copy the file `plugin.js` and the  `img` directory into the plugin folder of you
 
 ```html
 <script src="plugin/chalkboard/plugin.js"></script>
-<script src="plugin/chalkboard/customcontrols.js"></script>
+<script src="plugin/customcontrols/customcontrols.js"></script>
 
 <script>
     Reveal.initialize({
