@@ -357,7 +357,17 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	var lastX = null;
 	var lastY = null;
 
+    var firstTransientX = null;
+    var firstTransientY = null;
+	var transientRectangleTop = null;
+	var transientRectangleBottom = null;
+	var transientRectangleLeft = null;
+	var transientRectangleRight = null;
+
 	var drawing = false;
+    var drawingTransient = false;
+    var replayTransient = false;
+    var replayTransientId = null;
 	var erasing = false;
 
 	var slideStart = Date.now();
@@ -437,6 +447,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		drawingCanvas[ id ].scale = 1;
 		drawingCanvas[ id ].xOffset = 0;
 		drawingCanvas[ id ].yOffset = 0;
+		drawingCanvas[ id ].imageData = null;
 
 		if ( id == "0" ) {
 			container.style.background = 'rgba(0,0,0,0)';
@@ -838,6 +849,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		imgCtx.rect( 0, 0, width, height );
 		imgCtx.fill();
 
+        var skip = false;
 		for ( var j = 0; j < slideData.events.length; j++ ) {
 			switch ( slideData.events[ j ].type ) {
 			case 'draw':
@@ -862,6 +874,12 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 				getCanvas( template, drawings, board ).getContext( '2d' ).clearRect( 0, 0, width, height );
 				getCanvas( template, drawings, board ).getContext( '2d' ).fill();
 				break;
+            case 'take-snapshot':
+                skip = true;
+                break;
+            case 'restore-snapshot':
+                skip = false;
+                break;
 			default:
 				break;
 			}
@@ -1338,10 +1356,28 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		case 'erase':
 			eraseCircle( id, event, timestamp );
 			break;
+		case 'take-snapshot':
+            replayTakeSnapshot();
+			break;
+		case 'restore-snapshot':
+            replayRestoreSnapshot();
+			break;
 		}
 	};
 
+	function replayTakeSnapshot( id, event, timestamp ) {
+        replayTransient = true;
+        replayTransientId = id;
+    }
+
+	function replayRestoreSnapshot ( id, event, timestamp ) {
+        replayTransient = false;
+        replayTransientId = null;
+    }
+
 	function drawLine( id, event, timestamp ) {
+        if(replayTransient && id == replayTransientId)
+            return;
 		var ctx = drawingCanvas[ id ].context;
 		var scale = drawingCanvas[ id ].scale;
 		var xOffset = drawingCanvas[ id ].xOffset;
@@ -1397,7 +1433,118 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		drawingCanvas[ mode ].sponge.style.visibility = 'hidden';
 	}
 
-	function startDrawing( x, y ) {
+    function takeSnapshot(id = mode, record = true) {
+        if( drawingCanvas[id].imageData ) 
+            return;
+
+        var ctx = drawingCanvas[ id ].context;
+        var x = 0;
+        var y = 0;
+        var width = drawingCanvas[id].width;
+        var height = drawingCanvas[id].height;
+
+        drawingCanvas[id].imageData = ctx.getImageData(0, 0, width, height);
+
+        if(!record)
+            return;
+
+        // record event
+        recordEvent( {
+            type: 'take-snapshot',
+        } );
+
+        // broadcast
+        var message = new CustomEvent( messageType );
+        message.content = {
+            sender: 'chalkboard-plugin',
+            type: 'take-snapshot',
+            timestamp: Date.now() - slideStart,
+            id,
+            board
+        };
+        document.dispatchEvent( message );
+    }
+
+    function clearTransient(id = mode) {
+        firstTransientX = null;
+        firstTransientY = null;
+        transientRectangleTop = null;
+        transientRectangleBottom = null;
+        transientRectangleLeft = null;
+        transientRectangleRight = null;
+        drawingCanvas[id].imageData = null;
+        drawingTransient = false;
+    }
+
+    function restoreSnapshot(id = mode, record = true) {
+        var restored = false;
+        var imageData = drawingCanvas[id].imageData;
+
+        if(imageData) {
+            var margin = 1.5*Math.max(chalkWidth, boardmarkerWidth);
+            var ctx = drawingCanvas[ id ].context;
+            ctx.putImageData(
+                imageData, 
+                transientRectangleLeft,
+                transientRectangleTop,
+                transientRectangleLeft - margin,
+                transientRectangleTop - margin,
+                transientRectangleRight - transientRectangleLeft + 2*margin,
+                transientRectangleBottom - transientRectangleTop + 2*margin);
+            restored = true;
+        }
+
+        if(!record)
+            return restored;
+
+        // record event
+        recordEvent( {
+            type: 'restore-snapshot',
+        } );
+
+        // broadcast
+        var message = new CustomEvent( messageType );
+        message.content = {
+            sender: 'chalkboard-plugin',
+            type: 'restore-snapshot',
+            timestamp: Date.now() - slideStart,
+            mode,
+            board
+        };
+        document.dispatchEvent( message );
+
+        return restored;
+    }
+
+    function overrideTransientDrawing() {
+        var scale = drawingCanvas[ mode ].scale;
+        var xOffset = drawingCanvas[ mode ].xOffset;
+        var yOffset = drawingCanvas[ mode ].yOffset;
+
+        mouseX = lastX;
+        mouseY = lastY;
+
+        drawingTransient = false; // drawSegment needs this to false to correctly record data
+        drawSegment( ( firstTransientX - xOffset ) / scale, ( firstTransientY - yOffset ) / scale, ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale, color[ mode ] );
+
+        // broadcast
+        var message = new CustomEvent( messageType );
+        message.content = {
+            sender: 'chalkboard-plugin',
+            type: 'draw',
+            timestamp: Date.now() - slideStart,
+            mode,
+            board,
+            fromX: ( firstTransientX - xOffset ) / scale,
+            fromY: ( firstTransientY - yOffset ) / scale,
+            toX: ( mouseX - xOffset ) / scale,
+            toY: ( mouseY - yOffset ) / scale,
+            color: color[ mode ]
+        };
+        document.dispatchEvent( message );
+    }
+
+	function startDrawing( x, y, beginTransient = false ) {
 		drawing = true;
 
 		var ctx = drawingCanvas[ mode ].context;
@@ -1406,6 +1553,14 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		var yOffset = drawingCanvas[ mode ].yOffset;
 		lastX = x * scale + xOffset;
 		lastY = y * scale + yOffset;
+
+        if(!beginTransient)
+            return;
+
+        firstTransientX = lastX;
+        firstTransientY = lastY;
+
+        takeSnapshot();
 	}
 
 	function drawSegment( fromX, fromY, toX, toY, colorIdx ) {
@@ -1414,14 +1569,16 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		var xOffset = drawingCanvas[ mode ].xOffset;
 		var yOffset = drawingCanvas[ mode ].yOffset;
 
-		recordEvent( {
-			type: 'draw',
-			color: colorIdx,
-			x1: fromX,
-			y1: fromY,
-			x2: toX,
-			y2: toY
-		} );
+        if( !drawingTransient ) {
+            recordEvent( {
+                type: 'draw',
+                color: colorIdx,
+                x1: fromX,
+                y1: fromY,
+                x2: toX,
+                y2: toY
+            } );
+        }
 
 		if (
 			fromX * scale + xOffset > 0 &&
@@ -1438,6 +1595,12 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	}
 
 	function stopDrawing() {
+        if(drawingTransient) {
+            if(restoreSnapshot()) {
+                overrideTransientDrawing();
+            }
+        }
+        clearTransient();
 		drawing = false;
 	}
 
@@ -1562,7 +1725,11 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 					};
 					document.dispatchEvent( message );
 				} else {
-					startDrawing( ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale );
+                    if(evt.shiftKey)
+                    {
+                        drawingTransient = true;
+                    }
+                    startDrawing( ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale, drawingTransient );
 				}
 			}
 		} );
@@ -1579,25 +1746,31 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 				mouseY = evt.pageY;
 
 				if ( drawing ) {
-					drawSegment( ( lastX - xOffset ) / scale, ( lastY - yOffset ) / scale, ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale, color[ mode ] );
-					// broadcast
-					var message = new CustomEvent( messageType );
-					message.content = {
-						sender: 'chalkboard-plugin',
-						type: 'draw',
-						timestamp: Date.now() - slideStart,
-						mode,
-						board,
-						fromX: ( lastX - xOffset ) / scale,
-						fromY: ( lastY - yOffset ) / scale,
-						toX: ( mouseX - xOffset ) / scale,
-						toY: ( mouseY - yOffset ) / scale,
-						color: color[ mode ]
-					};
-					document.dispatchEvent( message );
+                    drawSegment( ( lastX - xOffset ) / scale, ( lastY - yOffset ) / scale, ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale, color[ mode ] );
 
-					lastX = mouseX;
-					lastY = mouseY;
+                    if( !drawingTransient ) {
+                        // broadcast
+                        var message = new CustomEvent( messageType );
+                        message.content = {
+                            sender: 'chalkboard-plugin',
+                            type: 'draw',
+                            timestamp: Date.now() - slideStart,
+                            mode,
+                            board,
+                            fromX: ( lastX - xOffset ) / scale,
+                            fromY: ( lastY - yOffset ) / scale,
+                            toX: ( mouseX - xOffset ) / scale,
+                            toY: ( mouseY - yOffset ) / scale,
+                            color: color[ mode ]
+                        };
+                        document.dispatchEvent( message );
+                    }
+                    lastX = mouseX;
+                    lastY = mouseY;
+                    transientRectangleTop = Math.min(transientRectangleTop, mouseY, firstTransientY);
+                    transientRectangleLeft = Math.min(transientRectangleLeft, mouseX, firstTransientX);
+                    transientRectangleBottom = Math.max(transientRectangleBottom, mouseY, firstTransientY);
+                    transientRectangleRight = Math.max(transientRectangleRight, mouseX, firstTransientX);
 				} else {
 					erasePoint( ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale );
 					// broadcast
