@@ -54,6 +54,9 @@ window.RevealChalkboard = window.RevealChalkboard || {
 	download: function () {
 		download();
 	},
+    recordWaitNextFragment: function () {
+        recordWaitNextFragment();
+    }
 };
 
 function scriptPath() {
@@ -200,6 +203,11 @@ const initChalkboard = function ( Reveal ) {
 			keyCode: 68,
 			key: 'D',
 			description: 'Download drawings'
+		},
+		recordWaitNextFragment: {
+			keyCode: 190,
+			key: '.',
+			description: 'Record wait for next fragment'
 		}
 	};
 
@@ -375,6 +383,11 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		h: 0,
 		v: 0
 	};
+    var fragmentsChangeBoard = false;
+    var chalkBoardPresentation = true;
+    var fragmentCount = 0;
+    var waitFragmentCount = 0;
+    var recordWaitFragmentCount = 0;
 
 	var timeouts = [
 		[],
@@ -696,7 +709,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		if ( !indices ) indices = slideIndices;
 		var data;
 		for ( var i = 0; i < storage[ id ].data.length; i++ ) {
-			if ( storage[ id ].data[ i ].slide.h === indices.h && storage[ id ].data[ i ].slide.v === indices.v && storage[ id ].data[ i ].slide.f === indices.f ) {
+			if ( storage[ id ].data[ i ].slide.h === indices.h && storage[ id ].data[ i ].slide.v === indices.v && (!fragmentsChangeBoard || storage[ id ].data[ i ].slide.f === indices.f) ) {
 				data = storage[ id ].data[ i ];
 				return data;
 			}
@@ -721,7 +734,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		var duration = 0;
 		for ( var id = 0; id < 2; id++ ) {
 			for ( var i = 0; i < storage[ id ].data.length; i++ ) {
-				if ( storage[ id ].data[ i ].slide.h === indices.h && storage[ id ].data[ i ].slide.v === indices.v && storage[ id ].data[ i ].slide.f === indices.f ) {
+				if ( storage[ id ].data[ i ].slide.h === indices.h && storage[ id ].data[ i ].slide.v === indices.v && (!fragmentsChangeBoard || storage[ id ].data[ i ].slide.f === indices.f) ) {
 					duration = Math.max( duration, storage[ id ].data[ i ].duration );
 					break;
 				}
@@ -879,6 +892,8 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
                 break;
             case 'restore-snapshot':
                 skip = false;
+                break;
+            case 'wait-next-fragment':
                 break;
 			default:
 				break;
@@ -1250,7 +1265,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	 ******************************************************************/
 
 	document.addEventListener( 'seekplayback', function ( event ) {
-//console.log('event seekplayback ' + event.timestamp);
+console.log('event seekplayback ' + event.timestamp);
 		stopPlayback();
 		if ( !playback || event.timestamp == 0 ) {
 			// in other cases startplayback fires after seeked
@@ -1261,20 +1276,20 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 
 
 	document.addEventListener( 'startplayback', function ( event ) {
-//console.log('event startplayback ' + event.timestamp);
+console.log('event startplayback ' + event.timestamp);
 		stopPlayback();
 		playback = true;
 		startPlayback( event.timestamp );
 	} );
 
 	document.addEventListener( 'stopplayback', function ( event ) {
-//console.log('event stopplayback ' + (Date.now() - slideStart) );
+console.log('event stopplayback ' + (Date.now() - slideStart) );
 		playback = false;
 		stopPlayback();
 	} );
 
 	document.addEventListener( 'startrecording', function ( event ) {
-//console.log('event startrecording ' + event.timestamp);
+console.log('event startrecording ' + event.timestamp);
 		startRecording();
 	} );
 
@@ -1285,31 +1300,54 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	}
 
 	function startPlayback( timestamp, finalMode ) {
-//console.log("playback " + timestamp );
+console.log('try playback ' + fragmentCount +"/" + waitFragmentCount);
+        if(waitFragmentCount > fragmentCount)
+            return;
+
+console.log("playback " + timestamp );
+
 		slideStart = Date.now() - timestamp;
-		closeChalkboard();
-		mode = 0;
-		board = 0;
+        if(!chalkBoardPresentation) {
+            closeChalkboard();
+            mode = 0;
+            board = 0;
+        }
 		for ( var id = 0; id < 2; id++ ) {
 			clearCanvas( id );
 			var slideData = getSlideData( slideIndices, id );
 //console.log( timestamp +" / " + JSON.stringify(slideData));
-			var index = 0;
-			while ( index < slideData.events.length && slideData.events[ index ].time < ( Date.now() - slideStart ) ) {
-				playEvent( id, slideData.events[ index ], timestamp );
-				index++;
-			}
+            if(chalkBoardPresentation) {
+                for(let index = 0; index < slideData.events.length; index++) {
+                    //var group_index = Math.trunc(index/100);
+                    //timeouts[ id ].push( setTimeout( playEvent, 50*group_index, id, slideData.events[ index ], timestamp));
+                    playEvent( id, slideData.events[ index ], timestamp );
+                }
+            } else {
+                var index = 0;
+                while ( index < slideData.events.length && slideData.events[ index ].time < ( Date.now() - slideStart ) ) {
+                    playEvent( id, slideData.events[ index ], timestamp );
+                    index++;
+                }
 
-			while ( playback && index < slideData.events.length ) {
-				timeouts[ id ].push( setTimeout( playEvent, slideData.events[ index ].time - ( Date.now() - slideStart ), id, slideData.events[ index ], timestamp ) );
-				index++;
-			}
+                while ( playback && index < slideData.events.length ) {
+                    timeouts[ id ].push( setTimeout( playEvent, slideData.events[ index ].time - ( Date.now() - slideStart ), id, slideData.events[ index ], timestamp ) );
+                    index++;
+                }
+            }
 		}
 //console.log("Mode: " + finalMode + "/" + mode );
+        if(chalkBoardPresentation)
+            return;
+
 		if ( finalMode != undefined ) {
 			mode = finalMode;
 		}
-		if ( mode == 1 ) showChalkboard();
+		if ( mode == 1 ) 
+        {
+            showChalkboard();
+        } else {
+            //closeChalkboard();
+        }
 //console.log("playback (ok)");
 
 	};
@@ -1327,9 +1365,17 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 
 	function playEvent( id, event, timestamp ) {
 //console.log( timestamp +" / " + JSON.stringify(event));
-//console.log( id + ": " + timestamp +" / " +  event.time +" / " + event.type +" / " + mode );
+//console.log( id + ": " + timestamp +" / " +  event.time +" / " + event.type +" / " + mode +" / ");
+console.log( id + ": " + timestamp +" / " + event.type +" / " + mode +" / " + fragmentCount + "/" + waitFragmentCount);
+        if (waitFragmentCount > fragmentCount)
+            return;
+
+        disableBoardOpenCloseEvents = true;
+
 		switch ( event.type ) {
 		case 'open':
+            if(disableBoardOpenCloseEvents)
+                break;
 			if ( timestamp <= event.time ) {
 				showChalkboard();
 			} else {
@@ -1338,6 +1384,8 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 
 			break;
 		case 'close':
+            if(disableBoardOpenCloseEvents)
+                break;
 			if ( timestamp < event.time ) {
 				closeChalkboard();
 			} else {
@@ -1351,7 +1399,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 			selectBoard( event.board );
 			break;
 		case 'draw':
-			drawLine( id, event, timestamp );
+            drawLine( id, event, timestamp );
 			break;
 		case 'erase':
 			eraseCircle( id, event, timestamp );
@@ -1362,8 +1410,23 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		case 'restore-snapshot':
             replayRestoreSnapshot();
 			break;
+		case 'wait-next-fragment':
+            waitFragmentCount = event.waitFragmentCount;
+			break;
 		}
 	};
+
+    function recordWaitNextFragment() {
+        recordWaitFragmentCount++;
+
+console.log('record wait-next-fragment ' + recordWaitFragmentCount);
+
+        // record event
+        recordEvent( {
+            type: 'wait-next-fragment',
+            waitFragmentCount: recordWaitFragmentCount
+        } );
+    }
 
 	function replayTakeSnapshot( id, event, timestamp ) {
         replayTransient = true;
@@ -1802,7 +1865,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	}
 
 	function resize() {
-//console.log("resize");
+console.log("resize");
 		// Resize the canvas and draw everything again
 		var timestamp = Date.now() - slideStart;
 		if ( !playback ) {
@@ -1824,6 +1887,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 //console.log( drawingCanvas[id].scale + "/" + drawingCanvas[id].xOffset + "/" +drawingCanvas[id].yOffset );
 		}
 //console.log( window.innerWidth + "/" + window.innerHeight);
+        waitFragmentCount = 0;
 		startPlayback( timestamp, mode, true );
 	}
 
@@ -1833,7 +1897,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	});
 
 	Reveal.addEventListener( 'ready', function ( evt ) {
-//console.log('ready');
+console.log('ready');
 		if ( !printMode ) {
 			window.addEventListener( 'resize', resize );
 
@@ -1853,16 +1917,20 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	} );
 	Reveal.addEventListener( 'slidechanged', function ( evt ) {
 //		clearTimeout( slidechangeTimeout );
-//console.log('slidechanged');
+console.log('slidechanged');
+        fragmentCount = 0;
+        waitFragmentCount = 0;
+        recordWaitFragmentCount = 0;
+
 		if ( !printMode ) {
 			slideStart = Date.now() - getSlideDuration();
 			slideIndices = Reveal.getIndices();
-			closeChalkboard();
+			//closeChalkboard();
 			board = 0;
 			clearCanvas( 0 );
 			clearCanvas( 1 );
 			if ( !playback ) {
-				slidechangeTimeout = setTimeout( startPlayback, transition, getSlideDuration(), 0 );
+				slidechangeTimeout = setTimeout( startPlayback, 0, getSlideDuration(), 0 );
 			}
 			if ( Reveal.isAutoSliding() ) {
 				var event = new CustomEvent( 'startplayback' );
@@ -1872,41 +1940,56 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		}
 	} );
 	Reveal.addEventListener( 'fragmentshown', function ( evt ) {
+        slideIndices = Reveal.getIndices();
+        fragmentCount = slideIndices.f+1;
 //		clearTimeout( slidechangeTimeout );
-//console.log('fragmentshown');
+console.log('fragmentshown ' + fragmentCount +"/" + waitFragmentCount);
+
 		if ( !printMode ) {
 			slideStart = Date.now() - getSlideDuration();
-			slideIndices = Reveal.getIndices();
-			closeChalkboard();
-			board = 0;
-			clearCanvas( 0 );
-			clearCanvas( 1 );
-			if ( Reveal.isAutoSliding() ) {
-				var event = new CustomEvent( 'startplayback' );
-				event.timestamp = 0;
-				document.dispatchEvent( event );
-			} else if ( !playback ) {
-				startPlayback( getSlideDuration(), 0 );
-//				closeChalkboard();
-			}
+
+            if(fragmentsChangeBoard){
+                closeChalkboard();
+                board = 0;
+                clearCanvas( 0 );
+                clearCanvas( 1 );
+                if ( Reveal.isAutoSliding() ) {
+                    var event = new CustomEvent( 'startplayback' );
+                    event.timestamp = 0;
+                    document.dispatchEvent( event );
+                } else if ( !playback ) {
+                    startPlayback( getSlideDuration(), 0 );
+                    //				closeChalkboard();
+                } 
+            } else {
+                startPlayback( getSlideDuration(), 0 );
+            }
 		}
 	} );
 	Reveal.addEventListener( 'fragmenthidden', function ( evt ) {
+        slideIndices = Reveal.getIndices();
+        fragmentCount = slideIndices.f+1;
+        waitFragmentCount = 0;
 //		clearTimeout( slidechangeTimeout );
-//console.log('fragmenthidden');
+console.log('fragmenthidden');
 		if ( !printMode ) {
 			slideStart = Date.now() - getSlideDuration();
-			slideIndices = Reveal.getIndices();
-			closeChalkboard();
-			board = 0;
-			clearCanvas( 0 );
-			clearCanvas( 1 );
-			if ( Reveal.isAutoSliding() ) {
-				document.dispatchEvent( new CustomEvent( 'stopplayback' ) );
-			} else if ( !playback ) {
-				startPlayback( getSlideDuration() );
-				closeChalkboard();
-			}
+            if(fragmentsChangeBoard) {
+                closeChalkboard();
+                board = 0;
+                clearCanvas( 0 );
+                clearCanvas( 1 );
+                if ( Reveal.isAutoSliding() ) {
+                    document.dispatchEvent( new CustomEvent( 'stopplayback' ) );
+                } else if ( !playback ) {
+                    startPlayback( getSlideDuration() );
+                    closeChalkboard();
+                }
+            } else {
+                document.dispatchEvent( new CustomEvent( 'stopplayback' ) );
+                clearCanvas( mode );
+                startPlayback( getSlideDuration() );
+            }
 		}
 	} );
 
@@ -1917,7 +2000,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		document.dispatchEvent( event );
 	} );
 	Reveal.addEventListener( 'autoslidepaused', function ( evt ) {
-//console.log('autoslidepaused');
+console.log('autoslidepaused');
 		document.dispatchEvent( new CustomEvent( 'stopplayback' ) );
 
 		// advance to end of slide
@@ -1961,7 +2044,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	};
 
 	function toggleChalkboard() {
-//console.log("toggleChalkboard " + mode);
+console.log("toggleChalkboard " + mode);
 		if ( mode == 1 ) {
 			if ( !readOnly ) {
 				recordEvent( { type: 'close' } );
@@ -2137,6 +2220,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	this.updateStorage = updateStorage;
 	this.getData = getData;
 	this.configure = configure;
+    this.recordWaitNextFragment = recordWaitNextFragment;
 
 
 	for ( var key in keyBindings ) {
