@@ -383,8 +383,11 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		h: 0,
 		v: 0
 	};
+
     var fragmentsChangeBoard = false;
     var chalkBoardPresentation = true;
+    var disableBoardOpenCloseEvents = true;
+
     var fragmentCount = 0;
     var waitFragmentCount = 0;
     var recordWaitFragmentCount = 0;
@@ -1265,7 +1268,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	 ******************************************************************/
 
 	document.addEventListener( 'seekplayback', function ( event ) {
-console.log('event seekplayback ' + event.timestamp);
+//console.log('event seekplayback ' + event.timestamp);
 		stopPlayback();
 		if ( !playback || event.timestamp == 0 ) {
 			// in other cases startplayback fires after seeked
@@ -1276,20 +1279,20 @@ console.log('event seekplayback ' + event.timestamp);
 
 
 	document.addEventListener( 'startplayback', function ( event ) {
-console.log('event startplayback ' + event.timestamp);
+//console.log('event startplayback ' + event.timestamp);
 		stopPlayback();
 		playback = true;
 		startPlayback( event.timestamp );
 	} );
 
 	document.addEventListener( 'stopplayback', function ( event ) {
-console.log('event stopplayback ' + (Date.now() - slideStart) );
+//console.log('event stopplayback ' + (Date.now() - slideStart) );
 		playback = false;
 		stopPlayback();
 	} );
 
 	document.addEventListener( 'startrecording', function ( event ) {
-console.log('event startrecording ' + event.timestamp);
+//console.log('event startrecording ' + event.timestamp);
 		startRecording();
 	} );
 
@@ -1300,11 +1303,11 @@ console.log('event startrecording ' + event.timestamp);
 	}
 
 	function startPlayback( timestamp, finalMode ) {
-console.log('try playback ' + fragmentCount +"/" + waitFragmentCount);
+//console.log('try playback ' + fragmentCount +"/" + waitFragmentCount);
         if(waitFragmentCount > fragmentCount)
             return;
 
-console.log("playback " + timestamp );
+//console.log("playback " + timestamp );
 
 		slideStart = Date.now() - timestamp;
         if(!chalkBoardPresentation) {
@@ -1366,11 +1369,9 @@ console.log("playback " + timestamp );
 	function playEvent( id, event, timestamp ) {
 //console.log( timestamp +" / " + JSON.stringify(event));
 //console.log( id + ": " + timestamp +" / " +  event.time +" / " + event.type +" / " + mode +" / ");
-console.log( id + ": " + timestamp +" / " + event.type +" / " + mode +" / " + fragmentCount + "/" + waitFragmentCount);
+//console.log( id + ": " + timestamp +" / " + event.type +" / " + mode +" / " + fragmentCount + "/" + waitFragmentCount);
         if (waitFragmentCount > fragmentCount)
             return;
-
-        disableBoardOpenCloseEvents = true;
 
 		switch ( event.type ) {
 		case 'open':
@@ -1419,7 +1420,7 @@ console.log( id + ": " + timestamp +" / " + event.type +" / " + mode +" / " + fr
     function recordWaitNextFragment() {
         recordWaitFragmentCount++;
 
-console.log('record wait-next-fragment ' + recordWaitFragmentCount);
+//console.log('record wait-next-fragment ' + recordWaitFragmentCount);
 
         // record event
         recordEvent( {
@@ -1865,7 +1866,7 @@ console.log('record wait-next-fragment ' + recordWaitFragmentCount);
 	}
 
 	function resize() {
-console.log("resize");
+//console.log("resize");
 		// Resize the canvas and draw everything again
 		var timestamp = Date.now() - slideStart;
 		if ( !playback ) {
@@ -1897,7 +1898,7 @@ console.log("resize");
 	});
 
 	Reveal.addEventListener( 'ready', function ( evt ) {
-console.log('ready');
+//console.log('ready');
 		if ( !printMode ) {
 			window.addEventListener( 'resize', resize );
 
@@ -1917,7 +1918,7 @@ console.log('ready');
 	} );
 	Reveal.addEventListener( 'slidechanged', function ( evt ) {
 //		clearTimeout( slidechangeTimeout );
-console.log('slidechanged');
+//console.log('slidechanged');
         fragmentCount = 0;
         waitFragmentCount = 0;
         recordWaitFragmentCount = 0;
@@ -1943,7 +1944,7 @@ console.log('slidechanged');
         slideIndices = Reveal.getIndices();
         fragmentCount = slideIndices.f+1;
 //		clearTimeout( slidechangeTimeout );
-console.log('fragmentshown ' + fragmentCount +"/" + waitFragmentCount);
+//console.log('fragmentshown ' + fragmentCount +"/" + waitFragmentCount);
 
 		if ( !printMode ) {
 			slideStart = Date.now() - getSlideDuration();
@@ -1971,7 +1972,7 @@ console.log('fragmentshown ' + fragmentCount +"/" + waitFragmentCount);
         fragmentCount = slideIndices.f+1;
         waitFragmentCount = 0;
 //		clearTimeout( slidechangeTimeout );
-console.log('fragmenthidden');
+//console.log('fragmenthidden');
 		if ( !printMode ) {
 			slideStart = Date.now() - getSlideDuration();
             if(fragmentsChangeBoard) {
@@ -2000,7 +2001,7 @@ console.log('fragmenthidden');
 		document.dispatchEvent( event );
 	} );
 	Reveal.addEventListener( 'autoslidepaused', function ( evt ) {
-console.log('autoslidepaused');
+//console.log('autoslidepaused');
 		document.dispatchEvent( new CustomEvent( 'stopplayback' ) );
 
 		// advance to end of slide
@@ -2044,7 +2045,7 @@ console.log('autoslidepaused');
 	};
 
 	function toggleChalkboard() {
-console.log("toggleChalkboard " + mode);
+//console.log("toggleChalkboard " + mode);
 		if ( mode == 1 ) {
 			if ( !readOnly ) {
 				recordEvent( { type: 'close' } );
