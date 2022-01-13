@@ -56,6 +56,12 @@ window.RevealChalkboard = window.RevealChalkboard || {
 	},
     recordWaitNextFragment: function () {
         recordWaitNextFragment();
+    },
+    recordWaitNextFragmentAbsolute: function () {
+        recordWaitNextFragmentAbsolute();
+    },
+    recordUserNoop: function () {
+        recordUserNoop();
     }
 };
 
@@ -207,7 +213,17 @@ const initChalkboard = function ( Reveal ) {
 		recordWaitNextFragment: {
 			keyCode: 190,
 			key: '.',
-			description: 'Record wait for next fragment'
+			description: 'Record wait for next fragment (relative)'
+		},
+		recordWaitNextFragmentAbsolute: {
+			keyCode: 188,
+			key: ',',
+			description: 'Record wait for next fragment absolute (based on page fragment)'
+		},
+		recordUserNoop: {
+			keyCode: 222,
+			key: '\'',
+			description: 'Record user noop (for post-editing)'
 		}
 	};
 
@@ -1373,6 +1389,10 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 //console.log( timestamp +" / " + JSON.stringify(event));
 //console.log( id + ": " + timestamp +" / " +  event.time +" / " + event.type +" / " + mode +" / ");
 //console.log( id + ": " + timestamp +" / " + event.type +" / " + mode +" / " + fragmentCount + "/" + waitFragmentCount);
+        if(event.type == 'wait-next-fragment' && event.mode == mode && event.waitFragmentCount < waitFragmentCount) {
+            waitFragmentCount = event.waitFragmentCount;
+        }
+
         if (waitFragmentCount > fragmentCount)
             return;
 
@@ -1415,21 +1435,53 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
             replayRestoreSnapshot();
 			break;
 		case 'wait-next-fragment':
-            waitFragmentCount = event.waitFragmentCount;
+            if(event.mode == mode)
+                waitFragmentCount = event.waitFragmentCount;
+			break;
+		default:
 			break;
 		}
 	};
 
-    function recordWaitNextFragment() {
-        recordWaitFragmentCount++;
+    function recordNoop(user_defined = false) {
+//console.log('record noop');
+        // record event
+        recordEvent( {
+            type: 'noop',
+        } );
+
+        if(user_defined) {
+//console.log('record user noop with "here"');
+            recordEvent( {
+                type: 'here',
+            } );
+        }
+    }
+
+    function recordUserNoop() {
+        recordNoop(true);
+    }
+
+    function recordWaitNextFragment(fragmentNumber) {
+        if(fragmentNumber === undefined) {
+            recordWaitFragmentCount++;
+        } else {
+            recordWaitFragmentCount = fragmentNumber;
+        }
+
 
 //console.log('record wait-next-fragment ' + recordWaitFragmentCount);
 
         // record event
         recordEvent( {
             type: 'wait-next-fragment',
-            waitFragmentCount: recordWaitFragmentCount
+            waitFragmentCount: recordWaitFragmentCount,
+            mode: mode
         } );
+    }
+
+    function recordWaitNextFragmentAbsolute() {
+        recordWaitNextFragment(fragmentCount);
     }
 
 	function replayTakeSnapshot( id, event, timestamp ) {
@@ -1904,6 +1956,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 
 		canvas.addEventListener( 'mouseup', function ( evt ) {
 			evt.preventDefault();
+            recordNoop();
 			drawingCanvas[ mode ].canvas.style.cursor = pens[ mode ][ color[ mode ] ].cursor;
 			if ( drawing || erasing ) {
 				stopDrawing();
@@ -1966,9 +2019,10 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	Reveal.addEventListener( 'slidechanged', function ( evt ) {
 //		clearTimeout( slidechangeTimeout );
 //console.log('slidechanged');
-        fragmentCount = 0;
+        slideIndices = Reveal.getIndices();
+        fragmentCount = slideIndices.f+1;
         waitFragmentCount = 0;
-        recordWaitFragmentCount = 0;
+        recordWaitFragmentCount = fragmentCount;
 
 		if ( !printMode ) {
 			slideStart = Date.now() - getSlideDuration();
@@ -2014,6 +2068,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
             }
 		}
 	} );
+
 	Reveal.addEventListener( 'fragmenthidden', function ( evt ) {
         slideIndices = Reveal.getIndices();
         fragmentCount = slideIndices.f+1;
@@ -2135,6 +2190,13 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 				setColor( idx, true );
 			}
 		}
+
+        slideIndices = Reveal.getIndices();
+        fragmentCount = slideIndices.f+1;
+        waitFragmentCount = 0;
+        document.dispatchEvent( new CustomEvent( 'stopplayback' ) );
+        clearCanvas( mode );
+        startPlayback( getSlideDuration() );
 	};
 
 	function clearSlide() {
@@ -2219,6 +2281,12 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	function resetStorage( force ) {
 		var ok = force || confirm( "Please confirm to delete all chalkboard drawings!" );
 		if ( ok ) {
+
+            fragmentCount = 0;
+            waitFragmentCount = 0;
+            recordWaitFragmentCount = 0;
+            clearTransient();
+
 			stopPlayback();
 			slideStart = Date.now();
 			clearCanvas( 0 );
@@ -2269,6 +2337,8 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	this.getData = getData;
 	this.configure = configure;
     this.recordWaitNextFragment = recordWaitNextFragment;
+    this.recordWaitNextFragmentAbsolute = recordWaitNextFragmentAbsolute;
+    this.recordUserNoop = recordUserNoop;
 
 
 	for ( var key in keyBindings ) {
