@@ -375,6 +375,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	var drawing = false;
     var drawingTransient = false;
     var transientDrawLine = false;
+    var transientDrawStraightLines = false;
     var transientDrawRectangle = false;
     var replayTransient = false;
     var replayTransientId = null;
@@ -1541,6 +1542,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
         drawingCanvas[id].imageData = null;
         drawingTransient = false;
         transientDrawLine = false;
+        transientDrawStraightLines = false;
         transientDrawRectangle = false;
     }
 
@@ -1594,15 +1596,32 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 
         drawingTransient = false; // drawSegment needs this to false to correctly record data
 
+        var fromX = ( firstTransientX - xOffset ) / scale;
+        var fromY = ( firstTransientY - yOffset ) / scale;
+        var toX = ( mouseX - xOffset ) / scale;
+        var toY = ( mouseY - yOffset ) / scale;
+
         if(transientDrawLine) {
-            drawSegment( ( firstTransientX - xOffset ) / scale, ( firstTransientY - yOffset ) / scale, ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale, color[ mode ] );
+            if(transientDrawStraightLines) {
+                var width = Math.abs(toX - fromX);
+                var height = Math.abs(toY - fromY);
+
+                if(width > height) {
+                    // Force horizontal line
+                    toY = fromY;
+                } else {
+                    // Force vertical line
+                    toX = fromX;
+                }
+            }
+            drawSegment(fromX, fromY, toX, toY, color[ mode ] );
         }
 
         if(transientDrawRectangle) {
-            var left = Math.min((firstTransientX - xOffset) / scale, (mouseX - xOffset) / scale);
-            var top = Math.min((firstTransientY - yOffset) / scale, (mouseY - yOffset) / scale);
-            var right = Math.max((firstTransientX - xOffset) / scale, (mouseX - xOffset) / scale);
-            var bottom = Math.max((firstTransientY - yOffset) / scale, (mouseY - yOffset) / scale);
+            var left = Math.min(fromX, toX);
+            var top = Math.min(fromY, toY);
+            var right = Math.max(fromX, toX);
+            var bottom = Math.max(fromY, toY);
             
             drawSegment(left, top, right, top, color[ mode ] );
             drawSegment(right, top, right, bottom, color[ mode ] );
@@ -1814,6 +1833,8 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
                             transientDrawRectangle = true;
                         } else {
                             transientDrawLine = true;
+                            if(evt.altKey)
+                                transientDrawStraightLines = true;
                         }
                     }
                     startDrawing( ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale, drawingTransient );
