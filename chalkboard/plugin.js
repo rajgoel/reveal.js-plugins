@@ -374,6 +374,8 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 
 	var drawing = false;
     var drawingTransient = false;
+    var transientDrawLine = false;
+    var transientDrawRectangle = false;
     var replayTransient = false;
     var replayTransientId = null;
 	var erasing = false;
@@ -1538,6 +1540,8 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
         transientRectangleRight = null;
         drawingCanvas[id].imageData = null;
         drawingTransient = false;
+        transientDrawLine = false;
+        transientDrawRectangle = false;
     }
 
     function restoreSnapshot(id = mode, record = true) {
@@ -1589,7 +1593,22 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
         mouseY = lastY;
 
         drawingTransient = false; // drawSegment needs this to false to correctly record data
-        drawSegment( ( firstTransientX - xOffset ) / scale, ( firstTransientY - yOffset ) / scale, ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale, color[ mode ] );
+
+        if(transientDrawLine) {
+            drawSegment( ( firstTransientX - xOffset ) / scale, ( firstTransientY - yOffset ) / scale, ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale, color[ mode ] );
+        }
+
+        if(transientDrawRectangle) {
+            var left = Math.min((firstTransientX - xOffset) / scale, (mouseX - xOffset) / scale);
+            var top = Math.min((firstTransientY - yOffset) / scale, (mouseY - yOffset) / scale);
+            var right = Math.max((firstTransientX - xOffset) / scale, (mouseX - xOffset) / scale);
+            var bottom = Math.max((firstTransientY - yOffset) / scale, (mouseY - yOffset) / scale);
+            
+            drawSegment(left, top, right, top, color[ mode ] );
+            drawSegment(right, top, right, bottom, color[ mode ] );
+            drawSegment(right, bottom, left, bottom, color[ mode ] );
+            drawSegment(left, bottom, left, top, color[ mode ] );
+        }
 
         // broadcast
         var message = new CustomEvent( messageType );
@@ -1766,7 +1785,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		canvas.addEventListener( 'mousedown', function ( evt ) {
 			evt.preventDefault();
 			if ( !readOnly && evt.target.getAttribute( 'data-chalkboard' ) == mode ) {
-//console.log( "mousedown: " + evt.button );
+//console.log( "mousedown: " + evt.button + " " + evt.shiftKey + " " + evt.ctrlKey);
 				var scale = drawingCanvas[ mode ].scale;
 				var xOffset = drawingCanvas[ mode ].xOffset;
 				var yOffset = drawingCanvas[ mode ].yOffset;
@@ -1789,9 +1808,13 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 					};
 					document.dispatchEvent( message );
 				} else {
-                    if(evt.shiftKey)
-                    {
+                    if(evt.shiftKey) {
                         drawingTransient = true;
+                        if(evt.ctrlKey) {
+                            transientDrawRectangle = true;
+                        } else {
+                            transientDrawLine = true;
+                        }
                     }
                     startDrawing( ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale, drawingTransient );
 				}
