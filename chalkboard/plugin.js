@@ -1827,14 +1827,17 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 					};
 					document.dispatchEvent( message );
 				} else {
-                    if(evt.shiftKey) {
+                    if(evt.shiftKey || evt.ctrlKey) {
                         drawingTransient = true;
-                        if(evt.ctrlKey) {
-                            transientDrawRectangle = true;
-                        } else {
+                        if(evt.shiftKey) {
                             transientDrawLine = true;
-                            if(evt.altKey)
+                        }
+                        if(evt.altKey) {
+                            if(evt.ctrlKey) {
+                                transientDrawRectangle = true;
+                            } else {
                                 transientDrawStraightLines = true;
+                            }
                         }
                     }
                     startDrawing( ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale, drawingTransient );
