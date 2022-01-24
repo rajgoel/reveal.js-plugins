@@ -585,7 +585,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 
 	if ( config.storage ) {
 		// Get chalkboard drawings from session storage
-		loaded = initStorage( sessionStorage.getItem( config.storage ) );
+		//loaded = initStorage( sessionStorage.getItem( config.storage ) );
 	}
 
 	if ( !loaded && config.src != null ) {
@@ -668,7 +668,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 	function updateStorage() {
 		var json = JSON.stringify( storage )
 		if ( config.storage ) {
-			sessionStorage.setItem( config.storage, json )
+			//sessionStorage.setItem( config.storage, json )
 		}
 		return json;
 	}
@@ -2308,7 +2308,7 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 			];
 
 			if ( config.storage ) {
-				sessionStorage.setItem( config.storage, null )
+				//sessionStorage.setItem( config.storage, null )
 			}
 			// broadcast
 			var message = new CustomEvent( messageType );
