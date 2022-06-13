@@ -30,6 +30,7 @@ const initAudioSlideshow = function(Reveal){
 	var defaultNotes = false; // use slide notes as default for the text to speech converter
 	var defaultText = false; // use slide text as default for the text to speech converter
 	var defaultDuration = 5; // value in seconds
+	var defaultAudioRate = 1.0; // speed of audio
 	var defaultAudios = true; // try to obtain audio for slide and fragment numbers
 	var advance = 0; // advance to next slide after given time in milliseconds after audio has played, use negative value to not advance
 	var autoplay = false; // automatically start slideshow
@@ -149,6 +150,7 @@ const initAudioSlideshow = function(Reveal){
 			if ( config.defaultText != null ) defaultText = config.defaultText;
 			if ( config.defaultDuration != null ) defaultDuration = config.defaultDuration;
 			if ( config.defaultAudios != null ) defaultAudios = config.defaultAudios;
+			if ( config.defaultAudioRate != null ) defaultAudioRate = config.defaultAudioRate;
 			if ( config.advance != null ) advance = config.advance;
 			if ( config.autoplay != null ) autoplay = config.autoplay;
 			if ( config.playerOpacity != null  ) playerOpacity = config.playerOpacity;
@@ -334,6 +336,8 @@ const initAudioSlideshow = function(Reveal){
 		audioElement.style.display = "none";
 		audioElement.setAttribute( 'controls', '' );
 		audioElement.setAttribute( 'preload', 'none' );
+
+		audioElement.playbackRate = defaultAudioRate;
 
 		if ( videoElement ) {
 			// connect play, pause, volumechange, mute, timeupdate events to video
