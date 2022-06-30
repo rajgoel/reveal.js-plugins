@@ -16,7 +16,7 @@
 window.RevealChalkboard = window.RevealChalkboard || {
 	id: 'RevealChalkboard',
 	init: function ( deck ) {
-		initChalkboard( deck );
+		initChalkboard.call(this, deck );
 	},
 	configure: function ( config ) {
 		configure( config );
