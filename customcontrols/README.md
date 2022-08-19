@@ -25,7 +25,7 @@ Copy the files `plugin.js` and `style.css` into the plugin folder of your reveal
 Note, without configuration you need to add
 
 ```javascript
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
 ```
 
 between ```<head>``` and ```</head>``` of your HTML file because the defaults use [Font Awesome](http://fontawesome.io/).
@@ -69,4 +69,4 @@ The `id` and `title` are optional. The configuration should be self explaining a
 
 MIT licensed
 
-Copyright (C) 2020 Asvin Goel
+Copyright (C) 2022 Asvin Goel
