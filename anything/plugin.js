@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js allowing to easily integrate any content
 **
-** Version: 1.0.1
+** Version: 1.0.2
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -42,18 +42,18 @@ const initAnything = function(Reveal){
 	function mergeRecursive(obj1, obj2) {
 
 	  for (var p in obj2) {
-	    try {
-	      // Property in destination object set; update its value.
-	      if ( obj1[p] !== null && typeof obj1[p] === 'object' && typeof obj2[p] === 'object' ) {
+            if ( p in obj1 ) {
+	      // Property already exists in destination object; 
+              if ( typeof obj1 === 'object' && typeof obj2 === 'object' ) {
+		// merge properties if both are objects
 	        obj1[p] = mergeRecursive(obj1[p], obj2[p]);
-	      } 
-	      else {
-	        obj1[p] = obj2[p];
-	      }
-	    } catch(e) {
-	      // Property in destination object not set; create it and set its value.
+              } 
+            }
+            else {
+	      // Property does not yet exist in destination object; create and set its value.
 	      obj1[p] = obj2[p];
-	    }
+            }		
+//console.warn(p, obj1[p], obj2[p]);
 	  }
 
 	  return obj1;
@@ -79,14 +79,14 @@ const initAnything = function(Reveal){
 				if ( comments !== null ) for (var k = 0; k < comments.length; k++ ){
 					comments[k] = comments[k].replace(/<!--/,'');
 					comments[k] = comments[k].replace(/-->/,'');
-					mergeRecursive( options, config[i].defaults);
+//					mergeRecursive( options, config[i].defaults);
 					options = parseJSON(comments[k]);
 					if ( options ) {
-						mergeRecursive( options, config[i].defaults);
+						options = mergeRecursive( options, config[i].defaults);
 						break;
 					}
 				}
-// console.log(config[i].className + " options: " + JSON.stringify(options))
+//console.log(config[i].className + " options: " + JSON.stringify(options))
 				initialize(elements[j], options);
 // console.log(elements[j].outerHTML)
 			} 
