@@ -43,8 +43,8 @@ const initAnything = function(Reveal){
 
 	  for (var p in obj2) {
             if ( p in obj1 ) {
-	      // Property already exists in destination object; 
-              if ( typeof obj1 === 'object' && typeof obj2 === 'object' ) {
+	      // Property already exists in destination object;
+              if ( typeof obj1[p] === 'object' && typeof obj2[p] === 'object' ) {
 		// merge properties if both are objects
 	        obj1[p] = mergeRecursive(obj1[p], obj2[p]);
               } 
