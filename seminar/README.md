@@ -8,7 +8,8 @@ The seminar plugin provides interaction capabilities with other hosts and partic
 
 ## Demo
 
-A demo of the plugin is provided at <https://rajgoel.github.io/reveal.js-demos/seminar-demo.html>. In the demo anyone can open a seminar room to become a host and share a link with the room name to anyone else. Everyone with the link can follow the hosted presentation.
+**The demo is currently not working.**
+~~A demo of the plugin is provided at <https://rajgoel.github.io/reveal.js-demos/seminar-demo.html>. In the demo anyone can open a seminar room to become a host and share a link with the room name to anyone else. Everyone with the link can follow the hosted presentation.~~
 
 ## Requirements
 
@@ -20,7 +21,7 @@ First, make sure to include the plugin and the require `socket.io` scripts:
 
 ```html
 <script src="../reveal.js-plugins/seminar/plugin.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
 ```
 
 Optionally, include the `chart`, `poll`, `questions`, and `chalkboard`  plugin:
@@ -77,4 +78,4 @@ document.querySelector("#host").addEventListener('click', function(e) {
 
 MIT licensed
 
-Copyright (C) 2021 Asvin Goel
+Copyright (C) 2023 Asvin Goel
