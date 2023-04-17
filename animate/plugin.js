@@ -3,16 +3,18 @@
 **
 ** A plugin for animating slide content.
 **
-** Version: 0.1.0
+** Version: 0.2.0
 **
 ** License: MIT license (see LICENSE.md)
 **
 ******************************************************************/
 
+"use strict";
+
 window.RevealAnimate = window.RevealAnimate || {
     id: 'RevealAnimate',
     init: function(deck) {
-        initAnimate(deck);
+        initAnimate.call(this,deck);
     },
     play: function() { play(); },
     pause: function() { pause(); },
@@ -20,45 +22,41 @@ window.RevealAnimate = window.RevealAnimate || {
 };
 
 const initAnimate = function(Reveal){
+	if ( document.querySelector('section[data-markdown]:not([data-markdown-parsed])')
+		   || document.querySelector('[data-load]:not([data-loaded])')
+	) {
+		// wait for other plugins to parse markdown and load external content
+		setTimeout(initAnimate, 100,Reveal);
+		return;
+	}
+
 	var config = Reveal.getConfig().animate || {};
 	var autoplay = config.autoplay;
 
 	var playback = false;
 	var isRecording = false;
 	var timer = null;
-	var initialized = 0;
+	var animatedSVGs = [];
+
+	var printMode = ( /print-pdf/gi ).test( window.location.search );
 
 	function parseJSON(str) {
 	    str = str.replace(/(\r\n|\n|\r|\t)/gm,""); // remove line breaks and tabs
 	    var json;
 	    try {
-        	json = JSON.parse(str, function (key, value) {
-    			if (value && (typeof value === 'string') && value.indexOf("function") === 0) {
-			        // we can only pass a function as string in JSON ==> doing a real function
+				json = JSON.parse(str, function (key, value) {
+					if (value && (typeof value === 'string') && value.indexOf("function") === 0) {
+						// we can only pass a function as string in JSON ==> doing a real function
 //			        eval("var jsFunc = " + value);
-				var jsFunc = new Function('return ' + value)();
-			        return jsFunc;
-		 	}
-			return value;
-		});
+						var jsFunc = new Function('return ' + value)();
+						return jsFunc;
+					}
+					return value;
+				});
 	    } catch (e) {
-        	return null;
-    		}
-            return json;
-	}
-
-	function load( element, config, filename, callback ) {
-		var xhr = new XMLHttpRequest(); 
-		xhr.onload = function() { 
-			if (xhr.readyState === 4) { 
-				callback( element, config, xhr.responseText );
-			} 
-			else { 
-				callback( "Failed to get file. ReadyState: " + xhr.readyState + ", Status: " + xhr.status );
+				return null;
 			}
-		}; 
-		xhr.open( 'GET', filename, true ); 
-		xhr.send();
+			return json;
 	}
 
 	function parseComments( element ) {
@@ -73,7 +71,7 @@ const initAnimate = function(Reveal){
 
 			if ( config ) {
 				if ( config.animation && Array.isArray(config.animation) && config.animation.length && !Array.isArray(config.animation[0]) ) {
-					// without fragments the animation can be specified as a single array (animation steps)
+					// without fragments, the animation can be specified as a single array (animation steps)
 					config.animation = [ config.animation ];
 				}
 				break;
@@ -84,37 +82,31 @@ const initAnimate = function(Reveal){
 		return config;
 	}
 
-	function getAnimatedSVG( container ) {
-		var elements = SVG.find('svg');
-		var svg = elements.toArray().find(element => element.node.parentElement == container);
-//console.warn("FOUND",svg.node);
-		return svg;
-	}
 
 /*****************************************************************
 ** Set up animations
 ******************************************************************/
-	function setupAnimations( container, config ) {
-//console.warn("setupAnimations");
+	function setupAnimations( index, container, config ) {
+//console.warn("setupAnimations",container,config);
+		container.setAttribute("data-animation-index",index);
+		animatedSVGs.push({ svg: SVG( container.querySelector('svg') ) });
+//console.log(animatedSVGs);
 		if ( !config ) return;
-
-		container.svg = getAnimatedSVG( container );
-
+		
+//		container.svg = SVG( container.querySelector('svg') );
 		// pre-animation setup
 		var setup = config.setup;
+//console.log(animatedSVGs[index].svg,setup);
 		if ( setup ) {
 			for (var i = 0; i < setup.length; i++ ){
 				try {
 					if ( setup[i].element ) {
 //console.log(setup[i].element,setup[i].modifier,setup[i].parameters);
-						var elements = container.svg.find(setup[i].element);
+						var elements = animatedSVGs[index].svg.find(setup[i].element);
 						if ( !elements.length ) {
-console.warn("Cannot find element to set up with selector: " + setup[i].element + "!");
+							console.warn("Cannot find element to set up with selector: " + setup[i].element + "!");
 						}
 
-//console.warn(elements);
-//console.log("element(" + setup[i].element + ")." + setup[i].modifier + "(" + setup[i].parameters + ")");
-//console.log("element(" + setup[i].element + ")." + setup[i].modifier + "(" + setup[i].parameters + ")");
 						for (var j = 0; j < elements.length; j++ ){
 							if ( typeof setup[i].modifier === "function" ) {
 								// if modifier is function execute it
@@ -131,11 +123,11 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 						// no element is provided
 						if ( typeof setup[i].modifier === "function" ) {
 							// if modifier is function execute it
-							setup[i].modifier.apply(container.svg,setup[i].parameters);
+							setup[i].modifier.apply(animatedSVGs[index].svg,setup[i].parameters);
 						} 
 						else {
 							// apply modifier to root
-							container.svg[setup[i].modifier].apply(container.svg,setup[i].parameters);
+							animatedSVGs[index].svg[setup[i].modifier].apply(animatedSVGs[index].svg,setup[i].parameters);
 						}
 					}				
 				} 
@@ -143,31 +135,31 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 					console.error("Error '" + error + "' setting up element " + JSON.stringify(setup[i]));
 				}
 			}
-//console.warn(container.svg.node.getAttribute("style"));
+//console.warn(animatedSVGs[index].svg.node.getAttribute("style"));
 		}
 
-		container.animation = new SVG.Timeline().persist(true);
-		container.animationSchedule = []; // completion time of each fragment animation
+		animatedSVGs[index].animation = new SVG.Timeline().persist(true);
+		animatedSVGs[index].animationSchedule = []; // completion time of each fragment animation
 
 		// setup animation
 		var animations = config.animation;
 		if ( animations ) {
 
-			container.animationSchedule.length = animations.length;
+			animatedSVGs[index].animationSchedule.length = animations.length;
 			var timestamp = 0;
 			for (var fragment = 0; fragment < animations.length; fragment++ ){
-				container.animationSchedule[fragment] = {};
-				container.animationSchedule[fragment].begin = timestamp;
+				animatedSVGs[index].animationSchedule[fragment] = {};
+				animatedSVGs[index].animationSchedule[fragment].begin = timestamp;
 				for (var i = 0; i < animations[fragment].length; i++ ){
 					try {
 						// add each animation step
-						var elements = container.svg.find(animations[fragment][i].element);
+						var elements = animatedSVGs[index].svg.find(animations[fragment][i].element);
 //console.log("element(" + animations[fragment][i].element + ")." + animations[fragment][i].modifier + "(" + animations[fragment][i].parameters + ")");
 						if ( !elements.length ) {
 							console.warn("Cannot find element to animate with selector: " + animations[fragment][i].element + "!");
 						}
 						for (var j = 0; j < elements.length; j++ ){
-							elements[j].timeline( container.animation );
+							elements[j].timeline( animatedSVGs[index].animation );
 							var anim = elements[j].animate(animations[fragment][i].duration,animations[fragment][i].delay,animations[fragment][i].when)
 							anim[animations[fragment][i].modifier].apply(anim,animations[fragment][i].parameters);
 						}
@@ -180,15 +172,13 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 					}
 				}
 				// set animationSchedule for each fragment animation
-				var schedule = container.animation.schedule();
+				var schedule = animatedSVGs[index].animation.schedule();
 				if ( schedule.length ) {
 					timestamp = schedule[schedule.length-1].end;
 				}
-				container.animationSchedule[fragment].end = timestamp;
+				animatedSVGs[index].animationSchedule[fragment].end = timestamp;
 			}
-			container.animation.stop();
-//console.warn(container.animation.schedule());
-// console.warn("Schedule", container.animationSchedule);
+			animatedSVGs[index].animation.stop();
 		}
 
 		// setup current slide
@@ -196,8 +186,6 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 			Reveal.layout(); // Update layout to account for svg size
 			animateSlide(0);
 		}
-
-		initialized += 1;
 	}
 
 	function initialize() {
@@ -205,22 +193,11 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 		// Get all animations
 		var elements = document.querySelectorAll("[data-animate]");
 		for (var i = 0; i < elements.length; i++ ){
+			if ( elements[i].hasAttribute("data-src") ) {
+				console.error("Animations no longer support 'data-src'! Use 'loadcontent' plugin instead.");
+			}
 			var config = parseComments( elements[i] );
-			var src = elements[i].getAttribute("data-src");
-			if ( src ) {
-				var element = elements[i];
-				load( elements[i], config, src, function( element, config, response ) {
-					if ( printMode ) {
-						// do not load svg multiple times
-						element.removeAttribute("data-src")
-					}
-					element.innerHTML = response + element.innerHTML;
-					setupAnimations( element, config );
-				});
-			}
-			else {
-				setupAnimations( elements[i], config );
-			}
+			setupAnimations( i, elements[i], config );
 		}
 	}
 
@@ -230,8 +207,9 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 		var elements = Reveal.getCurrentSlide().querySelectorAll("[data-animate]");
 		for (var i = 0; i < elements.length; i++ ){
 //console.warn("Play",elements[i]);
-			if ( elements[i].animation ) {
-				elements[i].animation.play();
+			const index = elements[i].getAttribute("data-animation-index");
+			if ( animatedSVGs[index].animation ) {
+				animatedSVGs[index].animation.play();
 			}
 		}
 		autoPause();
@@ -243,8 +221,9 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 
 		var elements = Reveal.getCurrentSlide().querySelectorAll("[data-animate]");
 		for (var i = 0; i < elements.length; i++ ){
-			if ( elements[i].animation ) {
-				elements[i].animation.pause();
+			const index = elements[i].getAttribute("data-animation-index");
+			if ( animatedSVGs[index].animation ) {
+				animatedSVGs[index].animation.pause();
 			}
 		}
 	}
@@ -259,12 +238,15 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 		var elements = Reveal.getCurrentSlide().querySelectorAll("[data-animate]");
 
 		for (var i = 0; i < elements.length; i++ ){
-			if ( elements[i].animation && elements[i].animationSchedule[fragment] ) {
-//console.log( elements[i].animationSchedule[fragment].end, elements[i].animation.time());
-				var timeout = elements[i].animationSchedule[fragment].end - elements[i].animation.time();
+			const index = elements[i].getAttribute("data-animation-index");
+			if ( animatedSVGs[index].animation
+			     && animatedSVGs[index].animationSchedule[fragment] 
+			) {
+//console.log( animatedSVGs[index].animationSchedule[fragment].end, animatedSVGs[index].animation.time());
+				var timeout = animatedSVGs[index].animationSchedule[fragment].end - animatedSVGs[index].animation.time();
 				timer = setTimeout(pause,timeout);
 			}
-//console.log("Auto pause",elements[i], timeout);
+//console.log("Auto pause",animatedSVGs[index], timeout);
 		}
 
 	}
@@ -274,9 +256,12 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 		var elements = Reveal.getCurrentSlide().querySelectorAll("[data-animate]");
 		var fragment = Reveal.getIndices().f + 1 || 0; // in reveal.js fragments start with index 0, here with index 1
 		for (var i = 0; i < elements.length; i++ ){
-//console.log("Seek",timestamp,elements[i].animationSchedule[fragment].begin + (timestamp || 0) );
-			if ( elements[i].animation && elements[i].animationSchedule[fragment] ) {
-				elements[i].animation.time( elements[i].animationSchedule[fragment].begin + (timestamp || 0) );
+			const index = elements[i].getAttribute("data-animation-index");
+//console.log("Seek",timestamp,animatedSVGs[index].animationSchedule[fragment].begin + (timestamp || 0) );
+			if ( animatedSVGs[index].animation
+				   && animatedSVGs[index].animationSchedule[fragment] 
+			) {
+				animatedSVGs[index].animation.time( animatedSVGs[index].animationSchedule[fragment].begin + (timestamp || 0) );
 			}
 		}
 		if ( timer ) { 
@@ -288,6 +273,8 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 	
 	// Control animation
 	function animateSlide( timestamp ) {
+		if ( printMode ) return;
+
 //		pause();
 //console.log("Animate slide", timestamp);
 		if ( timestamp !== undefined ) {
@@ -306,29 +293,9 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 /*****************************************************************
 ** Print
 ******************************************************************/
-	var printMode = ( /print-pdf/gi ).test( window.location.search );
 //console.log("createPrintout" + printMode)
 
-	function initializePrint( ) {
-//return;
-//console.log("initializePrint", document.querySelectorAll(".pdf-page").length);
-		if ( !document.querySelectorAll(".pdf-page").length ) {
-			// wait for pdf pages to be created
-			setTimeout( initializePrint, 500 );
-			return;
-		}
-		initialize();
-		createPrintout();
-	}
-
-	function createPrintout( ) {
-//console.log("createPrintout", document.querySelectorAll(".pdf-page").length, document.querySelectorAll("[data-animate]").length );
-		if ( initialized < document.querySelectorAll("[data-animate]").length ) {
-//console.log("wait");
-			// wait for animations to be loaded
-			setTimeout( createPrintout, 500 );
-			return;
-		}
+	function setupPrintout( ) {
 		var pages = document.querySelectorAll(".pdf-page");
 		for ( var i = 0; i < pages.length; i++ ) {
 			var fragment = -1;
@@ -341,77 +308,82 @@ console.warn("Cannot find element to set up with selector: " + setup[i].element 
 			fragment += 1;
 			var elements = pages[i].querySelectorAll("[data-animate]");
 			for ( var j = 0; j < elements.length; j++ ) {
-//console.log(i,fragment, elements[j]);
+				const index = elements[j].getAttribute("data-animation-index");
+//console.log(pages[i],fragment, elements[j]);
 
-				if ( elements[j].animation && elements[j].animationSchedule && elements[j].animationSchedule[fragment] ) {
-//console.log(i,fragment, elements[j].animationSchedule[fragment].begin);
-					elements[j].animation.time( elements[j].animationSchedule[fragment].end );
-				}
-				var fragments = elements[j].querySelectorAll("svg > [data-fragment-index]");
+				// set visibility for fragments
+				var fragments = elements[j].querySelectorAll("svg [data-fragment-index]");
 //console.log(i,fragment, elements[j], fragments);
 				for ( var k = 0; k < fragments.length; k++ ) {
 					if ( fragments[k].getAttribute("data-fragment-index") < fragment ) {
 						fragments[k].classList.add("visible");
 					}
 				}
+
+				// set animation timestamp
+				if ( animatedSVGs[index].animation 
+				     && animatedSVGs[index].animationSchedule 
+				     && animatedSVGs[index].animationSchedule[fragment] 
+				) {
+//console.log(i,fragment, elements[j].animationSchedule[fragment].begin);
+					animatedSVGs[index].animation.time( animatedSVGs[index].animationSchedule[fragment].end );
+				}
+
+				// remove HTML comments to fix problems with printing in Chrome
+				elements[j].innerHTML = elements[j].innerHTML.replace(/<\!--.*?-->/g, "");
 			}			
 		}
 	}
 /*****************************************************************
 ** Event listeners
 ******************************************************************/
-
-	Reveal.addEventListener( 'ready', function( event ) {
-//console.log('ready ');
-/*
-		if ( printMode ) {
-			initializePrint();
-			return;
-		}
-*/
+	Reveal.addEventListener( 'pdf-ready', function( event ) {
+//console.log('pdf-ready ',event);
 		initialize();
+		setupPrintout();
+  }, { once: true });
 
-		if ( printMode ) {
-			initializePrint();
-			return;
-		}
+	if ( !printMode ) {
+		Reveal.addEventListener( 'ready', function( event ) {
+//console.log('ready ');
+			initialize();
 
-		Reveal.addEventListener('slidechanged', function(){
+			Reveal.addEventListener('slidechanged', function(){
 //console.log('slidechanged',Reveal.getIndices());
-			animateSlide(0);
-		});
-
-		Reveal.addEventListener( 'overviewshown', function( event ) {
-			// pause animation
-			pause();
-		} );
+				animateSlide(0);
+			});
+	
+			Reveal.addEventListener( 'overviewshown', function( event ) {
+				// pause animation
+				pause();
+			} );
 
 /*
-		Reveal.addEventListener( 'overviewhidden', function( event ) {
-		} );
+			Reveal.addEventListener( 'overviewhidden', function( event ) {
+			} );
 */
-		Reveal.addEventListener( 'paused', function( event ) {
+			Reveal.addEventListener( 'paused', function( event ) {
 //console.log('paused ');
-			// pause animation
-			pause();
-		} );
+				// pause animation
+				pause();
+			} );
 /*
-		Reveal.addEventListener( 'resumed', function( event ) {
+			Reveal.addEventListener( 'resumed', function( event ) {
 console.log('resumed ');
-			// resume animation
+				// resume animation
 		} );
 */
-		Reveal.addEventListener( 'fragmentshown', function( event ) {
+			Reveal.addEventListener( 'fragmentshown', function( event ) {
 //console.log("fragmentshown",event);
-			animateSlide(0);
-		} );
+				animateSlide(0);
+			} );
 
-		Reveal.addEventListener( 'fragmenthidden', function( event ) {
+			Reveal.addEventListener( 'fragmenthidden', function( event ) {
 //console.log("fragmentshown",event);
-			animateSlide(0);
+				animateSlide(0);
+			} );
 		} );
-	} );
-
+	}
 
 /*****************************************************************
 ** Playback
@@ -453,5 +425,6 @@ console.log('resumed ');
 	this.seek = seek; 
 	return this;
 };
+
 
 
