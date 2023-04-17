@@ -286,11 +286,12 @@ const initChalkboard = function ( Reveal ) {
 	function whenReady( callback ) {
 		// wait for markdown to be parsed and code to be highlighted
 		if ( !document.querySelector( 'section[data-markdown]:not([data-markdown-parsed])' ) 
+			   && !document.querySelector( '[data-load]:not([data-loaded])') 
 		     && !document.querySelector( 'code[data-line-numbers*="|"]') 	
 		) {
 			callback();
 		} else {
-			console.log( "Wait for markdown to be parsed and code to be highlighted" );
+			console.log( "Wait for external sources to be loaded and code to be highlighted" );
 			setTimeout( whenReady, 500, callback )
 		}
 	}
