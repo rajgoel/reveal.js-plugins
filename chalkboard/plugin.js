@@ -750,23 +750,39 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		//console.warn(Reveal.getTotalSlides(),Reveal.getSlidesElement());
 		if ( storage[ 1 ].data.length == 0 ) return;
 		console.log( 'Create printout(s) for ' + storage[ 1 ].data.length + " slides" );
-		drawingCanvas[ 0 ].container.style.opacity = 0; // do not print notes canvas
-		drawingCanvas[ 0 ].container.style.visibility = 'hidden';
-
+		drawingCanvas[ 0 ].container.style.opacity = 1.0; // print the notes canvas
+		drawingCanvas[ 0 ].container.style.visibility = 'visible';
 		var patImg = new Image();
 		patImg.onload = function () {
 			var slides = Reveal.getSlides();
+			sid = 1;
 //console.log(slides);
-			for ( var i = storage[ 1 ].data.length - 1; i >= 0; i-- ) {
+			for ( var i = storage[ sid ].data.length - 1; i >= 0; i-- ) {
 				console.log( 'Create printout for slide ' + storage[ 1 ].data[ i ].slide.h + '.' + storage[ 1 ].data[ i ].slide.v );
 				var slideData = getSlideData( storage[ 1 ].data[ i ].slide, 1 );
-				var drawings = createDrawings( slideData, patImg );
+				var drawings = createDrawings( slideData, patImg, 1 );
 //console.log("Page:", storage[ 1 ].data[ i ].page );
 //console.log("Slide:", slides[storage[ 1 ].data[ i ].page] );
-				addDrawings( slides[storage[ 1 ].data[ i ].page], drawings );
+				addDrawings( slides[storage[ sid ].data[ i ].page], drawings );
 
 			}
 //			Reveal.sync();
+			//Overlay notes canvas
+			if (config.printNotes) {
+				sid = 0;
+
+				for ( var i = storage[ sid ].data.length - 1; i >= 0; i-- ) {
+					console.log( 'Create notes overlay for slide ' + storage[ sid ].data[ i ].slide.h + '.' + storage[ sid ].data[ i ].slide.v );
+					var slideData = getSlideData( storage[ sid ].data[ i ].slide, sid );
+					console.log(slideData.slide + slideData.events.length)
+					var drawings = createDrawings( slideData, patImg, 0 );
+				//console.log("Page:", storage[ 1 ].data[ i ].page );
+				//console.log("Slide:", slides[storage[ 1 ].data[ i ].page] );
+					if (drawings.length > 0) {
+						overlayDrawing( slides[storage[ sid ].data[ i ].page], drawings[0] );
+					}
+				}
+			}
 		};
 		patImg.src = background[ 1 ];
 	}
@@ -813,16 +829,16 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		return container[ idx ].canvas;
 	}
 
-	function createDrawings( slideData, patImg ) {
+	function createDrawings( slideData, patImg, id ) {
 		var width = Reveal.getConfig().width;
 		var height = Reveal.getConfig().height;
 		var scale = 1;
 		var xOffset = 0;
 		var yOffset = 0;
-		if ( width != storage[ 1 ].width || height != storage[ 1 ].height ) {
-			scale = Math.min( width / storage[ 1 ].width, height / storage[ 1 ].height );
-			xOffset = ( width - storage[ 1 ].width * scale ) / 2;
-			yOffset = ( height - storage[ 1 ].height * scale ) / 2;
+		if ( width != storage[ id ].width || height != storage[ id ].height ) {
+			scale = Math.min( width / storage[ id ].width, height / storage[ id ].height );
+			xOffset = ( width - storage[ id ].width * scale ) / 2;
+			yOffset = ( height - storage[ id ].height * scale ) / 2;
 		}
 		mode = 1;
 		board = 0;
@@ -836,7 +852,9 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 		var imgCtx = template.getContext( '2d' );
 		imgCtx.fillStyle = imgCtx.createPattern( patImg, 'repeat' );
 		imgCtx.rect( 0, 0, width, height );
-		imgCtx.fill();
+		if (id == 1) {
+			imgCtx.fill();
+		}
 
 		for ( var j = 0; j < slideData.events.length; j++ ) {
 			switch ( slideData.events[ j ].type ) {
@@ -890,6 +908,16 @@ console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instea
 				parent.append( newPDFPage );
 			}
 		}
+	}
+
+	function overlayDrawing( slide, drawing ) {
+		var overlay = document.createElement( 'div' );
+		overlay.classList.add( 'overlay' );
+		overlay.style.position = "relative";
+		overlay.style.height = Reveal.getConfig().height;
+		overlay.style.width = Reveal.getConfig().width;
+		overlay.append( drawing.canvas );
+		slide.parentElement.appendChild(overlay)
 	}
 
 	/*****************************************************************

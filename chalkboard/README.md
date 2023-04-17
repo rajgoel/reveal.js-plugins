@@ -89,6 +89,7 @@ The plugin has several configuration options:
 - ```readOnly```: Configuation option allowing to prevent changes to existing drawings. If set to ```true``` no changes can be made, if set to false ```false``` changes can be made, if unset or set to ```undefined``` no changes to the drawings can be made after returning to a slide or fragment for which drawings had been recorded before. In any case the recorded drawings for a slide or fragment can be cleared by pressing the 'DEL' key (i.e. by using the ```RevealChalkboard.clear()``` function).
 - ```transition```: Gives the duration (in milliseconds) of the transition for a slide change, so that the notes canvas is drawn after the transition is completed.
 - ```theme```: Can be set to either ```"chalkboard"``` or ```"whiteboard"```.
+- ```printNotes```: If set to ```true``` the notes on the slides will get rendered in the print view. Defaults to ```false```.
 
 The following configuration options allow to change the appearance of the notes canvas and the chalkboard. All of these options require two values, the first gives the value for the notes canvas, the second for the chalkboard.
 
