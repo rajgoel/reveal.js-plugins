@@ -1,5 +1,12 @@
 # Changelog
 
+## Unpublished
+
+### Breaking changed
+
+- Removed embed-tweet plugin
+
+
 ## 4.2.0
 
 - Seminar plugin now works with socket.io v4.6.1: Make sure to update seminar server and client library, e.g., by using
