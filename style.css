@@ -1,0 +1,71 @@
+/*********************************************
+ * Slide numbers
+ *********************************************/
+
+.reveal .slide-number {
+    display: inline-block;
+    right: 37px;
+    bottom: 20px;
+    text-align: center;
+    line-height: 0px;
+    border-radius: 50%;
+    font-size: 12px;
+    width: 36px;
+    height: 36px;
+    font-size: 10px;
+    background: none;
+    color: var(--r-link-color);
+}
+
+.reveal .slide-number span {
+    margin: 0;
+    padding: 0;
+}
+
+.reveal .slide-number a {
+    display: inline-block;
+    padding-top: 50%;
+    padding-bottom: 50%;
+}
+
+/*********************************************
+ * Inline code
+ *********************************************/
+:not(pre) > code {
+  background-color: lightgray;
+  padding: 0;
+  border-radius: 6px;
+}
+/* 
+Inline code is also used to escape math blocks. 
+The rendered math is then embedded within a span 
+and should not receive the code background.
+*/
+:not(pre) > code > span {
+  background-color: var(--r-background-color);
+  padding: 0;
+  border-radius: 0px;
+}
+
+/*********************************************
+ * Fragments
+ *********************************************/
+
+.reveal .slides section .fragment.appear-disappear {
+	opacity: 0;
+	display: none; }
+.reveal .slides section .fragment.appear-disappear.current-fragment {
+	opacity: 1;
+	display: inline; }
+
+/*********************************************
+ * Print
+ *********************************************/
+
+@media print {
+	.presentation-only, .audio-controls, .slide-menu-button, .slide-number {
+		display: none!important; 
+	}
+}
+
+
