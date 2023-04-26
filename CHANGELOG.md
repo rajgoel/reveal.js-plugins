@@ -12,6 +12,7 @@ The versioning scheme is uses the first two numbers of the version of `reveal.js
 ### Breaking changes
 
 - In `animate` plugin, external svgs must now be loaded with `loadcontent` plugin, `data-src` is no longer supported to load external svg files to be animated 
+- Removed deprecated config from `anything` plugin
 - Removed deprecated buttons from `chalkboard` plugin
 - Removed `embed-tweet` plugin, `loadcontent` plugin can be used instead
 

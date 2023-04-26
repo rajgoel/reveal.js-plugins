@@ -3,16 +3,18 @@
 **
 ** A plugin for reveal.js allowing to easily integrate any content
 **
-** Version: 1.0.2
+** Version: 1.1.0
 **
 ** License: MIT license (see LICENSE.md)
 **
 ******************************************************************/
 
+"use strict";
+
 window.RevealAnything = window.RevealAnything || {
 	id: 'RevealAnything',
 	init: function(deck) {
-		if ( Reveal.getConfig().anything ) initAnything(deck);
+		if ( Reveal.getConfig().anything ) initAnything.call(this,deck);
 	}
 };
 
@@ -21,12 +23,12 @@ const initAnything = function(Reveal){
 	    str = str.replace(/(\r\n|\n|\r|\t)/gm,""); // remove line breaks and tabs
 	    var json;
 	    try {
-        	json = JSON.parse(str, function (key, value) {
-    			if (value && (typeof value === 'string') && value.indexOf("function") === 0) {
+        json = JSON.parse(str, function (key, value) {
+    		if (value && (typeof value === 'string') && value.indexOf("function") === 0) {
 			        // we can only pass a function as string in JSON ==> doing a real function
 //			        eval("var jsFunc = " + value);
-				var jsFunc = new Function('return ' + value)();
-			        return jsFunc;
+					var jsFunc = new Function('return ' + value)();
+		      return jsFunc;
 		 	}
 			return value;
 		});
@@ -42,17 +44,17 @@ const initAnything = function(Reveal){
 	function mergeRecursive(obj1, obj2) {
 
 	  for (var p in obj2) {
-            if ( p in obj1 ) {
+       if ( p in obj1 ) {
 	      // Property already exists in destination object;
-              if ( typeof obj1[p] === 'object' && typeof obj2[p] === 'object' ) {
-		// merge properties if both are objects
+         if ( typeof obj1[p] === 'object' && typeof obj2[p] === 'object' ) {
+					// merge properties if both are objects
 	        obj1[p] = mergeRecursive(obj1[p], obj2[p]);
-              } 
-            }
-            else {
+         } 
+       }
+       else {
 	      // Property does not yet exist in destination object; create and set its value.
 	      obj1[p] = obj2[p];
-            }		
+       }		
 //console.warn(p, obj1[p], obj2[p]);
 	  }
 
@@ -67,11 +69,6 @@ const initAnything = function(Reveal){
 			// Get all elements of the class
 			var elements = document.getElementsByClassName(config[i].className);
 			var initialize = config[i].initialize;
-			// deprecated parameters
-			if ( !initialize && config[i].f ) {
-				initialize = config[i].f;
-				console.warn('Setting parameter "f" is deprecated! Use "initialize" instead. ');
-			}
 
 			for (var j = 0; j < elements.length; j++ ){
 				var options = config[i].defaults;
@@ -79,16 +76,13 @@ const initAnything = function(Reveal){
 				if ( comments !== null ) for (var k = 0; k < comments.length; k++ ){
 					comments[k] = comments[k].replace(/<!--/,'');
 					comments[k] = comments[k].replace(/-->/,'');
-//					mergeRecursive( options, config[i].defaults);
 					options = parseJSON(comments[k]);
 					if ( options ) {
 						options = mergeRecursive( options, config[i].defaults);
 						break;
 					}
 				}
-//console.log(config[i].className + " options: " + JSON.stringify(options))
 				initialize(elements[j], options);
-// console.log(elements[j].outerHTML)
 			} 
 		}
 	} );
