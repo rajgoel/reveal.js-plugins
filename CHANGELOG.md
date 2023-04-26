@@ -1,10 +1,19 @@
 # Changelog
 
+The versioning scheme is uses the first two numbers of the version of `reveal.js` that was used when updating the plugins. The last number refers to the version of the plugin collection.
+
 ## Unpublished
 
-### Breaking changed
+### New features
 
-- Removed embed-tweet plugin
+- Added `loadcontent` plugin
+- Plugins now work in strict mode
+
+### Breaking changes
+
+- In `animate` plugin, external svgs must now be loaded with `loadcontent` plugin, `data-src` is no longer supported to load external svg files to be animated 
+- Removed deprecated buttons from `chalkboard` plugin
+- Removed `embed-tweet` plugin, `loadcontent` plugin can be used instead
 
 
 ## 4.2.0
