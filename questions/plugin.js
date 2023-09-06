@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a Q&A to an online seminar.
 **
-** Version: 0.1.3
+** Version: 0.1.4
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -99,11 +99,12 @@ console.warn( "toggleQnAButton is deprecated, use customcontrols plugin instead!
 
 
 	function toggleQnA( show ) {
+    let dashboard = document.querySelector('.qna.dashboard');
+    if ( !dashboard ) return;
 		if ( show == undefined ) {
-			show = document.querySelector('.qna.dashboard').style.visibility == "hidden";
+			dashboard.style.visibility == "hidden";
 		}
-
-		document.querySelector('.qna.dashboard').style.visibility = show ? "visible" : "hidden";
+		dashboard.style.visibility = show ? "visible" : "hidden";
 	}
 
 
