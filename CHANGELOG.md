@@ -4,6 +4,10 @@ The versioning scheme is uses the first two numbers of the version of `reveal.js
 
 ## Unpublished
 
+- N/A
+
+## 4.2.0 (forthcoming)
+
 ### New features
 
 - Added `loadcontent` plugin
@@ -27,10 +31,6 @@ by
 - Removed deprecated config from `anything` plugin
 - Removed deprecated buttons from `chalkboard` plugin
 - Removed `embed-tweet` plugin, `loadcontent` plugin can be used instead
-
-
-## 4.2.0
-
 - Seminar plugin now works with socket.io v4.6.1: Make sure to update seminar server and client library, e.g., by using
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
