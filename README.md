@@ -2,6 +2,8 @@
 
 This is a collection of plugins for [Reveal.js](https://github.com/hakimel/reveal.js) - a framework for easily creating beautiful presentations using HTML. Example presentations and demos for these plugins can be found and added [here](https://github.com/rajgoel/reveal.js-plugins/wiki/Example-presentations).
 
+**Note:** The demos are not up to date and may not work.
+
 This collections includes the following plugins:
 
 - [Animate](https://github.com/rajgoel/reveal.js-plugins/tree/master/animate) ([Demo](https://rajgoel.github.io/reveal.js-demos/animate-demo.html)): A plugin for animations using SVG.js.
@@ -13,10 +15,10 @@ This collections includes the following plugins:
  A plugin for using Chart.js.
 - [Custom controls](https://github.com/rajgoel/reveal.js-plugins/tree/master/customcontrols) ([Demo](https://rajgoel.github.io/reveal.js-demos/customcontrols-demo.html)):
  A plugin for customization of controls.
-- [Embed tweet](https://github.com/rajgoel/reveal.js-plugins/tree/master/embed-tweet) ([Demo](https://rajgoel.github.io/reveal.js-demos/embed-tweet-demo.html)):
- A plugin allowing to easily embed tweets in your slides.
 - [Fullscreen](https://github.com/rajgoel/reveal.js-plugins/tree/master/fullscreen) ([Demo](https://rajgoel.github.io/reveal.js-demos/fullscreen-demo.html)):
  A simple plugin allowing to use fullscreen slides.
+ - [Load content](https://github.com/rajgoel/reveal.js-plugins/tree/master/loadcontent) ([Demo](https://rajgoel.github.io/reveal.js-demos/loadcontent-demo.html)):
+  A plugin allowing to load external content into the body of HTML-elements.
 - [Menu](https://github.com/denehyg/reveal.js-menu) ([Demo](https://denehyg.github.io/reveal.js-menu)): A plugin by Greg Denehy for adding a slideout menu.
 - [Seminar](https://github.com/rajgoel/reveal.js-plugins/tree/master/seminar) ([Demo](https://rajgoel.github.io/reveal.js-demos/seminar-demo.html)): a plugin providing interaction capabilities with other hosts and participants (e.g. slide events, chalkboard drawings, Q&A, polls).
 
