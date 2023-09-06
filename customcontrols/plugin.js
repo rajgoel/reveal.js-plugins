@@ -3,7 +3,7 @@
 **
 ** A plugin replacing the default controls by custom controls.
 **
-** Version: 2.0.0
+** Version: 2.0.1
 ** 
 ** License: MIT license (see LICENSE.md)
 **
@@ -17,6 +17,9 @@ window.RevealCustomControls = window.RevealCustomControls || {
 
 const initCustomControls = function(Reveal){
 	var config = Reveal.getConfig().customcontrols || {};
+
+	if (Reveal.isSpeakerNotes() && new URLSearchParams(location.search).get('controls') == 'false') return;
+	if (!config?.controls?.length) return this;
 
 	var collapseIcon = config.collapseIcon || '<i class="fa fa-chevron-down"></i>';
 	var expandIcon = config.expandIcon || '<i class="fa fa-chevron-up"></i>';
