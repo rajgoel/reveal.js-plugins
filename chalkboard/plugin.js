@@ -16,7 +16,7 @@
 window.RevealChalkboard = window.RevealChalkboard || {
 	id: 'RevealChalkboard',
 	init: function ( deck ) {
-		initChalkboard( deck );
+		initChalkboard.call(this, deck );
 	},
 	configure: function ( config ) {
 		configure( config );
@@ -90,7 +90,7 @@ const initChalkboard = function ( Reveal ) {
 /*****************************************************************
  ** Configuration
  ******************************************************************/
-	var background, pen, draw, color;
+	var background, pens, draw, color;
 	var grid = false;
 	var boardmarkerWidth = 3;
 	var chalkWidth = 7;
