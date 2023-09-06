@@ -13,7 +13,7 @@ The seminar plugin provides interaction capabilities with other hosts and partic
 
 ## Requirements
 
-The seminar plugin needs `socket.io` server to manage the communication between hosts and participants. The [`seminar`](https://github.com/rajgoel/seminar)-repository provides such a server. A sample deployment can be found at <https://reveal-seminar.herokuapp.com/>. You are very welcome to point your presentations to this `socket.io` server, but availability and stability are not guaranteed. **For anything mission critical we recommend running your own seminar server**.
+The seminar plugin needs `socket.io` server to manage the communication between hosts and participants. The [`seminar`](https://github.com/rajgoel/seminar)-repository provides such a server. ~~A sample deployment can be found at <https://reveal-seminar.herokuapp.com/>. You are very welcome to point your presentations to this `socket.io` server, but availability and stability are not guaranteed. **For anything mission critical we recommend running your own seminar server**.~~
 
 ## Configuration
 
