@@ -11,7 +11,19 @@ The versioning scheme is uses the first two numbers of the version of `reveal.js
 
 ### Breaking changes
 
-- In `animate` plugin, external svgs must now be loaded with `loadcontent` plugin, `data-src` is no longer supported to load external svg files to be animated 
+- In `animate` plugin, external svgs must now be loaded with `loadcontent` plugin. Thus, `data-src` is no longer supported to load external svg files to be animated. To migrate old animations add the [`loadcontent` plugin](loadcontent) and replace
+```html
+<div data-animate data-src="graphics.svg">
+<!-- External svg file to be animated will be added here -->
+</div>
+```
+by
+```html
+<div data-animate data-load="graphics.svg">
+<!-- External svg file to be animated will be added here -->
+</div>
+```
+
 - Removed deprecated config from `anything` plugin
 - Removed deprecated buttons from `chalkboard` plugin
 - Removed `embed-tweet` plugin, `loadcontent` plugin can be used instead
