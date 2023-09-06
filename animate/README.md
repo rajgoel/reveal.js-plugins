@@ -9,13 +9,14 @@ A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to add a
 Copy the files ```plugin.js``` and ```svg.min.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/animate``` and load the plugin as shown below.
 
 ```html
+<script src="plugin/loadcontent/plugin.js"></script>
 <script src="plugin/animate/plugin.js"></script>
 <script src="plugin/animate/svg.min.js"></script>
 
 <script>
     Reveal.initialize({
         // ...
-        plugins: [ RevealAnimate ],
+        plugins: [ RevealLoadContent, RevealAnimate ],
         // ...
     });
 </script>
@@ -36,10 +37,10 @@ Reveal.initialize({
 
 ## Usage
 
-An animation can be included in a slide by adding an element with the ```data-animate``` attribute. Furthermore, the filename of an SVG to be loaded can be provided by an attribute `data-src="drawing.svg"`. Alternatively, an `svg` element can be manually placed within the element. The animation is provided by a comment with a JSON-string as follows:
+An animation can be included in a slide by adding an element with the ```data-animate``` attribute. If the `loadcontent` plugin is used, the filename of an SVG to be loaded can be provided by an attribute `data-load="drawing.svg"`. Alternatively, an `svg` element can be manually placed within the element. The animation is provided by a comment with a JSON-string as follows:
 
 ```html
-<div data-animate data-src="drawing.svg">
+<div data-animate data-load="drawing.svg">
 <!--
 {
 "setup": [
@@ -72,7 +73,7 @@ The [demo](https://rajgoel.github.io/reveal.js-demos/animate-demo.html) includes
 
 The following example loads a heart and creates a heartbeat animation.
 ```html
-<div data-animate data-src="animate/heart.svg">
+<div data-animate data-load="animate/heart.svg">
 <!--
 {
 "setup": [
@@ -100,7 +101,7 @@ The following example loads a SVG file and makes selected elements of the svg ap
 <span class="fragment"></span>
 <span class="fragment"></span>
 
-<div data-animate data-src="animate/decisiontree.svg">
+<div data-animate data-load="animate/decisiontree.svg">
 <!--
 { "setup": [
 { "element": "#Price", "modifier": "attr", "parameters": [ {"class": "fragment", "data-fragment-index": "0"} ] },
@@ -126,7 +127,7 @@ The following example loads a SVG file and adds additional SVG elements to it up
 <span class="fragment"></span>
 <span class="fragment"></span>
 
-<div data-animate data-src="animate/linear_program.svg">
+<div data-animate data-load="animate/linear_program.svg">
 <!--
 {
 "setup": [
@@ -229,7 +230,7 @@ The following example loads a SVG file and adds additional SVG elements to it up
 The following example loads an SVG file, clones elements of the SVG, and manipulates them. Then, the cloned elements are displayed sequentially.
 
 ```html
-<div data-animate data-src="animate/integer_program.svg">
+<div data-animate data-load="animate/integer_program.svg">
 <!--
 {
 "setup": [
@@ -269,4 +270,4 @@ The following example loads an SVG file, clones elements of the SVG, and manipul
 
 MIT licensed
 
-Copyright (C) 2021 Asvin Goel
+Copyright (C) 2023 Asvin Goel

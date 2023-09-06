@@ -1,12 +1,12 @@
 # Changelog
 
-The versioning scheme is uses the first two numbers of the version of `reveal.js` that was used when updating the plugins. The last number refers to the version of the plugin collection.
+The first two numbers of the versioning scheme refer to the  version of `reveal.js` that was used for testing the plugins. The last number is a running index indicating the version of the plugin collection.
 
 ## Unpublished
 
-- N/A
+- ...
 
-## 4.2.0 (forthcoming)
+## 4.2.0
 
 ### New features
 
@@ -29,9 +29,10 @@ by
 ```
 
 - Removed deprecated config from `anything` plugin
-- Removed deprecated buttons from `chalkboard` plugin
+- Removed deprecated buttons from `chalkboard` plugin (use `customcontrols` plugin instead)
+- Removed deprecated buttons from `questions` plugin (use `customcontrols` plugin instead)
 - Removed `embed-tweet` plugin, `loadcontent` plugin can be used instead
-- Seminar plugin now works with socket.io v4.6.1: Make sure to update seminar server and client library, e.g., by using
+- Seminar plugin now works with [socket.io v4.6.1](https://socket.io/docs/v4/changelog/4.6.1): Make sure to update seminar server and client library, e.g., by using
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
 ```
