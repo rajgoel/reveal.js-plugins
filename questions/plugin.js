@@ -73,36 +73,11 @@ const initQnA = function(Reveal){
 	container.appendChild(questionList);
 	document.querySelector( '.reveal' ).appendChild( container );
 
-	toggleQnAButton = config.toggleQnAButton || false;
-
-	if ( toggleQnAButton ) {
-console.warn( "toggleQnAButton is deprecated, use customcontrols plugin instead!" );
-		var button = document.createElement( 'div' );
-		button.className = "toggle-questions";
-		button.id = "toggle-questions";
-		button.style.visibility = "hidden";
-		button.style.position = "absolute";
-		button.style.zIndex = 30;
-		button.style.fontSize = "24px";
-
-		button.style.left = toggleQnAButton.left || "30px";
-		button.style.bottom = toggleQnAButton.bottom ||  "30px";
-		button.style.top = toggleQnAButton.top ||  "auto";
-		button.style.right = toggleQnAButton.right ||  "auto";
-
-		button.innerHTML = '<a href="#" title="Toggle Q&A dashboard (Q)" onclick="RevealQnA.toggleQnA(); return false;">' +
-				'<span class="fa-stack" style="margin: -10px;"><span class="fa fa-comment fa-stack-1x"></span><strong class="fa-stack-1x fa-inverse qna question-counter" style="font-size:0.5em;"></strong></span>' +
-//<i class="fa fa-comment"></i>
-				'</a>';
-		document.querySelector(".reveal").appendChild( button );
-	}
-
-
 	function toggleQnA( show ) {
     let dashboard = document.querySelector('.qna.dashboard');
     if ( !dashboard ) return;
 		if ( show == undefined ) {
-			dashboard.style.visibility == "hidden";
+			show = dashboard.style.visibility == "hidden";
 		}
 		dashboard.style.visibility = show ? "visible" : "hidden";
 	}
