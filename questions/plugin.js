@@ -74,10 +74,10 @@ const initQnA = function(Reveal){
 	document.querySelector( '.reveal' ).appendChild( container );
 
 	function toggleQnA( show ) {
-    let dashboard = document.querySelector('.qna.dashboard');
-    if ( !dashboard ) return;
+		let dashboard = document.querySelector('.qna.dashboard');
+		if ( !dashboard ) return;
 		if ( show == undefined ) {
-			show = dashboard.style.visibility == "hidden";
+			show = ( dashboard.style.visibility == "hidden" );
 		}
 		dashboard.style.visibility = show ? "visible" : "hidden";
 	}
