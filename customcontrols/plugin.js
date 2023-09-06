@@ -18,6 +18,7 @@ window.RevealCustomControls = window.RevealCustomControls || {
 const initCustomControls = function(Reveal){
 	var config = Reveal.getConfig().customcontrols || {};
 
+	if (Reveal.isSpeakerNotes() && new URLSearchParams(location.search).get('controls') == 'false') return;
 	if (!config?.controls?.length) return this;
 
 	var collapseIcon = config.collapseIcon || '<i class="fa fa-chevron-down"></i>';
