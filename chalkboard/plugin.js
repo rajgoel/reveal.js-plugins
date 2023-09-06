@@ -3,7 +3,7 @@
  **
  ** A plugin for reveal.js adding a chalkboard.
  **
- ** Version: 2.1.0
+ ** Version: 2.2.0
  **
  ** License: MIT license (see LICENSE.md)
  **
@@ -12,6 +12,8 @@
  ** Multi color support initially added by Kurt Rinnert https://github.com/rinnert
  ** Compatibility with reveal.js v4 by Hakim El Hattab https://github.com/hakimel
  ******************************************************************/
+
+"use strict";
 
 window.RevealChalkboard = window.RevealChalkboard || {
 	id: 'RevealChalkboard',
@@ -284,11 +286,12 @@ const initChalkboard = function ( Reveal ) {
 	function whenReady( callback ) {
 		// wait for markdown to be parsed and code to be highlighted
 		if ( !document.querySelector( 'section[data-markdown]:not([data-markdown-parsed])' ) 
+			   && !document.querySelector( '[data-load]:not([data-loaded])') 
 		     && !document.querySelector( 'code[data-line-numbers*="|"]') 	
 		) {
 			callback();
 		} else {
-			console.log( "Wait for markdown to be parsed and code to be highlighted" );
+			console.log( "Wait for external sources to be loaded and code to be highlighted" );
 			setTimeout( whenReady, 500, callback )
 		}
 	}
@@ -301,44 +304,6 @@ const initChalkboard = function ( Reveal ) {
 			console.log( "Wait for drawings to be loaded" );
 			setTimeout( whenLoaded, 500, callback )
 		}
-	}
-
-	if ( toggleChalkboardButton ) {
-console.warn( "toggleChalkboardButton is deprecated, use customcontrols plugin instead!" );
-//console.log("toggleChalkboardButton")
-		var button = document.createElement( 'div' );
-		button.className = "chalkboard-button";
-		button.id = "toggle-chalkboard";
-		button.style.visibility = "visible";
-		button.style.position = "absolute";
-		button.style.zIndex = 30;
-		button.style.fontSize = "24px";
-
-		button.style.left = toggleChalkboardButton.left || "30px";
-		button.style.bottom = toggleChalkboardButton.bottom || "30px";
-		button.style.top = toggleChalkboardButton.top || "auto";
-		button.style.right = toggleChalkboardButton.right || "auto";
-
-		button.innerHTML = '<a href="#" title="Toggle chalkboard (' + keyBindings.toggleChalkboard.key + ')" onclick="RevealChalkboard.toggleChalkboard(); return false;"><i class="fa fa-pen-square"></i></a>'
-		document.querySelector( ".reveal" ).appendChild( button );
-	}
-	if ( toggleNotesButton ) {
-console.warn( "toggleNotesButton is deprecated, use customcontrols plugin instead!" );
-//console.log("toggleNotesButton")
-		var button = document.createElement( 'div' );
-		button.className = "chalkboard-button";
-		button.id = "toggle-notes";
-		button.style.position = "absolute";
-		button.style.zIndex = 30;
-		button.style.fontSize = "24px";
-
-		button.style.left = toggleNotesButton.left || "70px";
-		button.style.bottom = toggleNotesButton.bottom || "30px";
-		button.style.top = toggleNotesButton.top || "auto";
-		button.style.right = toggleNotesButton.right || "auto";
-
-		button.innerHTML = '<a href="#" title="Toggle slide annotation (' + keyBindings.toggleNotesCanvas.key + ')" onclick="RevealChalkboard.toggleNotesCanvas(); return false;"><i class="fa fa-pen"></i></a>'
-		document.querySelector( ".reveal" ).appendChild( button );
 	}
 
 	var drawingCanvas = [ {

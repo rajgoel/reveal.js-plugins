@@ -3,7 +3,7 @@
 **
 ** A plugin for reveal.js adding a Q&A to an online seminar.
 **
-** Version: 0.1.2
+** Version: 0.1.3
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -22,6 +22,7 @@ const initQnA = function(Reveal){
 	var config = Reveal.getConfig().questions || {};
         const STATUS = {"JOINED": 3, "HOSTING": 4};
 	var connected = false;
+	enableOrDisable(connected);
 	var questions = 0;
 	var counter = 0;
 
@@ -95,13 +96,6 @@ console.warn( "toggleQnAButton is deprecated, use customcontrols plugin instead!
 				'</a>';
 		document.querySelector(".reveal").appendChild( button );
 	}
-
-
-/*
-	function initializeQnA() {
-
-	}
-*/
 
 
 	function toggleQnA( show ) {
@@ -214,10 +208,7 @@ console.warn( "toggleQnAButton is deprecated, use customcontrols plugin instead!
 		return bubbleUp( document.querySelector('.qna > .questions').appendChild(div) );
 	}
 
-	document.addEventListener( 'seminar', function ( message ) {
-		// update status
-//console.log(message.status);
-		var connected = ( message.status >= STATUS.JOINED );
+	function enableOrDisable(connected) {
 		var buttons = document.querySelectorAll('#toggle-questions');
 		for (var i = 0; i < buttons.length; i++) {
 			buttons[i].style.display = connected ? "inherit" : "none";
@@ -231,6 +222,12 @@ console.warn( "toggleQnAButton is deprecated, use customcontrols plugin instead!
 				toggleQnA();
 			} )
 		}
+	}
+
+	document.addEventListener( 'seminar', function ( message ) {
+		// update status
+//console.log(message.status);
+		enableOrDisable(message.status >= STATUS.JOINED);
 	});
 
 	document.addEventListener( 'received', function ( message ) {
