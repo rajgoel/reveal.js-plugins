@@ -2,6 +2,15 @@
 
 This plugin allows to load content of an HTML element from a file.
 
+## Usage
+
+Simply add a `data-load` attribute with the filename to a `<div>` element, to load the file and add the content into to the `<div>`.
+
+```html
+<div data-load="graphics.svg">
+<!-- Content of graphics.svg will be added here -->
+</div>
+```
 
 ## Installation
 
