@@ -29,12 +29,31 @@
 }
 
 /*********************************************
+ * Kbd for key strokes
+ *********************************************/
+
+kbd {
+  display: inline-block;
+  padding: 2px 14px;
+  background-color: darkgray;
+  font-family: Arial, sans-serif;
+  border-radius: 4px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 2px 0 0 rgba(255, 255, 255, 0.7) inset;
+  text-shadow: none;
+	font-size: 0.85em;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+/*********************************************
  * Inline code
  *********************************************/
 :not(pre) > code {
-  background-color: lightgray;
-  padding: 0;
-  border-radius: 6px;
+  background-color: darkgray!important;
+  padding: 4px 4px 4px 4px;
+  border-radius: 4px;
+  text-shadow: none;
+  font-family: courier;
 }
 /* 
 Inline code is also used to escape math blocks. 
