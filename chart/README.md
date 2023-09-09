@@ -2,25 +2,27 @@
 
 A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to easily add charts using [Chart.js](http://www.chartjs.org/).
 
-[Check out the live demo](https://rajgoel.github.io/reveal.js-demos/chart-demo.html)
+[Check out the demo](https://rajgoel.github.io/reveal.js-demos/?topic=chart)
 
-## Installation
+## Setup
 
-Copy the file `plugin.js` into the plugin folder of your reveal.js presentation, i.e. `plugin/chart`.
-
-Add the plugin and Chart.js to the dependencies in your presentation, as below.
-
+To use the plugin include
 ```html
+<!-- Chart plugin -->
+<script src="https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/chart/plugin.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js"></script>
-<script src="plugin/chart/plugin.js"></script>
+```
+to the header of your presentation and configure reveal.js and the plugin by
 
-<script>
-    Reveal.initialize({
-        // ...
-        plugins: [ RevealChart ],
-        // ...
-    });
-</script>
+```js
+Reveal.initialize({
+  chart: {
+    // add configuration here
+  },
+  // ...
+  plugins: [ RevealChart ],
+  // ...
+});
 ```
 
 ## Configuration
@@ -126,4 +128,4 @@ The chart data can also be provided in an external CSV file. To include external
 
 MIT licensed
 
-Copyright (C) 2021 Asvin Goel
+Copyright (C) 2023 Asvin Goel

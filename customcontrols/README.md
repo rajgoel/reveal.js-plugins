@@ -2,35 +2,31 @@
 
 This plugin allows to add responsive custom controls to reveal.js which allow arbitrary positioning, layout, and behaviour of the controls.
 
-[Check out the live demo](https://rajgoel.github.io/reveal.js-demos/customcontrols-demo.html)
+[Check out the demo](https://rajgoel.github.io/reveal.js-demos/)
 
+## Setup
 
-## Installation
-
-Copy the files `plugin.js` and `style.css` into the plugin folder of your reveal.js presentation, i.e. ```plugin/customcontrols``` and load the plugin as shown below.
-
+To use the plugin include
 ```html
-<link rel="stylesheet" href="plugin/customcontrols/style.css">
-<script src="plugin/customcontrols/plugin.js"></script>
-
-<script>
-    Reveal.initialize({
-        // ...
-        plugins: [ RevealCustomControls ],
-        // ...
-    });
-</script>
+<!-- Font awesome is used by several plugins -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Custom controls plugin -->
+<script src="https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/customcontrols/plugin.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/customcontrols/style.css">
 ```
+to the header of your presentation and configure reveal.js and the plugin by
 
-Note, without configuration you need to add
-
-```javascript
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+```js
+Reveal.initialize({
+  customcontrols: {
+    // add configuration here
+  },
+  // ...
+  plugins: [ RevealCustomControls ],
+  // ...
+});
 ```
-
-between ```<head>``` and ```</head>``` of your HTML file because the defaults use [Font Awesome](http://fontawesome.io/).
-
-
 
 ## Configuration
 
@@ -41,24 +37,16 @@ The plugin can be configured by adding custom controls and changing the layout o
 Reveal.initialize({
 	// ...
   customcontrols: {
-		controls: [
+    controls: [
       {
-			  id: 'toggle-overview',
-			  title: 'Toggle overview (O)',
-			  icon: '<i class="fa fa-th"></i>',
-			  action: 'Reveal.toggleOverview();'
-			},
-			{ icon: '<i class="fa fa-pen-square"></i>',
-			  title: 'Toggle chalkboard (B)',
-			  action: 'RevealChalkboard.toggleChalkboard();'
-			},
-			{ icon: '<i class="fa fa-pen"></i>',
-			  title: 'Toggle notes canvas (C)',
-			  action: 'RevealChalkboard.toggleNotesCanvas();'
-			}
-		]
-	},
-	// ...
+        id: 'toggle-overview',
+        title: 'Toggle overview (O)',
+        icon: '<i class="fa fa-th"></i>',
+        action: 'Reveal.toggleOverview();'
+      }
+    ]
+  },
+  // ...
 
 });
 ```
@@ -69,4 +57,4 @@ The `id` and `title` are optional. The configuration should be self explaining a
 
 MIT licensed
 
-Copyright (C) 2022 Asvin Goel
+Copyright (C) 2023 Asvin Goel

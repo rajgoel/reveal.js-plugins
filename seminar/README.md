@@ -6,56 +6,56 @@ The seminar plugin provides interaction capabilities with other hosts and partic
 - [`poll` plugin](https://github.com/rajgoel/reveal.js-plugins/tree/master/poll): presentations can include instant polls in which participants can select one of multiple choices and the overall results are shown, e.g., in a chart on another slide
 - [`questions` plugin](https://github.com/rajgoel/reveal.js-plugins/tree/master/questions): allows to collect questions for a Q&A, participants can ask questions and upvote questions that they want to be answered first
 
-## Demo
+[Check out the demo](https://rajgoel.github.io/reveal.js-demos/?topic=seminar)
 
-**The demo is currently not working.**
-~~A demo of the plugin is provided at <https://rajgoel.github.io/reveal.js-demos/seminar-demo.html>. In the demo anyone can open a seminar room to become a host and share a link with the room name to anyone else. Everyone with the link can follow the hosted presentation.~~
+## Seminar server
 
-## Requirements
+The `seminar` plugin requires a running socket.io server. The [`seminar`](https://github.com/rajgoel/seminar)-repository provides such a server.
 
-The seminar plugin needs `socket.io` server to manage the communication between hosts and participants. The [`seminar`](https://github.com/rajgoel/seminar)-repository provides such a server. ~~A sample deployment can be found at <https://reveal-seminar.herokuapp.com/>. You are very welcome to point your presentations to this `socket.io` server, but availability and stability are not guaranteed. **For anything mission critical we recommend running your own seminar server**.~~
+> Section under construction
+
+## Setup
+
+To use the plugin include
+```html
+<!-- Seminar plugin -->
+<script src="https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/seminar/plugin.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
+```
+to the header of your presentation and configure reveal.js and the plugin by
+
+```js
+Reveal.initialize({
+	seminar: {
+    // add configuration here
+  },
+  // ...
+  plugins: [ RevealSeminar ],
+  // ...
+});
+```
+
+
 
 ## Configuration
 
-First, make sure to include the plugin and the require `socket.io` scripts:
 
-```html
-<script src="../reveal.js-plugins/seminar/plugin.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
-```
-
-Optionally, include the `chart`, `poll`, `questions`, and `chalkboard`  plugin:
-```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js"></script>
-<script src="../reveal.js-plugins/chart/plugin.js"></script>
-<script src="../reveal.js-plugins/poll/plugin.js"></script>
-<script src="../reveal.js-plugins/questions/plugin.js"></script>
-<script src="../reveal.js-plugins/chalkboard/plugin.js"></script>
-```
-
-and the respective style files
-```html
-<link rel="stylesheet" href="../reveal.js-plugins/poll/style.css">
-<link rel="stylesheet" href="../reveal.js-plugins/questions/style.css">
-```
 
 Example configuration:
 ```javascript
 Reveal.initialize({
   // ...
 	seminar: {
-		server: 'https://seminar.eu.openode.io', // change server as necessary
+		server: 'http://localhost:4433', // change server as necessary
 		room: 'Some room name', // put your room name here
 		hash: '$2a$05$hhgakVn1DWBfgfSwMihABeYToIBEiQGJ.ONa.HWEiNGNI6mxFCy8S', // a hash is required for every seminar room and can be generated on the URL of the socket.io server
 		autoJoin: true // set to true to auto,matically join the seminar room
 	},
   // ...
-	plugins: [ RevealChart, RevealSeminar, RevealChalkboard, RevealPoll, RevealQnA  ]
-	// check the respective documentation for the configurations of the other plugins
+	plugins: [ RevealSeminar ]
+	// ...
 });
 ```
-You may want to take a look at the [source code](https://github.com/rajgoel/reveal.js-demos) of the demo presentation.
-
 
 ## API
 

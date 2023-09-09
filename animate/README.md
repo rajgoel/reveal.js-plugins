@@ -2,38 +2,34 @@
 
 A plugin for [Reveal.js](https://github.com/hakimel/reveal.js) allowing to add animations using [SVG.js](https://svgjs.dev).
 
-[Check out the live demo](https://rajgoel.github.io/reveal.js-demos/animate-demo.html)
+[Check out the demo](https://rajgoel.github.io/reveal.js-demos/?topic=animate)
 
-## Installation
+## Setup
 
-Copy the files ```plugin.js``` and ```svg.min.js``` into the plugin folder of your reveal.js presentation, i.e. ```plugin/animate``` and load the plugin as shown below.
-
+To use the plugin include
 ```html
-<script src="plugin/loadcontent/plugin.js"></script>
-<script src="plugin/animate/plugin.js"></script>
-<script src="plugin/animate/svg.min.js"></script>
-
-<script>
-    Reveal.initialize({
-        // ...
-        plugins: [ RevealLoadContent, RevealAnimate ],
-        // ...
-    });
-</script>
+<!-- Load content plugin -->
+<script src="https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/loadcontent/plugin.js"></script>
+<!-- Animate plugin -->
+<script src="https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/animate/plugin.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/3.1.2/svg.min.js"></script>
 ```
+to the header of your presentation and configure reveal.js and the plugin by
 
-By default animations only play when using the [Auto-Slide](https://revealjs.com/auto-slide/) feature or when playing (or recording) an [Audio-Slideshow](https://github.com/rajgoel/reveal.js-plugins/tree/master/audio-slideshow). In order to always play an animation when moving to a slide, the plugin can be configured by setting the `autoplay` parameter to `true`:
 ```js
 Reveal.initialize({
-	// ...
-	animate: {
-		autoplay: true
-	}
-	// ...
+  animate: {
+    autoplay: true // default is false
+  },
+  // ...
+  plugins: [ RevealLoadContent, RevealAnimate ],
+  // ...
 });
 ```
 
+By default animations only play when using the [Auto-Slide](https://revealjs.com/auto-slide/) feature or when playing (or recording) an [Audio-Slideshow](https://github.com/rajgoel/reveal.js-plugins/tree/master/audio-slideshow). In order to always play an animation when moving to a slide, the plugin can be configured by setting the `autoplay` parameter to `true`.
 
+The `loadcontent` plugin is only required when svg are loaded from an external file using the `data-load="..."` attributes (see examples below). It is important that `RevealLoadContent` is listed before `RevealAnimate`.
 
 ## Usage
 
