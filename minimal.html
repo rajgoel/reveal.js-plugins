@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>reveal.js minimal</title>
+	  <!-- Reveal.js -->
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js@latest/dist/reveal.js"></script>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@latest/dist/reveal.css">
+		<!-- Change theme as you like -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@latest/dist/theme/blood.css" id="theme">
+
+		<!-- Native plugins of reveal.js -->
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js@latest/plugin/markdown/markdown.js"></script>
+
+		<!-- Menu plugin -->
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js-menu@2.1.0/menu.js"></script>
+		<link href=" https://cdn.jsdelivr.net/npm/reveal.js-menu@2.1.0/menu.css " rel="stylesheet">
+
+		<!-- Add other plugins and additional style sheets -->
+
+	</head>
+	<body>
+
+		<div class="reveal">
+			<div class="slides">
+				<section data-markdown data-separator="^\n===\n$" data-separator-vertical="^\n---\n$">
+
+# Reveal.js playground
+
+---
+
+This is a minimal slide deck to be used as a playground for creating more advanced presentations. 
+
+===
+
+## Plugins
+
+The only plugins added to this presentations are 
+
+- the [`markdown` plugin](https://revealjs.com/markdown/) and 
+- the [`menu` plugin](https://github.com/denehyg/reveal.js-menu).
+
+===
+
+## The end
+
+				</section>
+
+			</div>
+		</div>
+
+		<script>
+			Reveal.initialize({
+				width: 1280,
+				height: 900,
+				// add other configuration parameters
+				// ...
+				// add menu plugin configuration
+				menu: {
+					themes: false,
+					transitions: false,
+					markers: true,
+					hideMissingTitles: true,
+				},
+				// add other plugin configurations
+				// ...
+				// load plugins
+				plugins: [
+					RevealMarkdown,
+					RevealMenu,
+					// add other plugins
+					// ...
+				]
+			});
+		</script>
+
+	</body>
+</html>
