@@ -22,7 +22,7 @@ Demos for the plugin collection can be found here: <https://rajgoel.github.io/re
 
 ## Getting started
 
-The easiest to get started is to take start with [minimal.html](minimal.html) and a look at the documentation of each of the plugins. The source code of the demos gives further examples and can be found here: <https://github.com/rajgoel/reveal.js-demos>.
+The easiest to get started is to start with [minimal.html](minimal.html) and take a look at the documentation of each of the plugins. The source code of the demos gives further examples and can be found here: <https://github.com/rajgoel/reveal.js-demos>.
 
 
 ## License
