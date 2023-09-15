@@ -3,7 +3,7 @@
  **
  ** A plugin for reveal.js adding a chalkboard.
  **
- ** Version: 2.3.0
+ ** Version: 2.3.1
  **
  ** License: MIT license (see LICENSE.md)
  **
@@ -345,6 +345,14 @@ const initChalkboard = function ( Reveal ) {
 	var updateStorageTimeout = null;
 	var playback = false;
 
+  function changeCursor( element, tool ) {
+    element.style.cursor = tool.cursor;
+    var palette = document.querySelector('.palette[data-mode="' + mode + '"]');
+    if ( palette ) {
+      palette.style.cursor = tool.cursor;
+    }
+  }
+
 	function createPalette( colors, length ) {
 		if ( length === true || length > colors.length ) {
 			length = colors.length;
@@ -420,7 +428,8 @@ const initChalkboard = function ( Reveal ) {
 		container.oncontextmenu = function () {
 			return false;
 		}
-		container.style.cursor = pens[ id ][ color[ id ] ].cursor;
+
+    changeCursor( container, pens[ id ][ color[ id ] ] );
 
 		drawingCanvas[ id ].width = window.innerWidth;
 		drawingCanvas[ id ].height = window.innerHeight;
@@ -445,6 +454,7 @@ const initChalkboard = function ( Reveal ) {
 
 			if ( colorButtons ) {
 				var palette = createPalette( boardmarkers, colorButtons );
+        palette.dataset.mode = id;
 				palette.style.visibility = 'hidden'; // only show palette in drawing mode
 				container.appendChild( palette );
 			}
@@ -456,6 +466,7 @@ const initChalkboard = function ( Reveal ) {
 
 			if ( colorButtons ) {
 				var palette = createPalette( chalks, colorButtons );
+        palette.dataset.mode = id;
 				container.appendChild( palette );
 			}
 			if ( boardHandle ) {
@@ -487,7 +498,7 @@ const initChalkboard = function ( Reveal ) {
 		canvas.width = drawingCanvas[ id ].width;
 		canvas.height = drawingCanvas[ id ].height;
 		canvas.setAttribute( 'data-chalkboard', id );
-		canvas.style.cursor = pens[ id ][ color[ id ] ].cursor;
+    changeCursor( canvas, pens[ id ][ color[ id ] ] );
 		container.appendChild( canvas );
 		drawingCanvas[ id ].canvas = canvas;
 
@@ -722,7 +733,6 @@ const initChalkboard = function ( Reveal ) {
 					count = Number(fragments[j].getAttribute('data-fragment-index')) + 1;
 				}
 			}
-//console.log(count,fragments.length,( slides[i].querySelector('h1,h2,h3,h4')||{}).innerHTML, page); 
 			page += count + 1;
 		}
 	}
@@ -742,8 +752,6 @@ const initChalkboard = function ( Reveal ) {
 				console.log( 'Create printout for slide ' + storage[ 1 ].data[ i ].slide.h + '.' + storage[ 1 ].data[ i ].slide.v );
 				var slideData = getSlideData( storage[ 1 ].data[ i ].slide, 1 );
 				var drawings = createDrawings( slideData, patImg );
-//console.log("Page:", storage[ 1 ].data[ i ].page );
-//console.log("Slide:", slides[storage[ 1 ].data[ i ].page] );
 				addDrawings( slides[storage[ 1 ].data[ i ].page], drawings );
 
 			}
@@ -895,7 +903,7 @@ const initChalkboard = function ( Reveal ) {
 		context.lineCap = 'round';
 		context.fillStyle = chalks[ colorIdx ].color; // 'rgba(255,255,255,0.5)';
 		context.strokeStyle = chalks[ colorIdx ].color;
-		/*var opacity = Math.min(0.8, Math.max(0,color[1].replace(/^.*,(.+)\)/,'$1') - 0.1)) + Math.random()*0.2;*/
+
 		var opacity = 1.0;
 		context.strokeStyle = context.strokeStyle.replace( /[\d\.]+\)$/g, opacity + ')' );
 		context.beginPath();
@@ -1052,10 +1060,10 @@ const initChalkboard = function ( Reveal ) {
 
     if ( color[ mode ] < 0 ) {
       // use eraser
-		  drawingCanvas[ mode ].canvas.style.cursor = sponge.cursor;
+      changeCursor( drawingCanvas[ mode ].canvas, sponge );
     }
     else {
-		  drawingCanvas[ mode ].canvas.style.cursor = pens[ mode ][ color[ mode ] ].cursor;
+      changeCursor( drawingCanvas[ mode ].canvas, pens[ mode ][ color[ mode ] ] );
     }
 	}
 
@@ -1516,7 +1524,7 @@ const initChalkboard = function ( Reveal ) {
 				if ( color[ mode ]  < 0 || evt.button == 2 || evt.button == 1 ) {
           if ( color[ mode ]  >= 0 ) {
             // show sponge
-      		  drawingCanvas[ mode ].canvas.style.cursor = sponge.cursor;
+            changeCursor( drawingCanvas[ mode ].canvas, sponge );
           }
 					startErasing( ( mouseX - xOffset ) / scale, ( mouseY - yOffset ) / scale );
 					// broadcast
@@ -1599,7 +1607,7 @@ const initChalkboard = function ( Reveal ) {
 		canvas.addEventListener( 'mouseup', function ( evt ) {
 			evt.preventDefault();
       if ( color[ mode ] >= 0 ) {
-  			drawingCanvas[ mode ].canvas.style.cursor = pens[ mode ][ color[ mode ] ].cursor;
+        changeCursor( drawingCanvas[ mode ].canvas, pens[ mode ][ color[ mode ] ] );
       }
 			if ( drawing || erasing ) {
 				stopDrawing();
