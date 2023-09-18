@@ -3,7 +3,7 @@
  **
  ** A plugin for reveal.js adding a chalkboard.
  **
- ** Version: 2.3.1
+ ** Version: 2.3.2
  **
  ** License: MIT license (see LICENSE.md)
  **
@@ -933,7 +933,7 @@ const initChalkboard = function ( Reveal ) {
 		context.clearRect( x - 1, y - 1, eraser.radius * 2 + 2, eraser.radius * 2 + 2 );
 		context.restore();
 		if ( mode == 1 && grid ) {
-			redrawGrid( x, y, eraser.radius );
+			redrawGrid( x + eraser.radius, y + eraser.radius, eraser.radius );
 		}
 	}
 
