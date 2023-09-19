@@ -48,23 +48,20 @@ kbd {
 /*********************************************
  * Inline code
  *********************************************/
-:not(pre) > code {
-  background-color: darkgray!important;
-  padding: 4px 4px 4px 4px;
-  border-radius: 4px;
-  text-shadow: none;
-  font-family: courier;
-}
+
 /* 
 Inline code is also used to escape math blocks. 
 The rendered math is then embedded within a span 
 and should not receive the code background.
 */
-:not(pre) > code > span {
-  background-color: var(--r-background-color);
-  padding: 0;
-  border-radius: 0px;
+code:not(:empty):not(:has(*)):not(pre code) {
+  background-color: darkgray;
+  padding: 4px 4px 4px 4px;
+  border-radius: 4px;
+  text-shadow: none;
+  font-family: courier;
 }
+
 
 /*********************************************
  * Fragments
