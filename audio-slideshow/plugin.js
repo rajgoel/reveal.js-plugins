@@ -119,7 +119,6 @@ const initAudioSlideshow = function(Reveal){
 				if ( currentAudio.id != previousAudio.id ) {
 					currentAudio.volume = previousAudio.volume;
 					currentAudio.muted = previousAudio.muted;
-					currentAudio.playbackRate = previousAudio.playbackRate;
 //console.debug( "Play " + currentAudio.id);
 					currentAudio.play();
 				}
@@ -291,6 +290,8 @@ const initAudioSlideshow = function(Reveal){
 			videoElement.currentTime = audioElement.currentTime;
 		} );
 		audioElement.addEventListener( 'play', function( event ) {
+			audioElement.playbackRate = currentPlaybackRate;
+			videoElement.playbackRate = currentPlaybackRate;
 			videoElement.currentTime = audioElement.currentTime;
 			if ( videoElement.paused ) videoElement.play();
 		} );
@@ -396,6 +397,10 @@ const initAudioSlideshow = function(Reveal){
 			var evt = new CustomEvent('startplayback');
 			evt.timestamp = 1000 * audioElement.currentTime;
 			document.dispatchEvent( evt );
+
+			// Make sure that the currentPlaybackRate is used, which
+			// might have been set by the user.
+			audioElement.playbackRate = currentPlaybackRate;
 
 			if ( timer ) { clearTimeout( timer ); timer = null; }
 			// preload next audio element so that it is available after slide change
