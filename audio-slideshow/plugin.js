@@ -30,7 +30,8 @@ const initAudioSlideshow = function(Reveal){
 	var defaultNotes = false; // use slide notes as default for the text to speech converter
 	var defaultText = false; // use slide text as default for the text to speech converter
 	var defaultDuration = 5; // value in seconds
-	var defaultPlaybackRate = 1.0; // speed of audio
+	var defaultPlaybackRate = 1.0; // default speed of audio
+	var currentPlaybackRate = 1.0; // current speed of audio
 	var defaultAudios = true; // try to obtain audio for slide and fragment numbers
 	var advance = 0; // advance to next slide after given time in milliseconds after audio has played, use negative value to not advance
 	var autoplay = false; // automatically start slideshow
@@ -151,7 +152,11 @@ const initAudioSlideshow = function(Reveal){
 			if ( config.defaultText != null ) defaultText = config.defaultText;
 			if ( config.defaultDuration != null ) defaultDuration = config.defaultDuration;
 			if ( config.defaultAudios != null ) defaultAudios = config.defaultAudios;
-			if ( config.defaultPlaybackRate != null ) defaultPlaybackRate = config.defaultPlaybackRate;
+			if ( config.defaultPlaybackRate != null ) {
+				defaultPlaybackRate = config.defaultPlaybackRate;
+				currentPlaybackRate = config.defaultPlaybackRate;
+			}
+
 			if ( config.advance != null ) advance = config.advance;
 			if ( config.autoplay != null ) autoplay = config.autoplay;
 			if ( config.playerOpacity != null  ) playerOpacity = config.playerOpacity;
@@ -297,6 +302,10 @@ const initAudioSlideshow = function(Reveal){
 			videoElement.volume = audioElement.volume;
 			videoElement.muted = audioElement.muted;
 		} );
+		audioElement.addEventListener( 'ratechange', function( event ) {
+			videoElement.playbackRate = audioElement.playbackRate;
+			currentPlaybackRate = audioElement.playbackRate;
+		} );
 		audioElement.addEventListener( 'seeked', function( event ) {
 			videoElement.currentTime = audioElement.currentTime;
 		} );
@@ -422,6 +431,9 @@ const initAudioSlideshow = function(Reveal){
 			document.dispatchEvent( evt );
 			if ( timer ) { clearTimeout( timer ); timer = null; }
 		} );
+		audioElement.addEventListener( 'ratechange', function( event ) {
+			currentPlaybackRate = audioElement.playbackRate;
+                } );
 
 		if ( audioFile != null ) {
 			// Support comma separated lists of audio sources
