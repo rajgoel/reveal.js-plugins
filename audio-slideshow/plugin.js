@@ -457,6 +457,10 @@ const initAudioSlideshow = function(Reveal){
 			container.appendChild( audioElement );
 		}
 	}
+
+	function getPlaybackRate() {
+		return currentPlaybackRate;
+	}
 };
 
 /*****************************************************************
