@@ -58,6 +58,13 @@ Reveal.initialize({
 });
 ```
 
+### Playback speed
+
+This plugin has a parameter ```defaultPlaybackRate```, which configures with what speed audio is played by default.  Note that this option changes the speed of *all* audios, which may interfere with other plugins such as ```RevealChalkboard``` or ```RevealAnimate```, which may have their own notion of "correct" playback rate.
+
+In addition, users may use adjust the speed of audio using the audio controls (usually, via right-click).  The plugin remembers the currently set speed and uses that on subsequent audios as well.
+
+
 ## Preparing an audio slideshow
 
 For each slide or fragment you can explicitly specify a file to be played when the slide or fragment is shown by setting the ```data-audio-src``` attribute for the slide or fragment.
