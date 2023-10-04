@@ -8,7 +8,7 @@
 ** available, a blank audio file with default  duration is played
 ** instead.
 **
-** Version: 1.0.2
+** Version: 1.1.0
 **
 ** License: MIT license (see LICENSE.md)
 **
