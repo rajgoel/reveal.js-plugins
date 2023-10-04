@@ -4,6 +4,10 @@ The first two numbers of the versioning scheme refer to the  version of `reveal.
 
 ## Unpublished
 
+- ...
+
+## 4.2.4
+
 ### New features
 
 - Added support for changing  playback rate of audio: https://github.com/rajgoel/reveal.js-plugins/pull/148
