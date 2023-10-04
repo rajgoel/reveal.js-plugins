@@ -41,14 +41,14 @@ Reveal.initialize({
 	// ...
 	audio: {
 		prefix: 'audio/', 	// audio files are stored in the "audio" folder
-		suffix: '.ogg',		// audio files have the ".ogg" ending
+		suffix: '.webm',  	// audio files have the ".webm" ending
 		textToSpeechURL: null,  // the URL to the text to speech converter
 		defaultNotes: false, 	// use slide notes as default for the text to speech converter
 		defaultText: false, 	// use slide text as default for the text to speech converter
 		advance: 0, 		// advance to next slide after given time in milliseconds after audio has played, use negative value to not advance
 		autoplay: false,	// automatically start slideshow
 		defaultDuration: 5,	// default duration in seconds if no audio is available
-		defaultAudios: true,	// try to play audios with names such as audio/1.2.ogg
+		defaultAudios: true,	// try to play audios with names such as audio/1.2.webm
 		defaultPlaybackRate = 1.0, // speed of audio
 		playerOpacity: 0.05,	// opacity value of audio player if unfocused
 		playerStyle: 'position: fixed; bottom: 4px; left: 25%; width: 50%; height:75px; z-index: 33;', // style used for container of audio controls
@@ -80,7 +80,7 @@ For each slide or fragment you can explicitly specify a file to be played when t
 </section>
 ```
 
-If no audio file is explicitly specified, the plugin automatically determines the name of the audio file using the given ```prefix```, the slide (or fragment) indices, and the ```suffix```, e.g. in the above code the slideshow will play the file ```audio/1.2.ogg```  before the fragment is shown (assuming that ```prefix``` is ```"audio/"```, ```suffix``` is ```".ogg"``` , ```Reveal.getIndices().h``` is ```"1"``` and ```Reveal.getIndices().v``` is ```"2"```).
+If no audio file is explicitly specified, the plugin automatically determines the name of the audio file using the given ```prefix```, the slide (or fragment) indices, and the ```suffix```, e.g. in the above code the slideshow will play the file ```audio/1.2.webm```  before the fragment is shown (assuming that ```prefix``` is ```"audio/"```, ```suffix``` is ```".webm"``` , ```Reveal.getIndices().h``` is ```"1"``` and ```Reveal.getIndices().v``` is ```"2"```).
 
 If you just want to play audio when file names are explicitly set with ```data-audio-src```, configure ```defaultAudios``` to ```false```.
 

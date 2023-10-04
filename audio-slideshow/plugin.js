@@ -24,9 +24,9 @@ window.RevealAudioSlideshow = window.RevealAudioSlideshow || {
 const initAudioSlideshow = function(Reveal){
 	// default parameters
 	var prefix = "audio/";
-	var suffix = ".ogg";
+	var suffix = ".webm";
 	var textToSpeechURL = null; // no text to speech converter
-//	var textToSpeechURL = "http://api.voicerss.org/?key=[YOUR_KEY]&hl=en-gb&c=ogg&src="; // the text to speech converter
+//	var textToSpeechURL = "http://localhost/?key=[YOUR_KEY]&hl=en-gb&c=ogg&src="; // the text to speech converter
 	var defaultNotes = false; // use slide notes as default for the text to speech converter
 	var defaultText = false; // use slide text as default for the text to speech converter
 	var defaultDuration = 5; // value in seconds
