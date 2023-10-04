@@ -69,7 +69,7 @@ const initAnimate = function(Reveal){
 			var config = parseJSON(comments[k]);
 //console.warn(comments[k], config);
 
-			if ( config ) {
+			if ( config && typeof config === 'object' ) {
 				if ( config.animation && Array.isArray(config.animation) && config.animation.length && !Array.isArray(config.animation[0]) ) {
 					// without fragments, the animation can be specified as a single array (animation steps)
 					config.animation = [ config.animation ];
