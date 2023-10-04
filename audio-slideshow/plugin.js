@@ -30,6 +30,8 @@ const initAudioSlideshow = function(Reveal){
 	var defaultNotes = false; // use slide notes as default for the text to speech converter
 	var defaultText = false; // use slide text as default for the text to speech converter
 	var defaultDuration = 5; // value in seconds
+	var defaultPlaybackRate = 1.0; // default speed of audio
+	var currentPlaybackRate = 1.0; // current speed of audio
 	var defaultAudios = true; // try to obtain audio for slide and fragment numbers
 	var advance = 0; // advance to next slide after given time in milliseconds after audio has played, use negative value to not advance
 	var autoplay = false; // automatically start slideshow
@@ -132,7 +134,7 @@ const initAudioSlideshow = function(Reveal){
 	function setup() {
 		// wait for markdown and highlight plugin to be done
 		if (
-			document.querySelector( 'section[data-markdown]:not([data-markdown-parsed])' ) 
+			document.querySelector( 'section[data-markdown]:not([data-markdown-parsed])' )
 			|| document.querySelector( 'code[data-line-numbers*="|"]')
 		) {
 			setTimeout( setup, 100 );
@@ -149,6 +151,11 @@ const initAudioSlideshow = function(Reveal){
 			if ( config.defaultText != null ) defaultText = config.defaultText;
 			if ( config.defaultDuration != null ) defaultDuration = config.defaultDuration;
 			if ( config.defaultAudios != null ) defaultAudios = config.defaultAudios;
+			if ( config.defaultPlaybackRate != null ) {
+				defaultPlaybackRate = config.defaultPlaybackRate;
+				currentPlaybackRate = config.defaultPlaybackRate;
+			}
+
 			if ( config.advance != null ) advance = config.advance;
 			if ( config.autoplay != null ) autoplay = config.autoplay;
 			if ( config.playerOpacity != null  ) playerOpacity = config.playerOpacity;
@@ -283,6 +290,8 @@ const initAudioSlideshow = function(Reveal){
 			videoElement.currentTime = audioElement.currentTime;
 		} );
 		audioElement.addEventListener( 'play', function( event ) {
+			audioElement.playbackRate = currentPlaybackRate;
+			videoElement.playbackRate = currentPlaybackRate;
 			videoElement.currentTime = audioElement.currentTime;
 			if ( videoElement.paused ) videoElement.play();
 		} );
@@ -293,6 +302,10 @@ const initAudioSlideshow = function(Reveal){
 		audioElement.addEventListener( 'volumechange', function( event ) {
 			videoElement.volume = audioElement.volume;
 			videoElement.muted = audioElement.muted;
+		} );
+		audioElement.addEventListener( 'ratechange', function( event ) {
+			videoElement.playbackRate = audioElement.playbackRate;
+			currentPlaybackRate = audioElement.playbackRate;
 		} );
 		audioElement.addEventListener( 'seeked', function( event ) {
 			videoElement.currentTime = audioElement.currentTime;
@@ -334,6 +347,8 @@ const initAudioSlideshow = function(Reveal){
 		audioElement.style.display = "none";
 		audioElement.setAttribute( 'controls', '' );
 		audioElement.setAttribute( 'preload', 'none' );
+
+		audioElement.playbackRate = defaultPlaybackRate;
 
 		if ( videoElement ) {
 			// connect play, pause, volumechange, mute, timeupdate events to video
@@ -383,29 +398,11 @@ const initAudioSlideshow = function(Reveal){
 			evt.timestamp = 1000 * audioElement.currentTime;
 			document.dispatchEvent( evt );
 
+			// Make sure that the currentPlaybackRate is used, which
+			// might have been set by the user.
+			audioElement.playbackRate = currentPlaybackRate;
+
 			if ( timer ) { clearTimeout( timer ); timer = null; }
-			// preload next audio element so that it is available after slide change
-			var indices = Reveal.getIndices();
-			var nextId = "audioplayer-" + indices.h + '.' + indices.v;
-			if ( indices.f != undefined && indices.f >= 0 ) {
-				nextId = nextId + '.' + (indices.f + 1);
-			}
-			else {
-				nextId = nextId + '.0';
-			}
-			var nextAudio = document.getElementById( nextId );
-			if ( !nextAudio ) {
-				nextId = "audioplayer-" + indices.h + '.' + (indices.v+1);
-				nextAudio = document.getElementById( nextId );
-				if ( !nextAudio ) {
-					nextId = "audioplayer-" + (indices.h+1) + '.0';
-					nextAudio = document.getElementById( nextId );
-				}
-			}
-			if ( nextAudio ) {
-//console.debug( "Preload: " + nextAudio.id );
-				nextAudio.load();
-			}
 		} );
 		audioElement.addEventListener( 'pause', function( event ) {
 			if ( timer ) { clearTimeout( timer ); timer = null; }
@@ -417,6 +414,9 @@ const initAudioSlideshow = function(Reveal){
 			document.dispatchEvent( evt );
 			if ( timer ) { clearTimeout( timer ); timer = null; }
 		} );
+		audioElement.addEventListener( 'ratechange', function( event ) {
+			currentPlaybackRate = audioElement.playbackRate;
+                } );
 
 		if ( audioFile != null ) {
 			// Support comma separated lists of audio sources
@@ -456,6 +456,10 @@ const initAudioSlideshow = function(Reveal){
 		if ( audioFile != null || defaultDuration > 0 ) {
 			container.appendChild( audioElement );
 		}
+	}
+
+	function getPlaybackRate() {
+		return currentPlaybackRate;
 	}
 };
 

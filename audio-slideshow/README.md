@@ -49,6 +49,7 @@ Reveal.initialize({
 		autoplay: false,	// automatically start slideshow
 		defaultDuration: 5,	// default duration in seconds if no audio is available
 		defaultAudios: true,	// try to play audios with names such as audio/1.2.ogg
+		defaultPlaybackRate = 1.0, // speed of audio
 		playerOpacity: 0.05,	// opacity value of audio player if unfocused
 		playerStyle: 'position: fixed; bottom: 4px; left: 25%; width: 50%; height:75px; z-index: 33;', // style used for container of audio controls
 		startAtFragment: false, // when moving to a slide, start at the current fragment or at the start of the slide
@@ -56,6 +57,13 @@ Reveal.initialize({
 	// ...
 });
 ```
+
+### Playback speed
+
+This plugin has a parameter ```defaultPlaybackRate```, which configures with what speed audio is played by default.  Note that this option changes the speed of *all* audios, which may interfere with other plugins such as ```RevealChalkboard``` or ```RevealAnimate```, which may have their own notion of "correct" playback rate.
+
+In addition, users may use adjust the speed of audio using the audio controls (usually, via right-click).  The plugin remembers the currently set speed and uses that on subsequent audios as well.
+
 
 ## Preparing an audio slideshow
 
