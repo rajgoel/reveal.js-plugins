@@ -4,7 +4,13 @@ The first two numbers of the versioning scheme refer to the  version of `reveal.
 
 ## Unpublished
 
-- ...
+### New features
+
+- Added support for changing  playback rate of audio: https://github.com/rajgoel/reveal.js-plugins/pull/148
+
+### Breaking changes
+
+- Default audio suffix is now `.webm`. Expicitly set config parameter back to `.ogg` if needed.
 
 ## 4.2.0
 
