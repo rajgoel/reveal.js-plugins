@@ -14,7 +14,7 @@ The first two numbers of the versioning scheme refer to the  version of `reveal.
 
 ### Breaking changes
 
-- Default audio suffix is now `.webm`. Expicitly set config parameter back to `.ogg` if needed.
+- Default audio suffix is now `.webm`. Explicitly set config parameter back to `.ogg` if needed.
 
 ## 4.2.0
 
