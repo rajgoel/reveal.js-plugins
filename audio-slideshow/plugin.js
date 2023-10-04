@@ -325,7 +325,12 @@ const initAudioSlideshow = function(Reveal){
 		// default file cannot be read
 		if ( textToSpeechURL != null && text != null && text != "" ) {
 			var audioSource = document.createElement( 'source' );
-			audioSource.src = textToSpeechURL + encodeURIComponent(text);
+			if (textToSpeechURL.includes("[TEXT]")) {
+				audioSource.src = textToSpeechURL.replace("[TEXT]", encodeURIComponent(text));
+			}
+			else {
+				audioSource.src = textToSpeechURL + encodeURIComponent(text);
+			}
 			audioSource.setAttribute('data-tts',audioElement.id.split( '-' ).pop());
 			audioElement.appendChild(audioSource, audioElement.firstChild);
 		}
