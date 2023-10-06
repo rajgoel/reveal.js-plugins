@@ -8,7 +8,7 @@
 ** available, a blank audio file with default  duration is played
 ** instead.
 **
-** Version: 1.1.0
+** Version: 1.1.1
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -351,7 +351,7 @@ const initAudioSlideshow = function(Reveal){
 		audioElement.id = "audioplayer-" + indices;
 		audioElement.style.display = "none";
 		audioElement.setAttribute( 'controls', '' );
-		audioElement.setAttribute( 'preload', 'none' );
+		audioElement.setAttribute( 'preload', 'auto' );
 
 		audioElement.playbackRate = defaultPlaybackRate;
 
