@@ -4,7 +4,7 @@
 ** A plugin for reveal.js allowing to record audio for a slide
 ** deck.
 **
-** Version: 1.0.0
+** Version: 1.0.1
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -21,6 +21,7 @@ window.RevealAudioRecorder = window.RevealAudioRecorder || {
 };
 
 var Recorder = {
+    audioType: "webm",
     audio: null,
     audioStream: null,
     recordRTC: null,
@@ -30,7 +31,6 @@ var Recorder = {
     canvas: null,
     isRecording: false,
     isPaused: false,
-
     initialize : function initialize() {
 	this.audio = new Audio();
 	this.audio.autoplay = true;
@@ -87,7 +87,7 @@ var Recorder = {
 		navigator.getUserMedia( { audio: true, video: false }, function( stream ) {
 			if ( window.IsChrome ) stream = new window.MediaStream( stream.getAudioTracks() );
 			Recorder.audioStream = stream;
-			Recorder.recordRTC = window.RecordRTC( stream, { type: 'audio' }, { bufferSize: 256 } );
+			Recorder.recordRTC = window.RecordRTC( stream, { type: 'audio/' + Recorder.audioType }, { bufferSize: 256 } );
 			Recorder.recordRTC.startRecording();
 			// Draw red circle over auto slide control
 			var context = Recorder.canvas.getContext( '2d' );
@@ -136,8 +136,8 @@ var Recorder = {
 
 			// add audio to zip
 			var blob = Recorder.recordRTC.getBlob();
-
-			Recorder.filename = Recorder.filename + '.' + blob.type.split( '/' ).pop();
+console.warn(blob.type);
+			Recorder.filename = Recorder.filename + '.' + Recorder.audioType;
 			var reader = new window.FileReader();
 			reader.readAsBinaryString(blob);
 			reader.onloadend = function() {
@@ -175,7 +175,7 @@ var Recorder = {
 			// add audio to zip
 			var blob = Recorder.recordRTC.getBlob();
 
-			Recorder.filename = Recorder.filename + '.' + blob.type.split( '/' ).pop();
+			Recorder.filename = Recorder.filename + '.' + Recorder.audioType;
 			var reader = new window.FileReader();
 			reader.readAsBinaryString(blob);
 			reader.onloadend = function() {
@@ -300,7 +300,7 @@ var Recorder = {
 const initAudioRecorder = function(Reveal){
   Reveal.addKeyBinding( { keyCode: 82, key: 'R', description: 'Toggle recording' }, function() { Recorder.toggleRecording(); } );
   Reveal.addKeyBinding( { keyCode: 90, key: 'Z', description: 'Download recordings' }, function() { Recorder.downloadZip(); } );
-  Reveal.addKeyBinding( { keyCode: 84, key: 'T', description: 'Fetch text-to-speech audio files' }, function() { Recorder.fetchTTS(); } );
+  Reveal.addKeyBinding( { keyCode: 84, key: 'T', description: 'Fetch Text-to-speech audio files' }, function() { Recorder.fetchTTS(); } );
 
 	Reveal.addEventListener( 'fragmentshown', function( event ) {
 		if ( Recorder.isRecording ) {
