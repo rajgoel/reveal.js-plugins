@@ -3,7 +3,7 @@
  **
  ** A plugin for reveal.js adding a chalkboard.
  **
- ** Version: 2.3.2
+ ** Version: 2.3.3
  **
  ** License: MIT license (see LICENSE.md)
  **
@@ -663,6 +663,15 @@ const initChalkboard = function ( Reveal ) {
 			} );
 			a.href = window.URL.createObjectURL( blob );
 		} catch ( error ) {
+			// https://stackoverflow.com/a/6234804
+			// escape data for proper handling of quotes and line breaks
+			// in case malicious user gets a chance to craft the exception message
+			error = String(error)
+					.replace(/&/g, "&amp;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;")
+					.replace(/"/g, "&quot;")
+					.replace(/'/g, "&#039;");
 			a.innerHTML += ' (' + error + ')';
 		}
 		a.click();
