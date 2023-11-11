@@ -152,22 +152,10 @@ const initChart = function(Reveal){
 		}
 	}
 
+	// redraw animation while keeping axes visible
 	function recreateChart(canvas) {
-		// clear data to redraw animation
-		var data = canvas.chart.data.datasets;
-		canvas.chart.data.datasets = []; 
+		canvas.chart.reset();
 		canvas.chart.update();
-		canvas.style.visibility = "hidden";
-		setTimeout( function(canvas, data) { 
-			canvas.chart.data.datasets = data; 
-			canvas.style.visibility = "visible"; 
-			canvas.chart.update(); 
-		}, 500, canvas, data); // wait for slide transition to re-add data and animation
-/*
-		var config = canvas.chart.config;
-		canvas.chart.destroy();
-		setTimeout( function() { canvas.chart = new Chart(canvas, config);}, 500); // wait for slide transition
-*/
 	}
 
 	// check if chart option is given or not
