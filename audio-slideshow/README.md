@@ -14,6 +14,9 @@ To use the plugin include
 <script src="https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/audio-slideshow/plugin.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/audio-slideshow/recorder.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/RecordRTC/5.6.2/RecordRTC.js"></script>
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/audio-slideshow/style.css">
+
 ```
 to the header of your presentation and configure reveal.js and the plugin by
 
@@ -53,6 +56,7 @@ Reveal.initialize({
 		playerOpacity: 0.05,	// opacity value of audio player if unfocused
 		playerStyle: 'position: fixed; bottom: 4px; left: 25%; width: 50%; height:75px; z-index: 33;', // style used for container of audio controls
 		startAtFragment: false, // when moving to a slide, start at the current fragment or at the start of the slide
+    silencedByDefault: true, // start with no audio by default. No player is shown, but a key binding is provided and a control button.
 	},
 	// ...
 });
@@ -83,6 +87,13 @@ For each slide or fragment you can explicitly specify a file to be played when t
 If no audio file is explicitly specified, the plugin automatically determines the name of the audio file using the given ```prefix```, the slide (or fragment) indices, and the ```suffix```, e.g. in the above code the slideshow will play the file ```audio/1.2.webm```  before the fragment is shown (assuming that ```prefix``` is ```"audio/"```, ```suffix``` is ```".webm"``` , ```Reveal.getIndices().h``` is ```"1"``` and ```Reveal.getIndices().v``` is ```"2"```).
 
 If you just want to play audio when file names are explicitly set with ```data-audio-src```, configure ```defaultAudios``` to ```false```.
+
+### Silenced by default
+
+Sometimes you need to silence all audios for your presentation. In this case,
+`silencedByDefault` can be set to **true** so no player will be shown. Instead,
+a button to enable all audios is provided so player can be enabled/disabled.
+User's decision is stored in localStorage to persist visitors choise.
 
 ### Text-to-speech
 
