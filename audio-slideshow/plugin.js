@@ -135,7 +135,7 @@ const initAudioSlideshow = function(Reveal){
     if ( indices.f != undefined && indices.f >= 0 ) id = id + '.' + indices.f;
     currentAudio = document.getElementById( id );
     if ( currentAudio ) {
-      if (!silenced) currentAudio.style.display = "block";
+      if (!silenced && currentAudio.getElementsByTagName('source').length > 0) currentAudio.style.display = "block";
       if ( previousAudio ) {
         if ( currentAudio.id != previousAudio.id ) {
           currentAudio.volume = previousAudio.volume;
