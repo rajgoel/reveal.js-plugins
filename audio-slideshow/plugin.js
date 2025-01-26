@@ -18,7 +18,8 @@ window.RevealAudioSlideshow = window.RevealAudioSlideshow || {
     id: 'RevealAudioSlideshow',
     init: function(deck) {
         initAudioSlideshow(deck);
-    }
+    },
+    toggleAutoAdvance: function() { return toggleAutoAdvance(); },
 };
 
 const initAudioSlideshow = function(Reveal){
@@ -44,6 +45,7 @@ const initAudioSlideshow = function(Reveal){
 	var currentAudio = null;
 	var previousAudio = null;
 	var timer = null;
+	var defaultAdvance = 0;
 
 	Reveal.addEventListener( 'fragmentshown', function( event ) {
 		if ( timer ) { clearTimeout( timer ); timer = null; }
@@ -104,6 +106,25 @@ const initAudioSlideshow = function(Reveal){
 		}
 	} );
 
+	function toggleAutoAdvance() {
+		if ( autoplay ) {
+			if ( currentAudio ) {
+				if ( timer ) { clearTimeout( timer ); timer = null; }
+				currentAudio.pause();
+                        }
+			autoplay = false;
+			advance = -1;
+		}
+		else {
+			if ( currentAudio && currentAudio.paused ) currentAudio.play();
+			autoplay = true;
+			advance = defaultAdvance;
+		}
+		return autoplay;
+	}
+
+	Reveal.addKeyBinding( { keyCode: 160, key: '^', description: 'Toggle audio autoadvance' }, toggleAutoAdvance );
+
 	function selectAudio( previousAudio ) {
 		if ( currentAudio ) {
 			currentAudio.pause();
@@ -156,7 +177,11 @@ const initAudioSlideshow = function(Reveal){
 				currentPlaybackRate = config.defaultPlaybackRate;
 			}
 
-			if ( config.advance != null ) advance = config.advance;
+			if ( config.advance != null )  {
+				advance = config.advance;
+				defaultAdvance = config.advance;
+			}
+
 			if ( config.autoplay != null ) autoplay = config.autoplay;
 			if ( config.playerOpacity != null  ) playerOpacity = config.playerOpacity;
 			if ( config.playerStyle != null ) playerStyle = config.playerStyle;
@@ -466,6 +491,10 @@ const initAudioSlideshow = function(Reveal){
 	function getPlaybackRate() {
 		return currentPlaybackRate;
 	}
+
+	this.toggleAutoAdvance = toggleAutoAdvance;
+
+	return this;
 };
 
 /*****************************************************************
