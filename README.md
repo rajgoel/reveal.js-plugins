@@ -29,4 +29,4 @@ The easiest to get started is to start with [minimal.html](minimal.html) and tak
 
 MIT licensed
 
-Copyright (C) 2023 Asvin Goel
+Copyright (C) 2025 Asvin Goel
